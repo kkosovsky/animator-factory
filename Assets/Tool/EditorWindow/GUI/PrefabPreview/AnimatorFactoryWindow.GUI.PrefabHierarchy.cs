@@ -65,7 +65,7 @@ namespace AnimatorFactory
 
             if (hasChildren)
             {
-                node.isExpanded = DrawCustomFoldout(isExpanded: node.isExpanded);
+                node.isExpanded = Custom.DrawFoldout(isExpanded: node.isExpanded);
             }
             else
             {
@@ -78,6 +78,19 @@ namespace AnimatorFactory
             );
 
             GUILayout.Label(content: content, options: GUILayout.Height(height: Layout.height16));
+
+            Custom.DrawIcon<SpriteRenderer>(
+                gameObject: node.gameObject,
+                labelSize: new Vector2(x: 16.0f, y: 16.0f),
+                tooltip: Strings.hasSpriteRendererComponent
+            );
+            
+            Custom.DrawIcon<Animator>(
+                gameObject: node.gameObject,
+                labelSize: new Vector2(x: 16.0f, y: 16.0f),
+                tooltip: Strings.hasAnimatorComponent
+            );
+
             EditorGUILayout.EndHorizontal();
         }
 

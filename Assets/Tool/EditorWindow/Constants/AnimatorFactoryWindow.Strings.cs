@@ -9,6 +9,8 @@ namespace AnimatorFactory
             internal const string prefabSelectionLabel = "Select Prefab:";
             internal const string hierarchyLabel = "GameObject Hierarchy:";
             internal const string noPrefabSelected = "No prefab selected";
+            internal const string hasAnimatorComponent = "Has Animator Component";
+            internal const string hasSpriteRendererComponent = "Has Sprite Renderer Component";
         }
     }
 }
