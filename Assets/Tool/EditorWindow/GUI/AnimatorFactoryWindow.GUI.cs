@@ -9,14 +9,18 @@ namespace AnimatorFactory
 
         void OnGUI()
         {
+            _serializedObject.Update();
             _scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition: _scrollPosition);
+            DrawPrefabSelection();
 
-            for (int i = 0; i < 50; i++)
+            if (_selectedPrefab != null)
             {
-                EditorGUILayout.LabelField(label: $"Item {i}");
+                EditorGUILayout.Space();
+                DrawPrefabHierarchy();
             }
 
             EditorGUILayout.EndScrollView();
+            _serializedObject.ApplyModifiedProperties();
         }
     }
 }
