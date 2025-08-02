@@ -65,7 +65,7 @@ namespace AnimatorFactory
 
             if (hasChildren)
             {
-                node.isExpanded = EditorGUILayout.Foldout(foldout: node.isExpanded, content: "");
+                node.isExpanded = DrawCustomFoldout(isExpanded: node.isExpanded);
             }
             else
             {
