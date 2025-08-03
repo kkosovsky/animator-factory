@@ -42,7 +42,7 @@ namespace AnimatorFactory
 
         void HierarchyListDidSelectItem(PrefabHierarchyListItem item)
         {
-            // DrawAnimatorUI(item: item);
+            DrawAnimatorUI(item: item);
         }
     }
 }
