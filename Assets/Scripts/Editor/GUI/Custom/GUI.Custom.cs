@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AnimatorFactory
 {
@@ -52,6 +53,30 @@ namespace AnimatorFactory
                 content: content,
                 options: new[] { GUILayout.Width(width: labelSize.x), GUILayout.Height(height: labelSize.y) }
             );
+        }
+        
+        public static void AddComponentIcon<T>(VisualElement container, string tooltip)
+            where T : Component
+        {
+            Texture componentIcon = EditorGUIUtility.ObjectContent(obj: null, type: typeof(T)).image;
+            if (componentIcon == null)
+            {
+                return;
+            }
+
+            Image iconImage = new()
+            {
+                image = componentIcon,
+                tooltip = tooltip,
+                style =
+                {
+                    width = 16,
+                    height = 16,
+                    marginLeft = 2
+                }
+            };
+            
+            container.Add(child: iconImage);
         }
     }
 }

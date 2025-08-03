@@ -1,25 +1,40 @@
-using UnityEditor;
-using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AnimatorFactory
 {
     public partial class AnimatorFactoryWindow
     {
-        Vector2 _scrollPosition;
+        IMGUIContainer _imguiContainer;
+        PrefabHierarchyListView _listView;
 
-        void OnGUI()
+        void CreateUIElements()
         {
-            _serializedObject.Update();
-            _scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition: _scrollPosition);
-            DrawPrefabSelection();
+            rootVisualElement.Clear();
 
-            if (_selectedPrefab != null)
+            _imguiContainer = new IMGUIContainer(onGUIHandler: OnIMGUI)
             {
-                EditorGUILayout.Space();
-                DrawPrefabHierarchy();
-            }
+                style = { 
+                    flexShrink = 0,
+                    paddingTop = 10,
+                    paddingBottom = 10,
+                    paddingLeft = 10,
+                    paddingRight = 10
+                }
+            };
+            rootVisualElement.Add(child: _imguiContainer);
 
-            EditorGUILayout.EndScrollView();
+            _listView = new PrefabHierarchyListView();
+            rootVisualElement.Add(child: _listView);
+        }
+
+        void OnIMGUI()
+        {
+            if (_serializedObject == null)
+            {
+                return;
+            }
+            _serializedObject.Update();
+            DrawPrefabSelection();
             _serializedObject.ApplyModifiedProperties();
         }
     }

@@ -15,6 +15,7 @@ namespace AnimatorFactory
         void OnEnable()
         {
             _serializedObject ??= new SerializedObject(obj: this);
+            CreateUIElements();
         }
     }
 }

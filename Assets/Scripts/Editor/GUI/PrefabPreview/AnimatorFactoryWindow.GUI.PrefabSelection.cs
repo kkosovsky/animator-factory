@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AnimatorFactory.Logic;
 using UnityEditor;
 using UnityEngine;
@@ -8,8 +9,8 @@ namespace AnimatorFactory
     {
         [SerializeField]
         GameObject _selectedPrefab;
-
         GameObject _lastSelectedPrefab;
+        List<HierarchyNode> _hierarchyNodes;
 
         void DrawPrefabSelection()
         {
@@ -29,11 +30,14 @@ namespace AnimatorFactory
 
             if (_selectedPrefab == null)
             {
+                _hierarchyNodes?.Clear();
+                _listView.Reset();
                 return;
             }
-            
+
             _lastSelectedPrefab = _selectedPrefab;
             _hierarchyNodes = HierarchyBuilder.BuildHierarchy(selectedPrefab: _selectedPrefab);
+            _listView.Refresh(hierarchyNodes: _hierarchyNodes);
         }
     }
 }
