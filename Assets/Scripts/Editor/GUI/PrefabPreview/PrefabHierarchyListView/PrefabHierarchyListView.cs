@@ -46,6 +46,12 @@ namespace AnimatorFactory
             EditorApplication.delayCall += RefreshItems;
         }
 
+        void RefreshItems()
+        {
+            _hierarchyListView.itemsSource = _hierarchyNodes;
+            _hierarchyListView.RefreshItems();
+        }
+
         void OnHierarchySelectionChanged(IEnumerable<object> selection)
         {
             HierarchyNode selectedItem = selection.FirstOrDefault() as HierarchyNode;
@@ -58,12 +64,6 @@ namespace AnimatorFactory
                     $"Selected hierarchy item: {selectedItem.name} (GameObject: {selectedItem.gameObject.name})"
                 );
             }
-        }
-
-        void RefreshItems()
-        {
-            _hierarchyListView.itemsSource = _hierarchyNodes;
-            _hierarchyListView.RefreshItems();
         }
     }
 }
