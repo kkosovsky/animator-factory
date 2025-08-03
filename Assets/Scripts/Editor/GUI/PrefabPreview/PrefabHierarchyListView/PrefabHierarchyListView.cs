@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -8,8 +9,10 @@ namespace AnimatorFactory
 {
     public partial class PrefabHierarchyListView : VisualElement
     {
-        HierarchyNode _selectedHierarchyItem;
-        List<HierarchyNode> _hierarchyNodes = new();
+        event Action<PrefabHierarchyListItem> DidSelectItem;
+        
+        PrefabHierarchyListItem _selectedItem;
+        List<PrefabHierarchyListItem> _hierarchyNodes = new();
         readonly ListView _hierarchyListView;
 
         public PrefabHierarchyListView()
@@ -29,7 +32,7 @@ namespace AnimatorFactory
             Add(child: _hierarchyListView);
         }
 
-        public void Refresh(List<HierarchyNode> hierarchyNodes)
+        public void Refresh(List<PrefabHierarchyListItem> hierarchyNodes)
         {
             if (_hierarchyListView == null || !hierarchyNodes.Any())
             {
@@ -46,6 +49,10 @@ namespace AnimatorFactory
             EditorApplication.delayCall += RefreshItems;
         }
 
+        public void AddListener(Action<PrefabHierarchyListItem> onSelectItem) => DidSelectItem += onSelectItem;
+
+        public void RemoveAllListeners() => ClearDelegates();
+
         void RefreshItems()
         {
             _hierarchyListView.itemsSource = _hierarchyNodes;
@@ -54,8 +61,9 @@ namespace AnimatorFactory
 
         void OnHierarchySelectionChanged(IEnumerable<object> selection)
         {
-            HierarchyNode selectedItem = selection.FirstOrDefault() as HierarchyNode;
-            _selectedHierarchyItem = selectedItem;
+            PrefabHierarchyListItem selectedItem = selection.FirstOrDefault() as PrefabHierarchyListItem;
+            _selectedItem = selectedItem;
+            DidSelectItem?.Invoke(_selectedItem);
 
             if (selectedItem != null)
             {
@@ -63,6 +71,20 @@ namespace AnimatorFactory
                     message:
                     $"Selected hierarchy item: {selectedItem.name} (GameObject: {selectedItem.gameObject.name})"
                 );
+            }
+        }
+        
+        void ClearDelegates()
+        {
+            if (DidSelectItem == null)
+            {
+                return;
+            }
+
+            Delegate[] onSelectDelegates = DidSelectItem.GetInvocationList();
+            foreach (Delegate @delegate in onSelectDelegates)
+            {
+                DidSelectItem -= (Action<PrefabHierarchyListItem>)@delegate;
             }
         }
     }

@@ -25,6 +25,7 @@ namespace AnimatorFactory
 
             _listView = new PrefabHierarchyListView();
             rootVisualElement.Add(child: _listView);
+            _listView.AddListener(onSelectItem: HierarchyListDidSelectItem);
         }
 
         void OnIMGUI()

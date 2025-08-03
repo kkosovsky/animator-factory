@@ -13,25 +13,25 @@ namespace AnimatorFactory
                 return;
             }
 
-            HierarchyNode node = _hierarchyNodes[index: index];
+            PrefabHierarchyListItem listItem = _hierarchyNodes[index: index];
 
             VisualElement indentSpace = element.Q<VisualElement>(name: "indent-space");
-            indentSpace.style.width = node.depth * 20;
+            indentSpace.style.width = listItem.depth * 20;
 
             Image icon = element.Q<Image>(name: "game-object-icon");
-            Texture2D gameObjectIcon = AssetPreview.GetMiniThumbnail(obj: node.gameObject);
+            Texture2D gameObjectIcon = AssetPreview.GetMiniThumbnail(obj: listItem.gameObject);
             if (gameObjectIcon != null)
             {
                 icon.image = gameObjectIcon;
             }
 
             Label nameLabel = element.Q<Label>(name: "name-label");
-            nameLabel.text = node.name;
+            nameLabel.text = listItem.name;
 
             VisualElement iconsContainer = element.Q<VisualElement>(name: "icons-container");
             iconsContainer.Clear();
 
-            if (node.gameObject.GetComponent<SpriteRenderer>() != null)
+            if (listItem.gameObject.GetComponent<SpriteRenderer>() != null)
             {
                 Custom.AddComponentIcon<SpriteRenderer>(
                     container: iconsContainer,
@@ -39,7 +39,7 @@ namespace AnimatorFactory
                 );
             }
 
-            if (node.gameObject.GetComponent<Animator>() != null)
+            if (listItem.gameObject.GetComponent<Animator>() != null)
             {
                 Custom.AddComponentIcon<Animator>(container: iconsContainer, tooltip: Strings.hasAnimatorComponent);
             }
