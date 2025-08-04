@@ -331,24 +331,29 @@ namespace AnimatorFactory.SpriteKeyframePreview
         {
             if (index >= _filteredSprites.Count) return;
 
-            Sprite sprite = _filteredSprites[index];
+            Sprite sprite = _filteredSprites[index: index];
             Label nameLabel = element.Q<Label>();
             VisualElement iconContainer = element.Children().First();
 
             nameLabel.text = sprite.name;
 
-            // Use the sprite texture directly instead of asset preview
+            // Use the sprite texture directly with modern UIElements properties
             if (sprite.texture != null)
             {
-                // Create a proper sprite background
-                iconContainer.style.backgroundImage = new StyleBackground(sprite);
-                iconContainer.style.unityBackgroundScaleMode = ScaleMode.ScaleToFit;
+                iconContainer.style.backgroundImage = new StyleBackground(v: sprite);
+                iconContainer.style.backgroundSize =
+                    new StyleBackgroundSize(v: new BackgroundSize(sizeType: BackgroundSizeType.Contain));
+                iconContainer.style.backgroundRepeat = new StyleBackgroundRepeat(
+                    v: new BackgroundRepeat(repeatX: Repeat.NoRepeat, repeatY: Repeat.NoRepeat)
+                );
                 iconContainer.style.backgroundColor = Color.clear;
             }
             else
             {
                 iconContainer.style.backgroundImage = null;
-                iconContainer.style.backgroundColor = new Color(0.3f, 0.3f, 0.3f);
+                iconContainer.style.backgroundSize = StyleKeyword.Initial;
+                iconContainer.style.backgroundRepeat = StyleKeyword.Initial;
+                iconContainer.style.backgroundColor = new Color(r: 0.3f, g: 0.3f, b: 0.3f);
             }
         }
 
@@ -356,28 +361,34 @@ namespace AnimatorFactory.SpriteKeyframePreview
         {
             _allSprites = new List<Sprite>();
 
-            string[] guids = AssetDatabase.FindAssets("t:Sprite");
+            string[] guids = AssetDatabase.FindAssets(filter: "t:Sprite");
             foreach (string guid in guids)
             {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
+                string path = AssetDatabase.GUIDToAssetPath(guid: guid);
 
-                if (IsFromUnityPackage(path))
+                if (IsFromUnityPackage(assetPath: path))
                 {
                     continue;
                 }
 
-                UnityEngine.Object[] allAssets = AssetDatabase.LoadAllAssetsAtPath(path);
+                UnityEngine.Object[] allAssets = AssetDatabase.LoadAllAssetsAtPath(assetPath: path);
 
                 foreach (UnityEngine.Object asset in allAssets)
                 {
                     if (asset is Sprite sprite)
                     {
-                        _allSprites.Add(sprite);
+                        _allSprites.Add(item: sprite);
                     }
                 }
             }
 
-            _allSprites.Sort((a, b) => string.Compare(a.name, b.name, StringComparison.OrdinalIgnoreCase));
+            _allSprites.Sort(
+                comparison: (a, b) => string.Compare(
+                    strA: a.name,
+                    strB: b.name,
+                    comparisonType: StringComparison.OrdinalIgnoreCase
+                )
+            );
         }
 
         /// <summary>
@@ -466,7 +477,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
             int count = _listView.selectedIndices?.Count() ?? 0;
             _selectionCountLabel.text = $"Selected: {count}";
 
-            // Enable/disable apply button based on selection
             _applyButton.SetEnabled(value: count > 0);
         }
     }
