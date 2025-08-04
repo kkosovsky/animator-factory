@@ -224,6 +224,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             Button changeButton = new()
             {
                 text = "Change Sprite",
+                tooltip = "Select sprites to replace all the keyframes",
                 style =
                 {
                     height = 20,
