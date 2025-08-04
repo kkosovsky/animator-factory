@@ -35,8 +35,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// </summary>
         public event System.Action<Sprite[]> SpritesSelected;
 
-
-
         public SpriteKeyframeView() => CreateUI();
 
         public void OnDataChanged(AnimationSpriteInfo spriteInfo)
@@ -138,7 +136,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
             _spriteSelectionListView.RefreshSprites();
             _spriteSelectionListView.ClearSelection();
             
-            // Hide the keyframes view while selecting
             _keyframesScrollView.style.display = DisplayStyle.None;
         }
 
@@ -183,9 +180,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             foreach (SpriteKeyframeData keyframe in spriteInfo.keyframes)
             {
-                VisualElement keyframeElement = CreateKeyframeElement(
-                    keyframe: keyframe
-                );
+                VisualElement keyframeElement = KeyframeElementView.Create(keyframe);
                 _keyframesContainer.Add(child: keyframeElement);
             }
         }
@@ -330,107 +325,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
             }
         }
 
-        static VisualElement CreateKeyframeElement(SpriteKeyframeData keyframe)
-        {
-            VisualElement container = new()
-            {
-                style =
-                {
-                    width = 60,
-                    height = 70,
-                    marginRight = 5,
-                    backgroundColor = new Color(r: 0.3f, g: 0.3f, b: 0.3f, a: 0.5f),
-                    borderTopWidth = 1,
-                    borderBottomWidth = 1,
-                    borderLeftWidth = 1,
-                    borderRightWidth = 1,
-                    borderTopColor = Color.gray,
-                    borderBottomColor = Color.gray,
-                    borderLeftColor = Color.gray,
-                    borderRightColor = Color.gray,
-                    paddingTop = 2,
-                    paddingBottom = 2,
-                    paddingLeft = 2,
-                    paddingRight = 2
-                }
-            };
 
-            if (keyframe.sprite != null)
-            {
-                Image spriteImage = new()
-                {
-                    sprite = keyframe.sprite,
-                    style =
-                    {
-                        width = 32,
-                        height = 32,
-                        alignSelf = Align.Center
-                    }
-                };
-                container.Add(child: spriteImage);
-            }
-            else
-            {
-                VisualElement placeholder = new()
-                {
-                    style =
-                    {
-                        width = 32,
-                        height = 32,
-                        alignSelf = Align.Center,
-                        backgroundColor = new Color(r: 0.2f, g: 0.2f, b: 0.2f, a: 0.8f),
-                        borderTopWidth = 1,
-                        borderBottomWidth = 1,
-                        borderLeftWidth = 1,
-                        borderRightWidth = 1,
-                        borderTopColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
-                        borderBottomColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
-                        borderLeftColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
-                        borderRightColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f)
-                    }
-                };
-
-                Label emptyLabel = new(text: "—")
-                {
-                    style =
-                    {
-                        alignSelf = Align.Center,
-                        unityTextAlign = TextAnchor.MiddleCenter,
-                        fontSize = 16,
-                        color = new Color(r: 0.6f, g: 0.6f, b: 0.6f, a: 1.0f),
-                        flexGrow = 1
-                    }
-                };
-                placeholder.Add(child: emptyLabel);
-                container.Add(child: placeholder);
-            }
-
-            int frameNumber = keyframe.index + 1;
-            Label timeLabel = new(text: $"F{frameNumber}")
-            {
-                style =
-                {
-                    fontSize = 9,
-                    alignSelf = Align.Center,
-                    color = Color.white
-                }
-            };
-            container.Add(child: timeLabel);
-
-            Label nameLabel = new(text: keyframe.sprite != null ? keyframe.sprite.name : "empty")
-            {
-                style =
-                {
-                    fontSize = 8,
-                    alignSelf = Align.Center,
-                    color = Color.gray,
-                    whiteSpace = WhiteSpace.Normal,
-                    textOverflow = TextOverflow.Ellipsis
-                }
-            };
-            container.Add(child: nameLabel);
-
-            return container;
-        }
     }
 }
