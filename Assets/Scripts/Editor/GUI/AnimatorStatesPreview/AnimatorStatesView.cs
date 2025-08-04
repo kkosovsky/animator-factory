@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Animations;
@@ -8,6 +9,8 @@ namespace AnimatorFactory
 {
     public class AnimatorStatesView : VisualElement
     {
+        public event Action<AnimatorState> StateSelected; // Add this event
+
         readonly VisualElement _statesContainer;
         readonly ScrollView _statesScrollView;
         readonly HelpBox _helpBox;
@@ -81,7 +84,7 @@ namespace AnimatorFactory
 
             foreach (AnimatorState state in allStates)
             {
-                Button stateButton = new Button(clickEvent: () => OnAnimatorStateSelected(state: state, animator: animator))
+                Button stateButton = new Button(clickEvent: () => OnAnimatorStateSelected(state: state))
                 {
                     text = state.name,
                     style = { 
@@ -121,9 +124,10 @@ namespace AnimatorFactory
             _statesContainer.Clear();
         }
 
-        void OnAnimatorStateSelected(AnimatorState state, Animator animator)
+        void OnAnimatorStateSelected(AnimatorState state)
         {
-            
+            Debug.Log($"Selected animator state: {state.name}");
+            StateSelected?.Invoke(state); // Fire the event
         }
 
         static List<AnimatorState> GetAllAnimatorStates(AnimatorController controller)

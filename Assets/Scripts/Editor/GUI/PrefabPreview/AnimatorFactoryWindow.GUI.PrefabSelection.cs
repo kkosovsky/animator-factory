@@ -9,8 +9,8 @@ namespace AnimatorFactory
         [SerializeField]
         GameObject _selectedPrefab;
         GameObject _lastSelectedPrefab;
-        List<PrefabHierarchyListItem> _hierarchyNodes;
         
+        List<PrefabHierarchyListItem> _hierarchyNodes;
         PrefabHierarchyListItem _selectedHierarchyItem; 
 
         void DrawPrefabSelection()

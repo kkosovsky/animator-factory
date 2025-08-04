@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
@@ -9,6 +10,7 @@ namespace AnimatorFactory
     {
         PrefabHierarchyListView _listView;
         AnimatorStatesView _animatorStatesView;
+        SpriteKeyframeView _spriteKeyframeView; // Add this
         ObjectField _prefabField;
 
         void CreateUIElements()
@@ -30,6 +32,7 @@ namespace AnimatorFactory
             AddPrefabSelectionView(container: container);
             AddHierarchyListView(container: container);
             AddAnimatorStatesView(container: container);
+            AddSpriteKeyframeView(container: container); // Add this
         }
 
         void AddPrefabSelectionView(VisualElement container)
@@ -55,6 +58,16 @@ namespace AnimatorFactory
             _animatorStatesView = new AnimatorStatesView();
             container.Add(child: _animatorStatesView);
             _animatorStatesView.Hide();
+            
+            // Wire up the state selection event
+            _animatorStatesView.StateSelected += OnAnimatorStateSelected;
+        }
+
+        void AddSpriteKeyframeView(VisualElement container)
+        {
+            _spriteKeyframeView = new SpriteKeyframeView();
+            container.Add(child: _spriteKeyframeView);
+            _spriteKeyframeView.Hide();
         }
 
         void OnPrefabSelectionChanged(ChangeEvent<Object> evt)
@@ -65,6 +78,7 @@ namespace AnimatorFactory
             {
                 _listView.Reset();
                 _animatorStatesView.Hide();
+                _spriteKeyframeView.Hide(); // Hide sprite keyframes too
                 return;
             }
 
@@ -72,11 +86,18 @@ namespace AnimatorFactory
                 HierarchyBuilder.BuildHierarchy(selectedPrefab: selectedPrefab);
             _listView.Refresh(hierarchyNodes: hierarchyNodes);
             _animatorStatesView.Hide();
+            _spriteKeyframeView.Hide();
         }
 
         void OnHierarchyItemSelected(PrefabHierarchyListItem item)
         {
             _animatorStatesView.ShowAnimatorStates(item: item);
+            _spriteKeyframeView.Hide(); // Hide keyframes until a state is selected
+        }
+
+        void OnAnimatorStateSelected(AnimatorState state)
+        {
+            _spriteKeyframeView.ShowSpriteKeyframes(state);
         }
     }
 }
