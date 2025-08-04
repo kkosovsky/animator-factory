@@ -26,16 +26,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
         bool _hasData;
 
         /// <summary>
-        /// Gets whether the ViewModel currently has sprite data.
-        /// </summary>
-        public bool HasData => _hasData;
-
-        /// <summary>
-        /// Gets the current sprite information.
-        /// </summary>
-        public AnimationSpriteInfo CurrentSpriteInfo => _currentSpriteInfo;
-
-        /// <summary>
         /// Loads sprite keyframes from the given animator state.
         /// </summary>
         /// <param name="state">The animator state to analyze</param>
@@ -59,7 +49,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
                     return;
                 }
 
-                // Cache the original keyframes for later restoration
                 _originalKeyframes = new List<SpriteKeyframeData>(spriteInfo.keyframes);
                 _currentSpriteInfo = spriteInfo;
                 _hasData = true;
@@ -80,7 +69,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
         {
             if (!_hasData || newFrameRate <= 0) return;
 
-            // Create a modified version of the current sprite info with new frame rate
             AnimationSpriteInfo modifiedInfo = CreateModifiedSpriteInfo(
                 original: _currentSpriteInfo,
                 newFrameRate: newFrameRate,
@@ -100,14 +88,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
         {
             if (!_hasData || newTotalFrames <= 0 || _originalKeyframes == null) return;
 
-            // Adjust the keyframes list based on the new total frames count using original keyframes
             List<SpriteKeyframeData> adjustedKeyframes = AdjustKeyframesForTotalFrames(
                 _originalKeyframes, 
                 newTotalFrames, 
                 _currentSpriteInfo.frameRate
             );
 
-            // Create a modified version of the current sprite info with new total frames and adjusted keyframes
             AnimationSpriteInfo modifiedInfo = CreateModifiedSpriteInfo(
                 original: _currentSpriteInfo,
                 newFrameRate: _currentSpriteInfo.frameRate,

@@ -337,7 +337,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             nameLabel.text = sprite.name;
 
-            // Use the sprite texture directly with modern UIElements properties
             if (sprite.texture != null)
             {
                 iconContainer.style.backgroundImage = new StyleBackground(v: sprite);
@@ -366,7 +365,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid: guid);
 
-                if (IsFromUnityPackage(assetPath: path))
+                if (Helpers.IsFromUnityPackage(assetPath: path))
                 {
                     continue;
                 }
@@ -389,24 +388,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
                     comparisonType: StringComparison.OrdinalIgnoreCase
                 )
             );
-        }
-
-        /// <summary>
-        /// Checks if the asset path belongs to a Unity package.
-        /// </summary>
-        /// <param name="assetPath">The asset path to check</param>
-        /// <returns>True if the asset is from a package, false otherwise</returns>
-        static bool IsFromUnityPackage(string assetPath)
-        {
-            if (string.IsNullOrEmpty(value: assetPath))
-                return false;
-
-            // Check for common package paths
-            return assetPath.StartsWith(value: "Packages/", comparisonType: StringComparison.OrdinalIgnoreCase)
-                || assetPath.StartsWith(
-                    value: "Library/PackageCache/",
-                    comparisonType: StringComparison.OrdinalIgnoreCase
-                );
         }
 
         void RefreshFilteredSprites()

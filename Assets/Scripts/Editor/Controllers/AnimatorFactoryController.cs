@@ -16,18 +16,18 @@ namespace AnimatorFactory.Editor
 
         readonly PrefabHierarchyView _prefabHierarchyView;
         readonly AnimatorStatesView _animatorStatesView;
-        readonly SpriteKeyframeView _spriteKeyframeView;
+        readonly SpriteKeyframesView _spriteKeyframesView;
 
         /// <summary>
         /// Initializes the controller with all required views.
         /// </summary>
         /// <param name="prefabHierarchyView">The prefab hierarchy view</param>
         /// <param name="animatorStatesView">The animator states view</param>
-        /// <param name="spriteKeyframeView">The sprite keyframe view</param>
+        /// <param name="spriteKeyframesView">The sprite keyframe view</param>
         public AnimatorFactoryController(
             PrefabHierarchyView prefabHierarchyView,
             AnimatorStatesView animatorStatesView,
-            SpriteKeyframeView spriteKeyframeView
+            SpriteKeyframesView spriteKeyframesView
         )
         {
             _prefabHierarchyViewModel = new PrefabHierarchyViewModel();
@@ -36,7 +36,7 @@ namespace AnimatorFactory.Editor
 
             _prefabHierarchyView = prefabHierarchyView;
             _animatorStatesView = animatorStatesView;
-            _spriteKeyframeView = spriteKeyframeView;
+            _spriteKeyframesView = spriteKeyframesView;
 
             BindEvents();
             WireFeatureInteractions();

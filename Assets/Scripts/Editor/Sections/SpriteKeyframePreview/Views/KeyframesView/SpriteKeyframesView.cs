@@ -1,14 +1,12 @@
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.UIElements;
 
 namespace AnimatorFactory.SpriteKeyframePreview
 {
     /// <summary>
-    /// Pure UI component for displaying sprite keyframes.
-    /// Binds to SpriteKeyframeViewModel through events.
+    /// UI component for displaying sprite keyframes.
     /// </summary>
-    public class SpriteKeyframeView : VisualElement
+    public class SpriteKeyframesView : VisualElement
     {
         Label _titleLabel;
         VisualElement _editableInfoContainer;
@@ -35,7 +33,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// </summary>
         public event System.Action<Sprite[]> SpritesSelected;
 
-        public SpriteKeyframeView() => CreateUI();
+        public SpriteKeyframesView() => CreateUI();
 
         public void OnDataChanged(AnimationSpriteInfo spriteInfo)
         {
@@ -103,7 +101,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
             _keyframesScrollView.Add(child: _keyframesContainer);
             Add(child: _keyframesScrollView);
 
-            // Create sprite selection list view (initially hidden)
             _spriteSelectionListView = new SpriteSelectionListView
             {
                 style = { display = DisplayStyle.None }
@@ -111,15 +108,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
             _spriteSelectionListView.SpritesApplied += OnSpritesApplied;
             _spriteSelectionListView.CancelRequested += OnSpriteSelectionCancelled;
             Add(child: _spriteSelectionListView);
-
-
         }
 
         void OnChangeSpriteButtonClicked()
         {
-            // Toggle the sprite selection list visibility
             bool isCurrentlyVisible = _spriteSelectionListView.style.display == DisplayStyle.Flex;
-            
+
             if (isCurrentlyVisible)
             {
                 HideSpriteSelection();
@@ -135,7 +129,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             _spriteSelectionListView.style.display = DisplayStyle.Flex;
             _spriteSelectionListView.RefreshSprites();
             _spriteSelectionListView.ClearSelection();
-            
+
             _keyframesScrollView.style.display = DisplayStyle.None;
         }
 
@@ -147,20 +141,11 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         void OnSpritesApplied(Sprite[] selectedSprites)
         {
-            // Hide the selection UI
             HideSpriteSelection();
-            
-            // Fire the event to notify the controller/viewmodel
-            SpritesSelected?.Invoke(selectedSprites);
+            SpritesSelected?.Invoke(obj: selectedSprites);
         }
 
-        void OnSpriteSelectionCancelled()
-        {
-            // Just hide the selection UI
-            HideSpriteSelection();
-        }
-
-
+        void OnSpriteSelectionCancelled() => HideSpriteSelection();
 
         void DisplayKeyframes(AnimationSpriteInfo spriteInfo)
         {
@@ -180,7 +165,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             foreach (SpriteKeyframeData keyframe in spriteInfo.keyframes)
             {
-                VisualElement keyframeElement = KeyframeElementView.Create(keyframe);
+                VisualElement keyframeElement = new KeyframeElementView(keyframe: keyframe);
                 _keyframesContainer.Add(child: keyframeElement);
             }
         }
@@ -324,7 +309,5 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 TotalFramesChanged?.Invoke(obj: evt.newValue);
             }
         }
-
-
     }
 }

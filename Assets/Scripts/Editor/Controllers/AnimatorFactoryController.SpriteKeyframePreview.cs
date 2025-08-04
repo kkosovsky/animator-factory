@@ -6,22 +6,22 @@ namespace AnimatorFactory.Editor
     {
         void BindSpriteKeyFramePreviewEvents()
         {
-            _spriteKeyframeViewModel.StatusChanged += _spriteKeyframeView.OnStatusChanged;
-            _spriteKeyframeViewModel.DataChanged += _spriteKeyframeView.OnDataChanged;
+            _spriteKeyframeViewModel.StatusChanged += _spriteKeyframesView.OnStatusChanged;
+            _spriteKeyframeViewModel.DataChanged += _spriteKeyframesView.OnDataChanged;
             
-            _spriteKeyframeView.FrameRateChanged += OnFrameRateChanged;
-            _spriteKeyframeView.TotalFramesChanged += OnTotalFramesChanged;
-            _spriteKeyframeView.SpritesSelected += OnSpritesSelected;
+            _spriteKeyframesView.FrameRateChanged += OnFrameRateChanged;
+            _spriteKeyframesView.TotalFramesChanged += OnTotalFramesChanged;
+            _spriteKeyframesView.SpritesSelected += OnSpritesSelected;
         }
 
         void UnbindSpriteKeyFramePreviewEvents()
         {
-            _spriteKeyframeViewModel.StatusChanged -= _spriteKeyframeView.OnStatusChanged;
-            _spriteKeyframeViewModel.DataChanged -= _spriteKeyframeView.OnDataChanged;
+            _spriteKeyframeViewModel.StatusChanged -= _spriteKeyframesView.OnStatusChanged;
+            _spriteKeyframeViewModel.DataChanged -= _spriteKeyframesView.OnDataChanged;
             
-            _spriteKeyframeView.FrameRateChanged -= OnFrameRateChanged;
-            _spriteKeyframeView.TotalFramesChanged -= OnTotalFramesChanged;
-            _spriteKeyframeView.SpritesSelected -= OnSpritesSelected;
+            _spriteKeyframesView.FrameRateChanged -= OnFrameRateChanged;
+            _spriteKeyframesView.TotalFramesChanged -= OnTotalFramesChanged;
+            _spriteKeyframesView.SpritesSelected -= OnSpritesSelected;
         }
 
         void OnFrameRateChanged(float newFrameRate)

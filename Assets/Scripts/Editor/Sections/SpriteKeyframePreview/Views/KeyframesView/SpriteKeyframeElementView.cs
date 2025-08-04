@@ -21,23 +21,20 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// </summary>
         /// <param name="keyframe">The keyframe data to display</param>
         /// <returns>A configured VisualElement representing the keyframe</returns>
-        public static VisualElement Create(SpriteKeyframeData keyframe)
+        public KeyframeElementView(SpriteKeyframeData keyframe)
         {
             VisualElement container = CreateContainer();
-            
-            if (keyframe.sprite != null)
-            {
-                container.Add(CreateSpriteImage(keyframe.sprite));
-            }
-            else
-            {
-                container.Add(CreateEmptyPlaceholder());
-            }
 
-            container.Add(CreateFrameLabel(keyframe.index));
-            container.Add(CreateNameLabel(keyframe.sprite));
+            VisualElement child = keyframe.sprite != null
+                ? CreateSpriteImage(sprite: keyframe.sprite)
+                : CreateEmptyPlaceholder();
 
-            return container;
+            container.Add(child: child);
+
+            container.Add(child: CreateFrameLabel(frameIndex: keyframe.index));
+            container.Add(child: CreateNameLabel(sprite: keyframe.sprite));
+
+            Add(child: container);
         }
 
         static VisualElement CreateContainer()
@@ -49,7 +46,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                     width = CONTAINER_WIDTH,
                     height = CONTAINER_HEIGHT,
                     marginRight = 5,
-                    backgroundColor = new Color(0.3f, 0.3f, 0.3f, 0.5f),
+                    backgroundColor = new Color(r: 0.3f, g: 0.3f, b: 0.3f, a: 0.5f),
                     borderTopWidth = 1,
                     borderBottomWidth = 1,
                     borderLeftWidth = 1,
@@ -89,38 +86,38 @@ namespace AnimatorFactory.SpriteKeyframePreview
                     width = SPRITE_SIZE,
                     height = SPRITE_SIZE,
                     alignSelf = Align.Center,
-                    backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.8f),
+                    backgroundColor = new Color(r: 0.2f, g: 0.2f, b: 0.2f, a: 0.8f),
                     borderTopWidth = 1,
                     borderBottomWidth = 1,
                     borderLeftWidth = 1,
                     borderRightWidth = 1,
-                    borderTopColor = new Color(0.5f, 0.5f, 0.5f, 0.8f),
-                    borderBottomColor = new Color(0.5f, 0.5f, 0.5f, 0.8f),
-                    borderLeftColor = new Color(0.5f, 0.5f, 0.5f, 0.8f),
-                    borderRightColor = new Color(0.5f, 0.5f, 0.5f, 0.8f)
+                    borderTopColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
+                    borderBottomColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
+                    borderLeftColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
+                    borderRightColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f)
                 }
             };
 
-            Label emptyLabel = new("—")
+            Label emptyLabel = new(text: "—")
             {
                 style =
                 {
                     alignSelf = Align.Center,
                     unityTextAlign = TextAnchor.MiddleCenter,
                     fontSize = EMPTY_LABEL_FONT_SIZE,
-                    color = new Color(0.6f, 0.6f, 0.6f, 1.0f),
+                    color = new Color(r: 0.6f, g: 0.6f, b: 0.6f, a: 1.0f),
                     flexGrow = 1
                 }
             };
 
-            placeholder.Add(emptyLabel);
+            placeholder.Add(child: emptyLabel);
             return placeholder;
         }
 
         static Label CreateFrameLabel(int frameIndex)
         {
             int frameNumber = frameIndex + 1;
-            return new Label($"F{frameNumber}")
+            return new Label(text: $"F{frameNumber}")
             {
                 style =
                 {
@@ -134,7 +131,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         static Label CreateNameLabel(Sprite sprite)
         {
             string displayName = sprite != null ? sprite.name : "empty";
-            return new Label(displayName)
+            return new Label(text: displayName)
             {
                 style =
                 {

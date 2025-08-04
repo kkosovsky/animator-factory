@@ -17,7 +17,7 @@ namespace AnimatorFactory
         ObjectField _prefabField;
         PrefabHierarchyView _prefabHierarchyView;
         AnimatorStatesView _animatorStatesView;
-        SpriteKeyframeView _spriteKeyframeView;
+        SpriteKeyframesView _spriteKeyframesView;
 
         AnimatorFactoryController _controller;
 
@@ -63,7 +63,7 @@ namespace AnimatorFactory
             _controller = new AnimatorFactoryController(
                 prefabHierarchyView: _prefabHierarchyView,
                 animatorStatesView: _animatorStatesView,
-                spriteKeyframeView: _spriteKeyframeView
+                spriteKeyframesView: _spriteKeyframesView
             );
         }
 
@@ -103,8 +103,8 @@ namespace AnimatorFactory
 
         void CreateSpriteKeyframeSection(VisualElement container)
         {
-            _spriteKeyframeView = new SpriteKeyframeView();
-            container.Add(child: _spriteKeyframeView);
+            _spriteKeyframesView = new SpriteKeyframesView();
+            container.Add(child: _spriteKeyframesView);
         }
 
         void OnPrefabSelectionChanged(ChangeEvent<Object> evt)
