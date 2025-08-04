@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace AnimatorFactory.Editor
 {
     public partial class AnimatorFactoryController
@@ -9,6 +11,7 @@ namespace AnimatorFactory.Editor
             
             _spriteKeyframeView.FrameRateChanged += OnFrameRateChanged;
             _spriteKeyframeView.TotalFramesChanged += OnTotalFramesChanged;
+            _spriteKeyframeView.SpritesSelected += OnSpritesSelected;
         }
 
         void UnbindSpriteKeyFramePreviewEvents()
@@ -18,6 +21,7 @@ namespace AnimatorFactory.Editor
             
             _spriteKeyframeView.FrameRateChanged -= OnFrameRateChanged;
             _spriteKeyframeView.TotalFramesChanged -= OnTotalFramesChanged;
+            _spriteKeyframeView.SpritesSelected -= OnSpritesSelected;
         }
 
         void OnFrameRateChanged(float newFrameRate)
@@ -28,6 +32,11 @@ namespace AnimatorFactory.Editor
         void OnTotalFramesChanged(int newTotalFrames)
         {
             _spriteKeyframeViewModel.UpdateTotalFrames(newTotalFrames);
+        }
+
+        void OnSpritesSelected(Sprite[] sprites)
+        {
+            // _spriteKeyframeViewModel.ReplaceKeyframesWithSprites(sprites);
         }
     }
 }

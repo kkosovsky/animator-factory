@@ -18,6 +18,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         ScrollView _keyframesScrollView;
         VisualElement _keyframesContainer;
         HelpBox _helpBox;
+        SpriteSelectionListView _spriteSelectionListView;
 
         /// <summary>
         /// Fired when frame rate is changed by user.
@@ -28,6 +29,13 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// Fired when total frames is changed by user.
         /// </summary>
         public event System.Action<int> TotalFramesChanged;
+
+        /// <summary>
+        /// Fired when sprites are selected for replacement.
+        /// </summary>
+        public event System.Action<Sprite[]> SpritesSelected;
+
+
 
         public SpriteKeyframeView() => CreateUI();
 
@@ -96,13 +104,72 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             _keyframesScrollView.Add(child: _keyframesContainer);
             Add(child: _keyframesScrollView);
+
+            // Create sprite selection list view (initially hidden)
+            _spriteSelectionListView = new SpriteSelectionListView
+            {
+                style = { display = DisplayStyle.None }
+            };
+            _spriteSelectionListView.SpritesApplied += OnSpritesApplied;
+            _spriteSelectionListView.CancelRequested += OnSpriteSelectionCancelled;
+            Add(child: _spriteSelectionListView);
+
+
         }
+
+        void OnChangeSpriteButtonClicked()
+        {
+            // Toggle the sprite selection list visibility
+            bool isCurrentlyVisible = _spriteSelectionListView.style.display == DisplayStyle.Flex;
+            
+            if (isCurrentlyVisible)
+            {
+                HideSpriteSelection();
+            }
+            else
+            {
+                ShowSpriteSelection();
+            }
+        }
+
+        void ShowSpriteSelection()
+        {
+            _spriteSelectionListView.style.display = DisplayStyle.Flex;
+            _spriteSelectionListView.RefreshSprites();
+            _spriteSelectionListView.ClearSelection();
+            
+            // Hide the keyframes view while selecting
+            _keyframesScrollView.style.display = DisplayStyle.None;
+        }
+
+        void HideSpriteSelection()
+        {
+            _spriteSelectionListView.style.display = DisplayStyle.None;
+            _keyframesScrollView.style.display = DisplayStyle.Flex;
+        }
+
+        void OnSpritesApplied(Sprite[] selectedSprites)
+        {
+            // Hide the selection UI
+            HideSpriteSelection();
+            
+            // Fire the event to notify the controller/viewmodel
+            SpritesSelected?.Invoke(selectedSprites);
+        }
+
+        void OnSpriteSelectionCancelled()
+        {
+            // Just hide the selection UI
+            HideSpriteSelection();
+        }
+
+
 
         void DisplayKeyframes(AnimationSpriteInfo spriteInfo)
         {
             _keyframesContainer.Clear();
             _titleLabel.text = $"Sprite Keyframes - {spriteInfo.animationName}";
-            
+
             _durationLabel.text = $"Duration: {spriteInfo.duration:F2}s";
             _frameRateField.SetValueWithoutNotify(newValue: spriteInfo.frameRate);
             _totalFramesField.SetValueWithoutNotify(newValue: spriteInfo.totalFrames);
@@ -113,7 +180,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         void RefreshKeyframeElements(AnimationSpriteInfo spriteInfo)
         {
             _keyframesContainer.Clear();
-            
+
             foreach (SpriteKeyframeData keyframe in spriteInfo.keyframes)
             {
                 VisualElement keyframeElement = CreateKeyframeElement(
@@ -240,10 +307,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
                     borderBottomRightRadius = 3
                 }
             };
+            changeButton.clicked += OnChangeSpriteButtonClicked;
             _editableInfoContainer.Add(child: changeButton);
 
             Add(child: _editableInfoContainer);
         }
+
 
         void OnFrameRateChanged(ChangeEvent<float> evt)
         {
@@ -320,7 +389,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                         borderRightColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f)
                     }
                 };
-                
+
                 Label emptyLabel = new(text: "—")
                 {
                     style =
