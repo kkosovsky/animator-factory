@@ -213,11 +213,33 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 value = 10,
                 style =
                 {
-                    width = 50
+                    width = 50,
+                    marginRight = 5
                 }
             };
             _totalFramesField.RegisterValueChangedCallback(callback: OnTotalFramesChanged);
             _editableInfoContainer.Add(child: _totalFramesField);
+
+            // Change button next to total frames
+            Button changeButton = new()
+            {
+                text = "Change Sprite",
+                style =
+                {
+                    height = 20,
+                    width = 100,
+                    fontSize = 10,
+                    borderTopWidth = 2,
+                    borderBottomWidth = 2,
+                    borderLeftWidth = 2,
+                    borderRightWidth = 2,
+                    borderTopLeftRadius = 3,
+                    borderTopRightRadius = 3,
+                    borderBottomLeftRadius = 3,
+                    borderBottomRightRadius = 3
+                }
+            };
+            _editableInfoContainer.Add(child: changeButton);
 
             Add(child: _editableInfoContainer);
         }
