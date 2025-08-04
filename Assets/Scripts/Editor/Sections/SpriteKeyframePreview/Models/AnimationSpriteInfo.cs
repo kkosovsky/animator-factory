@@ -22,5 +22,20 @@ namespace AnimatorFactory.SpriteKeyframePreview
             totalFrames = Mathf.RoundToInt(f: duration * frameRate);
             keyframes = new List<SpriteKeyframeData>();
         }
+
+        public AnimationSpriteInfo(
+            string animationName,
+            float duration,
+            float frameRate,
+            int totalFrames,
+            List<SpriteKeyframeData> keyframes
+        )
+        {
+            this.animationName = animationName;
+            this.duration = duration;
+            this.frameRate = frameRate;
+            this.totalFrames = totalFrames;
+            this.keyframes = keyframes;
+        }
     }
 }

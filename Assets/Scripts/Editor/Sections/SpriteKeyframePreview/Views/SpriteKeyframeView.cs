@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEditor.UIElements;
 
 namespace AnimatorFactory.SpriteKeyframePreview
 {
@@ -10,10 +11,23 @@ namespace AnimatorFactory.SpriteKeyframePreview
     public class SpriteKeyframeView : VisualElement
     {
         Label _titleLabel;
-        Label _infoLabel;
+        VisualElement _editableInfoContainer;
+        Label _durationLabel;
+        FloatField _frameRateField;
+        IntegerField _totalFramesField;
         ScrollView _keyframesScrollView;
         VisualElement _keyframesContainer;
         HelpBox _helpBox;
+
+        /// <summary>
+        /// Fired when frame rate is changed by user.
+        /// </summary>
+        public event System.Action<float> FrameRateChanged;
+
+        /// <summary>
+        /// Fired when total frames is changed by user.
+        /// </summary>
+        public event System.Action<int> TotalFramesChanged;
 
         public SpriteKeyframeView() => CreateUI();
 
@@ -54,16 +68,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             };
             Add(child: _titleLabel);
 
-            _infoLabel = new Label()
-            {
-                style =
-                {
-                    fontSize = 11,
-                    color = Color.gray,
-                    marginBottom = 10
-                }
-            };
-            Add(child: _infoLabel);
+            CreateEditableInfoSection();
 
             _helpBox = new HelpBox(text: "", messageType: HelpBoxMessageType.Info)
             {
@@ -97,14 +102,22 @@ namespace AnimatorFactory.SpriteKeyframePreview
         {
             _keyframesContainer.Clear();
             _titleLabel.text = $"Sprite Keyframes - {spriteInfo.animationName}";
-            _infoLabel.text =
-                $"Duration: {spriteInfo.duration:F2}s | Frame Rate: {spriteInfo.frameRate} fps | Total Frames: {spriteInfo.totalFrames}";
+            
+            _durationLabel.text = $"Duration: {spriteInfo.duration:F2}s";
+            _frameRateField.SetValueWithoutNotify(newValue: spriteInfo.frameRate);
+            _totalFramesField.SetValueWithoutNotify(newValue: spriteInfo.totalFrames);
 
-            foreach (var keyframe in spriteInfo.keyframes)
+            RefreshKeyframeElements(spriteInfo: spriteInfo);
+        }
+
+        void RefreshKeyframeElements(AnimationSpriteInfo spriteInfo)
+        {
+            _keyframesContainer.Clear();
+            
+            foreach (SpriteKeyframeData keyframe in spriteInfo.keyframes)
             {
                 VisualElement keyframeElement = CreateKeyframeElement(
-                    keyframe: keyframe,
-                    frameRate: spriteInfo.frameRate
+                    keyframe: keyframe
                 );
                 _keyframesContainer.Add(child: keyframeElement);
             }
@@ -116,17 +129,116 @@ namespace AnimatorFactory.SpriteKeyframePreview
             _helpBox.messageType = type;
             _helpBox.style.display = DisplayStyle.Flex;
             _keyframesScrollView.style.display = DisplayStyle.None;
-            _infoLabel.style.display = DisplayStyle.None;
+            _editableInfoContainer.style.display = DisplayStyle.None;
         }
 
         void HideStatus()
         {
             _helpBox.style.display = DisplayStyle.None;
             _keyframesScrollView.style.display = DisplayStyle.Flex;
-            _infoLabel.style.display = DisplayStyle.Flex;
+            _editableInfoContainer.style.display = DisplayStyle.Flex;
         }
 
-        VisualElement CreateKeyframeElement(SpriteKeyframeData keyframe, float frameRate)
+        void CreateEditableInfoSection()
+        {
+            _editableInfoContainer = new VisualElement
+            {
+                style =
+                {
+                    flexDirection = FlexDirection.Row,
+                    alignItems = Align.Center,
+                    marginBottom = 10,
+                    flexWrap = Wrap.Wrap
+                }
+            };
+
+            _durationLabel = new Label(text: "Duration: 0.00s")
+            {
+                style =
+                {
+                    fontSize = 11,
+                    color = Color.gray,
+                    marginRight = 10
+                }
+            };
+            _editableInfoContainer.Add(child: _durationLabel);
+
+            Label frameRateLabel = new Label(text: "Frame Rate:")
+            {
+                style =
+                {
+                    fontSize = 11,
+                    color = Color.gray,
+                    marginRight = 5
+                }
+            };
+            _editableInfoContainer.Add(child: frameRateLabel);
+
+            _frameRateField = new FloatField
+            {
+                value = 12.0f,
+                style =
+                {
+                    width = 50,
+                    marginRight = 5
+                }
+            };
+            _frameRateField.RegisterValueChangedCallback(callback: OnFrameRateChanged);
+            _editableInfoContainer.Add(child: _frameRateField);
+
+            Label fpsLabel = new Label(text: "fps")
+            {
+                style =
+                {
+                    fontSize = 11,
+                    color = Color.gray,
+                    marginRight = 15
+                }
+            };
+            _editableInfoContainer.Add(child: fpsLabel);
+
+            Label totalFramesLabel = new Label(text: "Total Frames:")
+            {
+                style =
+                {
+                    fontSize = 11,
+                    color = Color.gray,
+                    marginRight = 5
+                }
+            };
+            _editableInfoContainer.Add(child: totalFramesLabel);
+
+            _totalFramesField = new IntegerField
+            {
+                value = 10,
+                style =
+                {
+                    width = 50
+                }
+            };
+            _totalFramesField.RegisterValueChangedCallback(callback: OnTotalFramesChanged);
+            _editableInfoContainer.Add(child: _totalFramesField);
+
+            Add(child: _editableInfoContainer);
+        }
+
+        void OnFrameRateChanged(ChangeEvent<float> evt)
+        {
+            if (evt.newValue > 0)
+            {
+                FrameRateChanged?.Invoke(obj: evt.newValue);
+            }
+        }
+
+        void OnTotalFramesChanged(ChangeEvent<int> evt)
+        {
+            if (evt.newValue > 0)
+            {
+                TotalFramesChanged?.Invoke(obj: evt.newValue);
+            }
+        }
+
+        static VisualElement CreateKeyframeElement(SpriteKeyframeData keyframe)
         {
             VisualElement container = new()
             {
@@ -151,7 +263,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 }
             };
 
-            // Sprite preview (if available)
             if (keyframe.sprite != null)
             {
                 Image spriteImage = new()
@@ -166,9 +277,43 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 };
                 container.Add(child: spriteImage);
             }
+            else
+            {
+                VisualElement placeholder = new()
+                {
+                    style =
+                    {
+                        width = 32,
+                        height = 32,
+                        alignSelf = Align.Center,
+                        backgroundColor = new Color(r: 0.2f, g: 0.2f, b: 0.2f, a: 0.8f),
+                        borderTopWidth = 1,
+                        borderBottomWidth = 1,
+                        borderLeftWidth = 1,
+                        borderRightWidth = 1,
+                        borderTopColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
+                        borderBottomColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
+                        borderLeftColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f),
+                        borderRightColor = new Color(r: 0.5f, g: 0.5f, b: 0.5f, a: 0.8f)
+                    }
+                };
+                
+                Label emptyLabel = new(text: "—")
+                {
+                    style =
+                    {
+                        alignSelf = Align.Center,
+                        unityTextAlign = TextAnchor.MiddleCenter,
+                        fontSize = 16,
+                        color = new Color(r: 0.6f, g: 0.6f, b: 0.6f, a: 1.0f),
+                        flexGrow = 1
+                    }
+                };
+                placeholder.Add(child: emptyLabel);
+                container.Add(child: placeholder);
+            }
 
-            // Time and frame info
-            int frameNumber = Mathf.RoundToInt(f: keyframe.time * frameRate);
+            int frameNumber = keyframe.index + 1;
             Label timeLabel = new(text: $"F{frameNumber}")
             {
                 style =
@@ -180,7 +325,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             };
             container.Add(child: timeLabel);
 
-            Label nameLabel = new(text: keyframe.sprite != null ? keyframe.sprite.name : "null")
+            Label nameLabel = new(text: keyframe.sprite != null ? keyframe.sprite.name : "empty")
             {
                 style =
                 {

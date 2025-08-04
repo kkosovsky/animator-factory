@@ -5,7 +5,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 {
     /// <summary>
     /// Service responsible for extracting sprite keyframe data from animation clips.
-    /// Contains stateless business logic for sprite analysis.
+    /// Contains stateless logic for sprite analysis.
     /// </summary>
     public static class SpriteKeyframeService
     {
@@ -22,7 +22,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             foreach (EditorCurveBinding binding in bindings)
             {
-                // Look for SpriteRenderer.sprite bindings (classID 212 is SpriteRenderer)
                 if (binding.type != typeof(SpriteRenderer) || binding.propertyName != "m_Sprite")
                 {
                     continue;
@@ -31,10 +30,11 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 ObjectReferenceKeyframe[] keyframes =
                     AnimationUtility.GetObjectReferenceCurve(clip: clip, binding: binding);
 
-                foreach (ObjectReferenceKeyframe keyframe in keyframes)
+                for (int i = 0; i < keyframes.Length; i++)
                 {
+                    ObjectReferenceKeyframe keyframe = keyframes[i];
                     Sprite sprite = keyframe.value as Sprite;
-                    info.keyframes.Add(item: new SpriteKeyframeData(time: keyframe.time, sprite: sprite));
+                    info.keyframes.Add(item: new SpriteKeyframeData(index: i, time: keyframe.time, sprite: sprite));
                 }
             }
 
