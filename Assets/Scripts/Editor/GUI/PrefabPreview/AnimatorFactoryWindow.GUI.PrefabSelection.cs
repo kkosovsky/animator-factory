@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using AnimatorFactory.Logic;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,6 +10,8 @@ namespace AnimatorFactory
         GameObject _selectedPrefab;
         GameObject _lastSelectedPrefab;
         List<PrefabHierarchyListItem> _hierarchyNodes;
+        
+        PrefabHierarchyListItem _selectedHierarchyItem; 
 
         void DrawPrefabSelection()
         {
@@ -42,7 +43,7 @@ namespace AnimatorFactory
 
         void HierarchyListDidSelectItem(PrefabHierarchyListItem item)
         {
-            DrawAnimatorUI(item: item);
+            _selectedHierarchyItem = item;
         }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace AnimatorFactory
@@ -64,14 +63,6 @@ namespace AnimatorFactory
             PrefabHierarchyListItem selectedItem = selection.FirstOrDefault() as PrefabHierarchyListItem;
             _selectedItem = selectedItem;
             DidSelectItem?.Invoke(_selectedItem);
-
-            if (selectedItem != null)
-            {
-                Debug.Log(
-                    message:
-                    $"Selected hierarchy item: {selectedItem.name} (GameObject: {selectedItem.gameObject.name})"
-                );
-            }
         }
         
         void ClearDelegates()

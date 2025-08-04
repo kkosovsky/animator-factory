@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AnimatorFactory.Logic
+namespace AnimatorFactory
 {
     public static class HierarchyBuilder
     {
