@@ -36,9 +36,7 @@ namespace AnimatorFactory.Editor
 
         void OnSpritesSelected(Sprite[] sprites)
         {
-            Debug.Log($"Sprites selected: {sprites.Length}");
             _spriteKeyframeViewModel.SelectedSpritesChanged(sprites: sprites);
-            // _spriteKeyframeViewModel.ReplaceKeyframesWithSprites(sprites);
         }
     }
 }

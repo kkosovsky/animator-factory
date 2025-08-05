@@ -1,6 +1,7 @@
 using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
 using AnimatorFactory.AnimatorStatePreview;
+using AnimatorFactory.GenerationControls;
 using UnityEngine;
 
 namespace AnimatorFactory.Editor
@@ -13,10 +14,12 @@ namespace AnimatorFactory.Editor
         readonly PrefabHierarchyViewModel _prefabHierarchyViewModel;
         readonly AnimatorStatesViewModel _animatorStatesViewModel;
         readonly SpriteKeyframeViewModel _spriteKeyframeViewModel;
+        readonly GenerationControlsViewModel _generationControlsViewModel;
 
         readonly PrefabHierarchyView _prefabHierarchyView;
         readonly AnimatorStatesView _animatorStatesView;
         readonly SpriteKeyframesView _spriteKeyframesView;
+        readonly GenerationControlsView _generationControlsView;
 
         /// <summary>
         /// Initializes the controller with all required views.
@@ -24,19 +27,23 @@ namespace AnimatorFactory.Editor
         /// <param name="prefabHierarchyView">The prefab hierarchy view</param>
         /// <param name="animatorStatesView">The animator states view</param>
         /// <param name="spriteKeyframesView">The sprite keyframe view</param>
+        /// <param name="generationControlsView">Component generation controls view</param>
         public AnimatorFactoryController(
             PrefabHierarchyView prefabHierarchyView,
             AnimatorStatesView animatorStatesView,
-            SpriteKeyframesView spriteKeyframesView
+            SpriteKeyframesView spriteKeyframesView,
+            GenerationControlsView generationControlsView
         )
         {
             _prefabHierarchyViewModel = new PrefabHierarchyViewModel();
             _animatorStatesViewModel = new AnimatorStatesViewModel();
             _spriteKeyframeViewModel = new SpriteKeyframeViewModel();
+            _generationControlsViewModel = new GenerationControlsViewModel();
 
             _prefabHierarchyView = prefabHierarchyView;
             _animatorStatesView = animatorStatesView;
             _spriteKeyframesView = spriteKeyframesView;
+            _generationControlsView = generationControlsView;
 
             BindEvents();
             WireFeatureInteractions();
@@ -72,6 +79,7 @@ namespace AnimatorFactory.Editor
             BindPrefabHierarchyPreviewEvents();
             BindAnimatorStatesPreviewEvents();
             BindSpriteKeyFramePreviewEvents();
+            BindGenerationControlsEvents();
         }
 
         void UnbindEvents()
@@ -79,6 +87,7 @@ namespace AnimatorFactory.Editor
             UnbindPrefabHierarchyEvents();
             UnbindAnimatorStatesPreviewEvents();
             UnbindSpriteKeyFramePreviewEvents();
+            UnbindGenerationControlsEvents();
         }
 
         void WireFeatureInteractions()

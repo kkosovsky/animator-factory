@@ -2,6 +2,7 @@ using AnimatorFactory.Editor;
 using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
 using AnimatorFactory.AnimatorStatePreview;
+using AnimatorFactory.GenerationControls;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace AnimatorFactory
         PrefabHierarchyView _prefabHierarchyView;
         AnimatorStatesView _animatorStatesView;
         SpriteKeyframesView _spriteKeyframesView;
+        GenerationControlsView _generationControlsView;
 
         AnimatorFactoryController _controller;
 
@@ -56,6 +58,7 @@ namespace AnimatorFactory
             CreateHierarchySection(container: mainContainer);
             CreateAnimatorStatesSection(container: mainContainer);
             CreateSpriteKeyframeSection(container: mainContainer);
+            CreateGenerateControlsView(container: mainContainer);
         }
 
         void InitializeController()
@@ -63,7 +66,8 @@ namespace AnimatorFactory
             _controller = new AnimatorFactoryController(
                 prefabHierarchyView: _prefabHierarchyView,
                 animatorStatesView: _animatorStatesView,
-                spriteKeyframesView: _spriteKeyframesView
+                spriteKeyframesView: _spriteKeyframesView,
+                generationControlsView: _generationControlsView
             );
         }
 
@@ -105,6 +109,12 @@ namespace AnimatorFactory
         {
             _spriteKeyframesView = new SpriteKeyframesView();
             container.Add(child: _spriteKeyframesView);
+        }
+        
+        void CreateGenerateControlsView(VisualElement container)
+        {
+            _generationControlsView = new GenerationControlsView();
+            container.Add(child: _generationControlsView);
         }
 
         void OnPrefabSelectionChanged(ChangeEvent<Object> evt)
