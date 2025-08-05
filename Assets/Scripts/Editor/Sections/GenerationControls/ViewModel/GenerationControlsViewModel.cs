@@ -70,24 +70,21 @@ namespace AnimatorFactory.GenerationControls
 
             EditorApplication.update -= UpdateGenerationProgress;
 
-            Debug.Log(message: $"CompleteGeneration - _generatedClip: {_generatedClip?.name}, _generatedStateName: {_generatedStateName}");
-            Debug.Log(message: $"AnimationClipGenerated event has {AnimationClipGenerated?.GetInvocationList()?.Length ?? 0} subscribers");
-
-            // Fire animation clip generated event with the created clip
             if (_generatedClip != null && !string.IsNullOrEmpty(value: _generatedStateName))
             {
-                Debug.Log(message: $"Firing AnimationClipGenerated event with clip: {_generatedClip.name}, state: {_generatedStateName}");
                 AnimationClipGenerated?.Invoke(arg1: _generatedClip, arg2: _generatedStateName);
             }
             else
             {
-                Debug.LogWarning(message: $"Not firing AnimationClipGenerated event - clip is null: {_generatedClip == null}, state name is empty: {string.IsNullOrEmpty(value: _generatedStateName)}");
+                Debug.LogWarning(
+                    message:
+                    $"Not firing AnimationClipGenerated event - clip is null: {_generatedClip == null}, state name is empty: {string.IsNullOrEmpty(value: _generatedStateName)}"
+                );
             }
 
             FinishedGeneration?.Invoke();
-            Debug.Log(message: "...:: Generation Completed ::...");
             
-            // Clear generated data
+            Debug.Log(message: "...:: Generation Completed ::...");
             _generatedClip = null;
             _generatedStateName = null;
         }

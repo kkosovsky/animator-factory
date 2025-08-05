@@ -26,12 +26,12 @@ namespace AnimatorFactory.AnimatorStatePreview
         List<AnimatorState> _currentStates = new();
         Animator _currentAnimator;
         AnimatorController _currentAnimatorController;
-        
+
         /// <summary>
         /// Gets the currently selected animator.
         /// </summary>
         public Animator CurrentAnimator => _currentAnimator;
-        
+
         /// <summary>
         /// Gets the currently selected animator controller.
         /// </summary>
@@ -54,7 +54,7 @@ namespace AnimatorFactory.AnimatorStatePreview
 
                 Animator animator = item.gameObject.GetComponent<Animator>();
                 AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;
-                
+
                 // Store current animator and controller
                 _currentAnimator = animator;
                 _currentAnimatorController = controller;
@@ -92,8 +92,6 @@ namespace AnimatorFactory.AnimatorStatePreview
         /// <param name="animationClip">The animation clip to attach</param>
         public void CreateNewStateWithClip(string stateName, AnimationClip animationClip)
         {
-            Debug.Log(message: $"AnimatorStatesViewModel.CreateNewStateWithClip called with stateName: '{stateName}', animationClip: '{animationClip?.name}'");
-            
             if (_currentAnimatorController == null)
             {
                 Debug.LogError(message: "No animator controller available to create new state");
@@ -101,13 +99,15 @@ namespace AnimatorFactory.AnimatorStatePreview
                 return;
             }
 
-            // Use the service to create the new state
-            AnimatorState newState = AnimatorStateService.CreateNewStateWithClip(_currentAnimatorController, stateName, animationClip);
-            
+            AnimatorState newState = AnimatorStateService.CreateNewStateWithClip(
+                animatorController: _currentAnimatorController,
+                stateName: stateName,
+                animationClip: animationClip
+            );
+
             if (newState != null)
             {
                 Debug.Log(message: $"Successfully created new animator state: {newState.name}");
-                // Refresh the states list to show the new state
                 LoadAnimatorStatesFromCurrentController();
             }
             else
@@ -122,21 +122,17 @@ namespace AnimatorFactory.AnimatorStatePreview
         /// </summary>
         void LoadAnimatorStatesFromCurrentController()
         {
-            Debug.Log(message: "LoadAnimatorStatesFromCurrentController called");
-            
-            if (_currentAnimatorController == null) 
+            if (_currentAnimatorController == null)
             {
                 Debug.LogWarning(message: "Current animator controller is null, cannot reload states");
                 return;
             }
 
-            Debug.Log(message: $"Reloading states from controller: {_currentAnimatorController.name}");
-            List<AnimatorState> allStates = AnimatorStateService.GetAllAnimatorStates(controller: _currentAnimatorController);
-            Debug.Log(message: $"Found {allStates.Count} states after reload");
-            
+            List<AnimatorState> allStates =
+                AnimatorStateService.GetAllAnimatorStates(controller: _currentAnimatorController);
+
             _currentStates = allStates;
-            
-            Debug.Log(message: $"StatesChanged event has {StatesChanged?.GetInvocationList()?.Length ?? 0} subscribers");
+
             StatesChanged?.Invoke(obj: allStates);
             Debug.Log(message: "StatesChanged event fired");
         }

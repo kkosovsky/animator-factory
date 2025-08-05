@@ -36,11 +36,6 @@ namespace AnimatorFactory.Editor
 
         void OnAnimationClipGenerated(AnimationClip animationClip, string stateName)
         {
-            Debug.Log(
-                message:
-                $"OnAnimationClipGenerated called - Animation clip: {animationClip?.name}, State name: {stateName}"
-            );
-
             if (animationClip == null)
             {
                 Debug.LogError(message: "Animation clip is null in OnAnimationClipGenerated");
@@ -52,10 +47,6 @@ namespace AnimatorFactory.Editor
                 Debug.LogError(message: "State name is null or empty in OnAnimationClipGenerated");
                 return;
             }
-
-            Debug.Log(
-                message: $"About to call CreateNewStateWithClip stateName: '{stateName}', clip: '{animationClip.name}'"
-            );
 
             _animatorStatesViewModel.CreateNewStateWithClip(stateName: stateName, animationClip: animationClip);
         }

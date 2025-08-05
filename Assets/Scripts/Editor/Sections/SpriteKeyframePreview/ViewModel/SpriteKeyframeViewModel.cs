@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -34,7 +35,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// <param name="stateName">The name of the new state</param>
         public void CreateNewAnimationState(string stateName)
         {
-            // Create a new animation with default empty keyframes
             float defaultFrameRate = 12.0f;
             int defaultTotalFrames = 12;
 
@@ -51,7 +51,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 frameRate: defaultFrameRate,
                 totalFrames: defaultTotalFrames,
                 keyframes: defaultKeyframes,
-                destinationFolderPath: "Assets/Animations"
+                destinationFolderPath: $"Assets{Path.DirectorySeparatorChar}"
             );
 
             _originalKeyframes = new List<SpriteKeyframeData>(collection: defaultKeyframes);
@@ -187,7 +187,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
         public void UpdateAnimationName(string name)
         {
             _currentAnimationInfo = _currentAnimationInfo.WithName(name: name);
-            Debug.Log(message: _currentAnimationInfo);
         }
 
         public void UpdateDestinationFolder(string destinationFolderPath)

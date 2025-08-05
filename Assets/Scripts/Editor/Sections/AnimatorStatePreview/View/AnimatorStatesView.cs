@@ -150,7 +150,6 @@ namespace AnimatorFactory.AnimatorStatePreview
 
         void OnAddStateButtonClicked()
         {
-            Debug.Log(message: "Add State Clicked");
             AddStateRequested?.Invoke();
         }
     }
