@@ -11,6 +11,7 @@ namespace AnimatorFactory
             internal const string windowTitle = "Animator Factory";
             internal const string prefabSelectionLabel = "Select Prefab:";
             internal const string hierarchyLabel = "GameObject Hierarchy:";
+            internal const string animatorStatesTabLabel = "Animator States";
         }
     }
 }
