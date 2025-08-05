@@ -102,7 +102,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             _keyframesScrollView = new ScrollView(scrollViewMode: ScrollViewMode.Horizontal)
             {
-                style = { height = 80 }
+                style = { height = 160 }
             };
 
             _keyframesContainer = new VisualElement
@@ -397,7 +397,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 return;
             }
 
-            if (!newValue.EndsWith(Path.DirectorySeparatorChar))
+            if (!newValue.EndsWith(value: Path.DirectorySeparatorChar))
             {
                 _destinationFolderField.value = $"{evt}{Path.DirectorySeparatorChar}";
             }
@@ -407,9 +407,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         void OnBrowseFolderClicked()
         {
-            string currentFolder = _destinationFolderField.value;
+            string newValue = _destinationFolderField.value;
+            string currentFolder = newValue;
             if (string.IsNullOrEmpty(value: currentFolder))
+            {
                 currentFolder = "Assets";
+            }
 
             string selectedFolder = EditorUtility.SaveFolderPanel(
                 title: "Select Destination Folder",
@@ -428,10 +431,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 return;
             }
 
-            if (!_destinationFolderField.value.EndsWith(Path.DirectorySeparatorChar))
+            if (!newValue.EndsWith(value: Path.DirectorySeparatorChar))
             {
                 _destinationFolderField.value = $"{relativePath}{Path.DirectorySeparatorChar}";
             }
+
+            DestinationFolderChanged?.Invoke(obj: _destinationFolderField.value);
         }
     }
 }

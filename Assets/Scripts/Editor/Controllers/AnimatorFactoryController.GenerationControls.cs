@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace AnimatorFactory.Editor
 {
     public partial class AnimatorFactoryController
@@ -11,6 +13,7 @@ namespace AnimatorFactory.Editor
                 _generationControlsView.UpdateGenerationProgressDialogue;
             _generationControlsViewModel.FinishedGeneration +=
                 _generationControlsView.HideGeneratingDialogue;
+            _generationControlsViewModel.AnimationClipGenerated += OnAnimationClipGenerated;
         }
 
         void UnbindGenerationControlsEvents()
@@ -22,13 +25,30 @@ namespace AnimatorFactory.Editor
                 _generationControlsView.UpdateGenerationProgressDialogue;
             _generationControlsViewModel.FinishedGeneration -=
                 _generationControlsView.HideGeneratingDialogue;
-            
+            _generationControlsViewModel.AnimationClipGenerated -= OnAnimationClipGenerated;
         }
 
         void OnGenerateButtonClicked()
         {
             _generationControlsView.ShowIsGeneratingDialogue();
-            _generationControlsViewModel.GenerateAnimationClips();
+            _generationControlsViewModel.GenerateAnimationClips(animationInfo: _spriteKeyframeViewModel.AnimationInfo);
+        }
+
+        void OnAnimationClipGenerated(AnimationClip animationClip, string stateName)
+        {
+            if (animationClip == null)
+            {
+                Debug.LogError(message: "Animation clip is null in OnAnimationClipGenerated");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(value: stateName))
+            {
+                Debug.LogError(message: "State name is null or empty in OnAnimationClipGenerated");
+                return;
+            }
+
+            _animatorStatesViewModel.CreateNewStateWithClip(stateName: stateName, animationClip: animationClip);
         }
     }
 }

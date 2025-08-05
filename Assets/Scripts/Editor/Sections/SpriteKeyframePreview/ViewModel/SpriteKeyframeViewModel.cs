@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -22,9 +23,42 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// </summary>
         public event Action<string, bool> StatusChanged; // message, isError
 
-        AnimationSpriteInfo _currentSpriteInfo;
+        public AnimationSpriteInfo AnimationInfo => _currentAnimationInfo;
+
+        AnimationSpriteInfo _currentAnimationInfo;
         List<SpriteKeyframeData> _originalKeyframes;
         bool _hasData;
+
+        /// <summary>
+        /// Creates a new empty animation state for editing.
+        /// </summary>
+        /// <param name="stateName">The name of the new state</param>
+        public void CreateNewAnimationState(string stateName)
+        {
+            float defaultFrameRate = 12.0f;
+            int defaultTotalFrames = 12;
+
+            List<SpriteKeyframeData> defaultKeyframes = new List<SpriteKeyframeData>();
+            for (int i = 0; i < defaultTotalFrames; i++)
+            {
+                float time = i / defaultFrameRate;
+                defaultKeyframes.Add(item: new SpriteKeyframeData(index: i, time: time, sprite: null));
+            }
+
+            _currentAnimationInfo = new AnimationSpriteInfo(
+                animationName: stateName,
+                duration: defaultTotalFrames / defaultFrameRate,
+                frameRate: defaultFrameRate,
+                totalFrames: defaultTotalFrames,
+                keyframes: defaultKeyframes,
+                destinationFolderPath: $"Assets{Path.DirectorySeparatorChar}"
+            );
+
+            _originalKeyframes = new List<SpriteKeyframeData>(collection: defaultKeyframes);
+            _hasData = true;
+
+            DataChanged?.Invoke(obj: _currentAnimationInfo);
+        }
 
         /// <summary>
         /// Loads sprite keyframes from the given animator state.
@@ -51,7 +85,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 }
 
                 _originalKeyframes = new List<SpriteKeyframeData>(collection: spriteInfo.keyframes);
-                _currentSpriteInfo = spriteInfo;
+                _currentAnimationInfo = spriteInfo;
                 _hasData = true;
                 DataChanged?.Invoke(obj: spriteInfo);
             }
@@ -71,13 +105,13 @@ namespace AnimatorFactory.SpriteKeyframePreview
             if (!_hasData || newFrameRate <= 0) return;
 
             AnimationSpriteInfo modifiedInfo = CreateModifiedSpriteInfo(
-                original: _currentSpriteInfo,
+                original: _currentAnimationInfo,
                 newFrameRate: newFrameRate,
-                newTotalFrames: _currentSpriteInfo.totalFrames,
-                newKeyframes: _currentSpriteInfo.keyframes
+                newTotalFrames: _currentAnimationInfo.totalFrames,
+                newKeyframes: _currentAnimationInfo.keyframes
             );
 
-            _currentSpriteInfo = modifiedInfo;
+            _currentAnimationInfo = modifiedInfo;
             DataChanged?.Invoke(obj: modifiedInfo);
         }
 
@@ -92,17 +126,17 @@ namespace AnimatorFactory.SpriteKeyframePreview
             List<SpriteKeyframeData> adjustedKeyframes = AdjustKeyframesForTotalFrames(
                 originalKeyframes: _originalKeyframes,
                 newTotalFrames: newTotalFrames,
-                frameRate: _currentSpriteInfo.frameRate
+                frameRate: _currentAnimationInfo.frameRate
             );
 
             AnimationSpriteInfo modifiedInfo = CreateModifiedSpriteInfo(
-                original: _currentSpriteInfo,
-                newFrameRate: _currentSpriteInfo.frameRate,
+                original: _currentAnimationInfo,
+                newFrameRate: _currentAnimationInfo.frameRate,
                 newTotalFrames: newTotalFrames,
                 newKeyframes: adjustedKeyframes
             );
 
-            _currentSpriteInfo = modifiedInfo;
+            _currentAnimationInfo = modifiedInfo;
             DataChanged?.Invoke(obj: modifiedInfo);
         }
 
@@ -116,9 +150,18 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         public void SelectedSpritesChanged(Sprite[] sprites)
         {
-            AnimationSpriteInfo currentInfo = _currentSpriteInfo;
+            AnimationSpriteInfo currentInfo = _currentAnimationInfo;
+            List<Sprite> spritesList = sprites.ToList();
+            spritesList
+                .Sort(
+                    comparison: (a, b) => string.Compare(
+                        strA: a.name,
+                        strB: b.name,
+                        comparisonType: StringComparison.OrdinalIgnoreCase
+                    )
+                );
 
-            List<SpriteKeyframeData> keyframeData = sprites
+            List<SpriteKeyframeData> keyframeData = spritesList
                 .Select(
                     selector: (sprite, index) => new SpriteKeyframeData(
                         index: index,
@@ -128,33 +171,34 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 )
                 .ToList();
 
-            _currentSpriteInfo = new AnimationSpriteInfo(
+            _currentAnimationInfo = new AnimationSpriteInfo(
                 animationName: currentInfo.animationName,
                 duration: keyframeData.Count / currentInfo.frameRate,
                 frameRate: currentInfo.frameRate,
                 totalFrames: sprites.Length,
                 keyframes: keyframeData,
-                path: currentInfo.path
+                destinationFolderPath: currentInfo.destinationFolderPath
             );
 
             _originalKeyframes = keyframeData;
-            DataChanged?.Invoke(obj: _currentSpriteInfo);
+            DataChanged?.Invoke(obj: _currentAnimationInfo);
         }
 
         public void UpdateAnimationName(string name)
         {
-            _currentSpriteInfo = _currentSpriteInfo.WithName(name: name);
+            _currentAnimationInfo = _currentAnimationInfo.WithName(name: name);
         }
 
         public void UpdateDestinationFolder(string destinationFolderPath)
         {
-            _currentSpriteInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
+            _currentAnimationInfo =
+                _currentAnimationInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
         }
 
         void ClearData()
         {
             _hasData = false;
-            _currentSpriteInfo = default;
+            _currentAnimationInfo = default;
             _originalKeyframes = null;
         }
 
@@ -174,7 +218,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 frameRate: newFrameRate,
                 totalFrames: newTotalFrames,
                 keyframes: newKeyframes,
-                path: original.path
+                destinationFolderPath: original.destinationFolderPath
             );
         }
 

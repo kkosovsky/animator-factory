@@ -9,12 +9,11 @@ namespace AnimatorFactory.SpriteKeyframePreview
     /// </summary>
     public class KeyframeElementView : VisualElement
     {
-        const int CONTAINER_WIDTH = 60;
-        const int CONTAINER_HEIGHT = 70;
-        const int SPRITE_SIZE = 32;
-        const int FRAME_LABEL_FONT_SIZE = 9;
-        const int NAME_LABEL_FONT_SIZE = 8;
-        const int EMPTY_LABEL_FONT_SIZE = 16;
+        const int CONTAINER_HEIGHT_OFFSET = 24;
+        const int SPRITE_SIZE = 64;
+        const int FRAME_LABEL_FONT_SIZE = 12;
+        const int NAME_LABEL_FONT_SIZE = 10;
+        const int EMPTY_LABEL_FONT_SIZE = 24;
 
         /// <summary>
         /// Creates a new keyframe element view for the given keyframe data.
@@ -23,10 +22,13 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// <returns>A configured VisualElement representing the keyframe</returns>
         public KeyframeElementView(SpriteKeyframeData keyframe)
         {
-            VisualElement container = CreateContainer();
-
+            (float width, float height) = CalculateOptimalSpriteSize(sprite: keyframe.sprite);
+            VisualElement container = CreateContainer(spriteWidth: width, spriteHeight: height);
+        
+            Debug.Log($"width: {width}, height: {height}");
+            
             VisualElement child = keyframe.sprite != null
-                ? CreateSpriteImage(sprite: keyframe.sprite)
+                ? CreateSpriteImage(sprite: keyframe.sprite, width: width, height: height)
                 : CreateEmptyPlaceholder();
 
             container.Add(child: child);
@@ -37,14 +39,14 @@ namespace AnimatorFactory.SpriteKeyframePreview
             Add(child: container);
         }
 
-        static VisualElement CreateContainer()
+        static VisualElement CreateContainer(float spriteWidth, float spriteHeight)
         {
             return new VisualElement
             {
                 style =
                 {
-                    width = CONTAINER_WIDTH,
-                    height = CONTAINER_HEIGHT,
+                    width = spriteWidth,
+                    height = spriteHeight + CONTAINER_HEIGHT_OFFSET,
                     marginRight = 5,
                     backgroundColor = new Color(r: 0.3f, g: 0.3f, b: 0.3f, a: 0.5f),
                     borderTopWidth = 1,
@@ -63,15 +65,16 @@ namespace AnimatorFactory.SpriteKeyframePreview
             };
         }
 
-        static Image CreateSpriteImage(Sprite sprite)
+        static Image CreateSpriteImage(Sprite sprite, float width, float height)
         {
             return new Image
             {
                 sprite = sprite,
+                scaleMode = ScaleMode.ScaleToFit,
                 style =
                 {
-                    width = SPRITE_SIZE,
-                    height = SPRITE_SIZE,
+                    width = width,
+                    height = height,
                     alignSelf = Align.Center
                 }
             };
@@ -142,6 +145,26 @@ namespace AnimatorFactory.SpriteKeyframePreview
                     textOverflow = TextOverflow.Ellipsis
                 }
             };
+        }
+
+        static (float width, float height) CalculateOptimalSpriteSize(Sprite sprite)
+        {
+            if (sprite == null || sprite.texture == null)
+            {
+                return (SPRITE_SIZE, SPRITE_SIZE);
+            }
+
+            Rect spriteRect = sprite.rect;
+            float spriteWidth = spriteRect.width;
+            float spriteHeight = spriteRect.height;
+            float sizeMultiplier = 2.0f;
+
+            if (spriteWidth <= 0 || spriteHeight <= 0)
+            {
+                return (SPRITE_SIZE, SPRITE_SIZE);
+            }
+
+            return (spriteWidth * sizeMultiplier, spriteHeight * sizeMultiplier);
         }
     }
 }

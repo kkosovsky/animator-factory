@@ -1,3 +1,4 @@
+using AnimatorFactory.Core.UI;
 using AnimatorFactory.Editor;
 using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
@@ -16,6 +17,7 @@ namespace AnimatorFactory
     public partial class AnimatorFactoryWindow : EditorWindow
     {
         ObjectField _prefabField;
+        TabView _mainTabView;
         PrefabHierarchyView _prefabHierarchyView;
         AnimatorStatesView _animatorStatesView;
         SpriteKeyframesView _spriteKeyframesView;
@@ -54,11 +56,39 @@ namespace AnimatorFactory
             };
             rootVisualElement.Add(child: mainContainer);
 
-            CreatePrefabSelectionSection(container: mainContainer);
-            CreateHierarchySection(container: mainContainer);
-            CreateAnimatorStatesSection(container: mainContainer);
-            CreateSpriteKeyframeSection(container: mainContainer);
-            CreateGenerateControlsView(container: mainContainer);
+            CreateTabbedInterface(container: mainContainer);
+        }
+
+        void CreateTabbedInterface(VisualElement container)
+        {
+            _mainTabView = new TabView
+            {
+                style =
+                {
+                    flexGrow = 1
+                }
+            };
+
+            VisualElement animatorStatesContent = CreateAnimatorStatesTabContent();
+            _mainTabView.AddTab(Strings.animatorStatesTabLabel, animatorStatesContent);
+
+            container.Add(_mainTabView);
+        }
+
+        VisualElement CreateAnimatorStatesTabContent()
+        {
+            VisualElement content = new VisualElement
+            {
+                style = { flexGrow = 1 }
+            };
+
+            CreatePrefabSelectionSection(container: content);
+            CreateHierarchySection(container: content);
+            CreateAnimatorStatesSection(container: content);
+            CreateSpriteKeyframeSection(container: content);
+            CreateGenerateControlsView(container: content);
+
+            return content;
         }
 
         void InitializeController()
