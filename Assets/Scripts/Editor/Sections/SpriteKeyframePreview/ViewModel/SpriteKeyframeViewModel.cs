@@ -120,7 +120,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             List<SpriteKeyframeData> keyframeData = sprites
                 .Select(
-                    (sprite, index) => new SpriteKeyframeData(
+                    selector: (sprite, index) => new SpriteKeyframeData(
                         index: index,
                         time: index / currentInfo.frameRate,
                         sprite: sprite
@@ -133,7 +133,8 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 duration: keyframeData.Count / currentInfo.frameRate,
                 frameRate: currentInfo.frameRate,
                 totalFrames: sprites.Length,
-                keyframes: keyframeData
+                keyframes: keyframeData,
+                path: currentInfo.path
             );
 
             _originalKeyframes = keyframeData;
@@ -143,6 +144,11 @@ namespace AnimatorFactory.SpriteKeyframePreview
         public void UpdateAnimationName(string name)
         {
             _currentSpriteInfo = _currentSpriteInfo.WithName(name: name);
+        }
+
+        public void UpdateDestinationFolder(string destinationFolderPath)
+        {
+            _currentSpriteInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
         }
 
         void ClearData()
@@ -167,7 +173,8 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 duration: newTotalFrames / newFrameRate,
                 frameRate: newFrameRate,
                 totalFrames: newTotalFrames,
-                keyframes: newKeyframes
+                keyframes: newKeyframes,
+                path: original.path
             );
         }
 

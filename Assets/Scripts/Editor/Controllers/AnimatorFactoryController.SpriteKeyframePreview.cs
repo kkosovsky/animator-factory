@@ -57,9 +57,7 @@ namespace AnimatorFactory.Editor
 
         void OnDestinationFolderChanged(string newDestinationFolder)
         {
-            Debug.Log($"Destination folder changed to: {newDestinationFolder}");
-            // TODO: Update destination folder in the view model or data structure
-            // _spriteKeyframeViewModel.UpdateDestinationFolder(newDestinationFolder);
+            _spriteKeyframeViewModel.UpdateDestinationFolder(newDestinationFolder);
         }
     }
 }
