@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using AnimatorFactory.SpriteKeyframePreview;
 using UnityEngine;
 using UnityEditor;
 
@@ -14,17 +16,17 @@ namespace AnimatorFactory.GenerationControls
         float _generationStartTime;
         float _generationDuration = 3.0f;
 
-        public void GenerateAnimationClips()
+        public void GenerateAnimationClips(AnimationSpriteInfo animationInfo)
         {
             if (_isGenerating)
             {
                 return;
             }
 
-            StartGeneration();
+            StartGeneration(animationInfo: animationInfo);
         }
 
-        void StartGeneration()
+        void StartGeneration(AnimationSpriteInfo animationInfo)
         {
             _isGenerating = true;
             _generationStartTime = (float)EditorApplication.timeSinceStartup;
@@ -32,7 +34,15 @@ namespace AnimatorFactory.GenerationControls
             EditorApplication.update += UpdateGenerationProgress;
 
             StartedGeneration?.Invoke();
-            Debug.Log("...:: Generation Started ::...");
+            AnimationClipGenerationService.CreateAnimationClip(
+                animationName: animationInfo.animationName,
+                sprites: animationInfo.keyframes.Select(selector: data => data.sprite).ToArray(),
+                keyframeCount: animationInfo.totalFrames,
+                frameRate: animationInfo.frameRate,
+                hasLoopTime: false,
+                wrapMode: WrapMode.Clamp,
+                destinationPath: animationInfo.path
+            );
         }
 
         void UpdateGenerationProgress()
@@ -40,9 +50,9 @@ namespace AnimatorFactory.GenerationControls
             if (!_isGenerating) return;
 
             float elapsedTime = (float)EditorApplication.timeSinceStartup - _generationStartTime;
-            float progress = Mathf.Clamp01(elapsedTime / _generationDuration);
+            float progress = Mathf.Clamp01(value: elapsedTime / _generationDuration);
 
-            UpdatedGenerationProgress?.Invoke(progress);
+            UpdatedGenerationProgress?.Invoke(obj: progress);
 
             if (progress >= 1.0f)
             {
@@ -57,7 +67,7 @@ namespace AnimatorFactory.GenerationControls
             EditorApplication.update -= UpdateGenerationProgress;
 
             FinishedGeneration?.Invoke();
-            Debug.Log("...:: Generation Completed ::...");
+            Debug.Log(message: "...:: Generation Completed ::...");
         }
     }
 }

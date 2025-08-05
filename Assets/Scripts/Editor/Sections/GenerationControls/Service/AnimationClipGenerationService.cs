@@ -14,7 +14,7 @@ namespace AnimatorFactory.GenerationControls
             float frameRate,
             bool hasLoopTime,
             WrapMode wrapMode, 
-            DefaultAsset targetFolder
+            string destinationPath
         )
         {
             AnimationClip clip = new()
@@ -44,10 +44,10 @@ namespace AnimatorFactory.GenerationControls
                 };
 
             AnimationUtility.SetObjectReferenceCurve(clip: clip, binding: spriteBinding, keyframes: spriteKeyFrames);
-            string path =
-                $"{AssetDatabase.GetAssetPath(assetObject: targetFolder)}{System.IO.Path.DirectorySeparatorChar}{animationName}.anim";
-            AssetDatabase.CreateAsset(asset: clip, path: path);
+            AssetDatabase.CreateAsset(asset: clip, path: destinationPath);
+            Debug.Log(message: $"Created asset at: {destinationPath}");
             AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
     }
 }

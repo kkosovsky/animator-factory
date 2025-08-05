@@ -28,7 +28,7 @@ namespace AnimatorFactory.Editor
         void OnGenerateButtonClicked()
         {
             _generationControlsView.ShowIsGeneratingDialogue();
-            _generationControlsViewModel.GenerateAnimationClips();
+            _generationControlsViewModel.GenerateAnimationClips(animationInfo: _spriteKeyframeViewModel.AnimationInfo);
         }
     }
 }

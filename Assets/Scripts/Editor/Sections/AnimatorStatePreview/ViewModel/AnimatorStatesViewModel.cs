@@ -40,6 +40,7 @@ namespace AnimatorFactory.AnimatorStatePreview
 
                 Animator animator = item.gameObject.GetComponent<Animator>();
                 AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;
+                // TODO: Add current animator data
 
                 if (controller == null)
                 {

@@ -22,7 +22,9 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// </summary>
         public event Action<string, bool> StatusChanged; // message, isError
 
-        AnimationSpriteInfo _currentSpriteInfo;
+        public AnimationSpriteInfo AnimationInfo => _currentAnimationInfo;
+
+        AnimationSpriteInfo _currentAnimationInfo;
         List<SpriteKeyframeData> _originalKeyframes;
         bool _hasData;
 
@@ -51,7 +53,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 }
 
                 _originalKeyframes = new List<SpriteKeyframeData>(collection: spriteInfo.keyframes);
-                _currentSpriteInfo = spriteInfo;
+                _currentAnimationInfo = spriteInfo;
                 _hasData = true;
                 DataChanged?.Invoke(obj: spriteInfo);
             }
@@ -71,13 +73,13 @@ namespace AnimatorFactory.SpriteKeyframePreview
             if (!_hasData || newFrameRate <= 0) return;
 
             AnimationSpriteInfo modifiedInfo = CreateModifiedSpriteInfo(
-                original: _currentSpriteInfo,
+                original: _currentAnimationInfo,
                 newFrameRate: newFrameRate,
-                newTotalFrames: _currentSpriteInfo.totalFrames,
-                newKeyframes: _currentSpriteInfo.keyframes
+                newTotalFrames: _currentAnimationInfo.totalFrames,
+                newKeyframes: _currentAnimationInfo.keyframes
             );
 
-            _currentSpriteInfo = modifiedInfo;
+            _currentAnimationInfo = modifiedInfo;
             DataChanged?.Invoke(obj: modifiedInfo);
         }
 
@@ -92,17 +94,17 @@ namespace AnimatorFactory.SpriteKeyframePreview
             List<SpriteKeyframeData> adjustedKeyframes = AdjustKeyframesForTotalFrames(
                 originalKeyframes: _originalKeyframes,
                 newTotalFrames: newTotalFrames,
-                frameRate: _currentSpriteInfo.frameRate
+                frameRate: _currentAnimationInfo.frameRate
             );
 
             AnimationSpriteInfo modifiedInfo = CreateModifiedSpriteInfo(
-                original: _currentSpriteInfo,
-                newFrameRate: _currentSpriteInfo.frameRate,
+                original: _currentAnimationInfo,
+                newFrameRate: _currentAnimationInfo.frameRate,
                 newTotalFrames: newTotalFrames,
                 newKeyframes: adjustedKeyframes
             );
 
-            _currentSpriteInfo = modifiedInfo;
+            _currentAnimationInfo = modifiedInfo;
             DataChanged?.Invoke(obj: modifiedInfo);
         }
 
@@ -116,7 +118,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         public void SelectedSpritesChanged(Sprite[] sprites)
         {
-            AnimationSpriteInfo currentInfo = _currentSpriteInfo;
+            AnimationSpriteInfo currentInfo = _currentAnimationInfo;
 
             List<SpriteKeyframeData> keyframeData = sprites
                 .Select(
@@ -128,7 +130,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 )
                 .ToList();
 
-            _currentSpriteInfo = new AnimationSpriteInfo(
+            _currentAnimationInfo = new AnimationSpriteInfo(
                 animationName: currentInfo.animationName,
                 duration: keyframeData.Count / currentInfo.frameRate,
                 frameRate: currentInfo.frameRate,
@@ -138,23 +140,23 @@ namespace AnimatorFactory.SpriteKeyframePreview
             );
 
             _originalKeyframes = keyframeData;
-            DataChanged?.Invoke(obj: _currentSpriteInfo);
+            DataChanged?.Invoke(obj: _currentAnimationInfo);
         }
 
         public void UpdateAnimationName(string name)
         {
-            _currentSpriteInfo = _currentSpriteInfo.WithName(name: name);
+            _currentAnimationInfo = _currentAnimationInfo.WithName(name: name);
         }
 
         public void UpdateDestinationFolder(string destinationFolderPath)
         {
-            _currentSpriteInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
+            _currentAnimationInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
         }
 
         void ClearData()
         {
             _hasData = false;
-            _currentSpriteInfo = default;
+            _currentAnimationInfo = default;
             _originalKeyframes = null;
         }
 
