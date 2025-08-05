@@ -9,6 +9,7 @@ namespace AnimatorFactory.AnimatorStatePreview
     public class AnimatorStatesView : VisualElement
     {
         public event Action<AnimatorState> SelectedState;
+        public event Action AddStateRequested;
 
         VisualElement _statesContainer;
         ScrollView _statesScrollView;
@@ -99,6 +100,28 @@ namespace AnimatorFactory.AnimatorStatePreview
                 };
                 _statesContainer.Add(child: stateButton);
             }
+
+            Button addStateButton = new(clickEvent: OnAddStateButtonClicked)
+            {
+                text = "Add\nState",
+                style =
+                {
+                    width = 100,
+                    height = 40,
+                    marginRight = 5,
+                    backgroundColor = new StyleColor(
+                        v: new Color(
+                            r: 106f / 255.0f,
+                            g: 148f / 255.0f,
+                            b: 77f / 255.0f
+                        )
+                    ),
+                    color = Color.white,
+                    unityFontStyleAndWeight = FontStyle.Bold,
+                    fontSize = 12
+                }
+            };
+            _statesContainer.Add(child: addStateButton);
         }
 
         void ShowStatus(string message, HelpBoxMessageType type)
@@ -122,7 +145,13 @@ namespace AnimatorFactory.AnimatorStatePreview
 
         void OnStateButtonClicked(AnimatorState state)
         {
-            SelectedState?.Invoke(state);
+            SelectedState?.Invoke(obj: state);
+        }
+
+        void OnAddStateButtonClicked()
+        {
+            Debug.Log(message: "Add State Clicked");
+            AddStateRequested?.Invoke();
         }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEditor.Animations;
+using UnityEngine;
 
 namespace AnimatorFactory.Editor
 {
@@ -10,6 +11,7 @@ namespace AnimatorFactory.Editor
             _animatorStatesViewModel.StatusChanged += _animatorStatesView.OnStatusChanged;
 
             _animatorStatesView.SelectedState += OnAnimatorStateSelected;
+            _animatorStatesView.AddStateRequested += OnAddStateRequested;
         }
 
         void UnbindAnimatorStatesPreviewEvents()
@@ -18,11 +20,18 @@ namespace AnimatorFactory.Editor
             _animatorStatesViewModel.StatusChanged -= _animatorStatesView.OnStatusChanged;
             
             _animatorStatesView.SelectedState -= OnAnimatorStateSelected;
+            _animatorStatesView.AddStateRequested -= OnAddStateRequested;
         }
 
         void OnAnimatorStateSelected(AnimatorState state)
         {
             _spriteKeyframeViewModel.LoadSpriteKeyframes(state: state);
+        }
+
+        void OnAddStateRequested()
+        {
+            Debug.Log("Add State Clicked");
+            // TODO: Implement add state functionality
         }
     }
 }
