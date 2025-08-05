@@ -5,11 +5,24 @@ namespace AnimatorFactory.Editor
         void BindGenerationControlsEvents()
         {
             _generationControlsView.GenerateButtonClicked += OnGenerateButtonClicked;
+            _generationControlsViewModel.StartedGeneration +=
+                _generationControlsView.ShowIsGeneratingDialogue;
+            _generationControlsViewModel.UpdatedGenerationProgress +=
+                _generationControlsView.UpdateGenerationProgressDialogue;
+            _generationControlsViewModel.FinishedGeneration +=
+                _generationControlsView.HideGeneratingDialogue;
         }
 
         void UnbindGenerationControlsEvents()
         {
             _generationControlsView.GenerateButtonClicked -= OnGenerateButtonClicked;
+            _generationControlsViewModel.StartedGeneration -=
+                _generationControlsView.ShowIsGeneratingDialogue;
+            _generationControlsViewModel.UpdatedGenerationProgress -=
+                _generationControlsView.UpdateGenerationProgressDialogue;
+            _generationControlsViewModel.FinishedGeneration -=
+                _generationControlsView.HideGeneratingDialogue;
+            
         }
 
         void OnGenerateButtonClicked()

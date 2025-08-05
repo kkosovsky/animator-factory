@@ -1,5 +1,6 @@
 using System;
 using UnityEngine.UIElements;
+using UnityEditor;
 
 namespace AnimatorFactory.GenerationControls
 {
@@ -20,7 +21,27 @@ namespace AnimatorFactory.GenerationControls
 
         public void ShowIsGeneratingDialogue()
         {
-            // TODO: Show dialogue saying "Animation data generation in progres..."
+            EditorUtility.DisplayProgressBar(
+                title: "Animator Factory",
+                info: "Animation data generation in progress...",
+                progress: 0.1f
+            );
+            _generateButton.SetEnabled(value: false);
+        }
+
+        public void UpdateGenerationProgressDialogue(float progress)
+        {
+            EditorUtility.DisplayProgressBar(
+                title: "Animator Factory",
+                info: "Animation data generation in progress...",
+                progress: progress
+            );
+        }
+
+        public void HideGeneratingDialogue()
+        {
+            EditorUtility.ClearProgressBar();
+            _generateButton.SetEnabled(value: true);
         }
 
         void MakeButton()
