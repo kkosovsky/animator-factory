@@ -66,7 +66,7 @@ namespace AnimatorFactory.AnimatorStatePreview
                     return;
                 }
 
-                List<AnimatorState> allStates = StateAnalysisService.GetAllAnimatorStates(controller: controller);
+                List<AnimatorState> allStates = AnimatorStateService.GetAllAnimatorStates(controller: controller);
 
                 if (allStates.Count == 0)
                 {
@@ -92,49 +92,28 @@ namespace AnimatorFactory.AnimatorStatePreview
         /// <param name="animationClip">The animation clip to attach</param>
         public void CreateNewStateWithClip(string stateName, AnimationClip animationClip)
         {
-            Debug.Log(message: $"CreateNewStateWithClip called with stateName: '{stateName}', animationClip: '{animationClip?.name}'");
+            Debug.Log(message: $"AnimatorStatesViewModel.CreateNewStateWithClip called with stateName: '{stateName}', animationClip: '{animationClip?.name}'");
             
             if (_currentAnimatorController == null)
             {
                 Debug.LogError(message: "No animator controller available to create new state");
+                ShowStatus(message: "No animator controller available to create new state", isError: true);
                 return;
             }
 
-            if (animationClip == null)
+            // Use the service to create the new state
+            AnimatorState newState = AnimatorStateService.CreateNewStateWithClip(_currentAnimatorController, stateName, animationClip);
+            
+            if (newState != null)
             {
-                Debug.LogError(message: "Animation clip is null, cannot create state");
-                return;
-            }
-
-            try
-            {
-                Debug.Log(message: $"Current animator controller: {_currentAnimatorController.name}");
-                Debug.Log(message: $"Number of layers: {_currentAnimatorController.layers.Length}");
-                
-                // Create new state in the first layer's state machine
-                AnimatorStateMachine rootStateMachine = _currentAnimatorController.layers[0].stateMachine;
-                Debug.Log(message: $"Root state machine: {rootStateMachine.name}");
-                
-                AnimatorState newState = rootStateMachine.AddState(name: stateName);
-                Debug.Log(message: $"Added new state: {newState.name}");
-                
-                // Attach the animation clip to the state
-                newState.motion = animationClip;
-                Debug.Log(message: $"Attached animation clip '{animationClip.name}' to state '{newState.name}'");
-                
-                // Mark the animator controller as dirty so Unity saves the changes
-                EditorUtility.SetDirty(target: _currentAnimatorController);
-                AssetDatabase.SaveAssets();
-                
-                Debug.Log(message: $"Created new animator state '{stateName}' with animation clip '{animationClip.name}'");
-                
-                // Refresh the states list
+                Debug.Log(message: $"Successfully created new animator state: {newState.name}");
+                // Refresh the states list to show the new state
                 LoadAnimatorStatesFromCurrentController();
             }
-            catch (System.Exception ex)
+            else
             {
-                Debug.LogError(message: $"Error creating new animator state: {ex.Message}");
-                Debug.LogException(exception: ex);
+                Debug.LogError(message: "Failed to create new animator state");
+                ShowStatus(message: "Failed to create new animator state", isError: true);
             }
         }
 
@@ -152,7 +131,7 @@ namespace AnimatorFactory.AnimatorStatePreview
             }
 
             Debug.Log(message: $"Reloading states from controller: {_currentAnimatorController.name}");
-            List<AnimatorState> allStates = StateAnalysisService.GetAllAnimatorStates(controller: _currentAnimatorController);
+            List<AnimatorState> allStates = AnimatorStateService.GetAllAnimatorStates(controller: _currentAnimatorController);
             Debug.Log(message: $"Found {allStates.Count} states after reload");
             
             _currentStates = allStates;
