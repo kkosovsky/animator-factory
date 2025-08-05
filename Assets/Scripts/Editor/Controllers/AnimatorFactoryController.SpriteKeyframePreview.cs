@@ -14,6 +14,7 @@ namespace AnimatorFactory.Editor
             _spriteKeyframesView.TotalFramesChanged += OnTotalFramesChanged;
             _spriteKeyframesView.SpritesSelected += OnSpritesSelected;
             _spriteKeyframesView.AnimationNameChanged += OnAnimationNameChanged;
+            _spriteKeyframesView.DestinationFolderChanged += OnDestinationFolderChanged;
         }
 
         void UnbindSpriteKeyFramePreviewEvents()
@@ -25,6 +26,7 @@ namespace AnimatorFactory.Editor
             _spriteKeyframesView.TotalFramesChanged -= OnTotalFramesChanged;
             _spriteKeyframesView.SpritesSelected -= OnSpritesSelected;
             _spriteKeyframesView.AnimationNameChanged -= OnAnimationNameChanged;
+            _spriteKeyframesView.DestinationFolderChanged -= OnDestinationFolderChanged;
         }
 
         void OnKeyframeDataChanged(AnimationSpriteInfo spriteInfo)
@@ -51,6 +53,13 @@ namespace AnimatorFactory.Editor
         void OnAnimationNameChanged(string newAnimationName)
         {
             _spriteKeyframeViewModel.UpdateAnimationName(newAnimationName);
+        }
+
+        void OnDestinationFolderChanged(string newDestinationFolder)
+        {
+            Debug.Log($"Destination folder changed to: {newDestinationFolder}");
+            // TODO: Update destination folder in the view model or data structure
+            // _spriteKeyframeViewModel.UpdateDestinationFolder(newDestinationFolder);
         }
     }
 }

@@ -83,7 +83,7 @@ namespace AnimatorFactory.AnimatorStatePreview
         void DisplayStates(List<AnimatorState> states)
         {
             ClearStates();
-            _titleLabel.text = $"Animator States ({states.Count})";
+            _titleLabel.text = $"Animator States (Count: {states.Count})";
 
             foreach (AnimatorState state in states)
             {
