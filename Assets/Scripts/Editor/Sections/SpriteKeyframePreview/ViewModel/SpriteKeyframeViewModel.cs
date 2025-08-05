@@ -140,6 +140,11 @@ namespace AnimatorFactory.SpriteKeyframePreview
             DataChanged?.Invoke(obj: _currentSpriteInfo);
         }
 
+        public void UpdateAnimationName(string name)
+        {
+            _currentSpriteInfo = _currentSpriteInfo.WithName(name: name);
+        }
+
         void ClearData()
         {
             _hasData = false;

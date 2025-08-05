@@ -8,7 +8,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
     /// </summary>
     public class SpriteKeyframesView : VisualElement
     {
-        Label _titleLabel;
+        TextField _titleField;
         VisualElement _editableInfoContainer;
         Label _durationLabel;
         FloatField _frameRateField;
@@ -32,6 +32,11 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// Fired when sprites are selected for replacement.
         /// </summary>
         public event System.Action<Sprite[]> SpritesSelected;
+
+        /// <summary>
+        /// Fired when animation name is changed by user.
+        /// </summary>
+        public event System.Action<string> AnimationNameChanged;
 
         public SpriteKeyframesView() => CreateUI();
 
@@ -62,15 +67,17 @@ namespace AnimatorFactory.SpriteKeyframePreview
             style.paddingTop = 10;
             style.display = DisplayStyle.None;
 
-            _titleLabel = new Label(text: "Sprite Keyframes")
+            _titleField = new TextField(label: "Clip Name:")
             {
+                value = "New Clip",
                 style =
                 {
                     unityFontStyleAndWeight = FontStyle.Bold,
                     marginBottom = 5
                 }
             };
-            Add(child: _titleLabel);
+            _titleField.RegisterValueChangedCallback(callback: OnAnimationNameChanged);
+            Add(child: _titleField);
 
             CreateEditableInfoSection();
 
@@ -150,7 +157,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         void DisplayKeyframes(AnimationSpriteInfo spriteInfo)
         {
             _keyframesContainer.Clear();
-            _titleLabel.text = $"Sprite Keyframes - {spriteInfo.animationName}";
+            _titleField.SetValueWithoutNotify(newValue: spriteInfo.animationName);
 
             _durationLabel.text = $"Duration: {spriteInfo.duration:F2}s";
             _frameRateField.SetValueWithoutNotify(newValue: spriteInfo.frameRate);
@@ -307,6 +314,14 @@ namespace AnimatorFactory.SpriteKeyframePreview
             if (evt.newValue > 0)
             {
                 TotalFramesChanged?.Invoke(obj: evt.newValue);
+            }
+        }
+
+        void OnAnimationNameChanged(ChangeEvent<string> evt)
+        {
+            if (!string.IsNullOrEmpty(value: evt.newValue))
+            {
+                AnimationNameChanged?.Invoke(obj: evt.newValue);
             }
         }
     }

@@ -37,5 +37,16 @@ namespace AnimatorFactory.SpriteKeyframePreview
             this.totalFrames = totalFrames;
             this.keyframes = keyframes;
         }
+
+        public AnimationSpriteInfo WithName(string name)
+        {
+            return new AnimationSpriteInfo(
+                animationName: name,
+                duration: duration,
+                frameRate: frameRate,
+                totalFrames: totalFrames,
+                keyframes: keyframes
+            );
+        }
     }
 }

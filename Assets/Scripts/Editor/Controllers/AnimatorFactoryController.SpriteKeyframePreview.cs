@@ -13,6 +13,7 @@ namespace AnimatorFactory.Editor
             _spriteKeyframesView.FrameRateChanged += OnFrameRateChanged;
             _spriteKeyframesView.TotalFramesChanged += OnTotalFramesChanged;
             _spriteKeyframesView.SpritesSelected += OnSpritesSelected;
+            _spriteKeyframesView.AnimationNameChanged += OnAnimationNameChanged;
         }
 
         void UnbindSpriteKeyFramePreviewEvents()
@@ -23,6 +24,7 @@ namespace AnimatorFactory.Editor
             _spriteKeyframesView.FrameRateChanged -= OnFrameRateChanged;
             _spriteKeyframesView.TotalFramesChanged -= OnTotalFramesChanged;
             _spriteKeyframesView.SpritesSelected -= OnSpritesSelected;
+            _spriteKeyframesView.AnimationNameChanged -= OnAnimationNameChanged;
         }
 
         void OnKeyframeDataChanged(AnimationSpriteInfo spriteInfo)
@@ -44,6 +46,11 @@ namespace AnimatorFactory.Editor
         {
             _spriteKeyframeViewModel.SelectedSpritesChanged(sprites: sprites);
             _generationControlsView.ShowButton();
+        }
+
+        void OnAnimationNameChanged(string newAnimationName)
+        {
+            _spriteKeyframeViewModel.UpdateAnimationName(newAnimationName);
         }
     }
 }
