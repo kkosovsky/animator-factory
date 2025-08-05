@@ -44,9 +44,15 @@ namespace AnimatorFactory.GenerationControls
             _generateButton.SetEnabled(value: true);
         }
 
+        public void ShowButton()
+        {
+            _generateButton.style.display = DisplayStyle.Flex;
+        }
+
         void MakeButton()
         {
             _generateButton = new Button { text = "Generate" };
+            _generateButton.style.display = DisplayStyle.None;
             Add(child: _generateButton);
         }
     }

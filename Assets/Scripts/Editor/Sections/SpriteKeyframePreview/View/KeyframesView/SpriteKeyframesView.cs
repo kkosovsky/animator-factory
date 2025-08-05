@@ -270,7 +270,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             // Change button next to total frames
             Button changeButton = new()
             {
-                text = "Change Sprite",
+                text = "Replace Sprites",
                 tooltip = "Select sprites to replace all the keyframes",
                 style =
                 {
