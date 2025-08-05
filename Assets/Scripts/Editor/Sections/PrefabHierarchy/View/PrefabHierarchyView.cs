@@ -54,7 +54,7 @@ namespace AnimatorFactory.PrefabHierarchy
                 return;
             }
 
-            ItemSelected?.Invoke(selectedItem);
+            ItemSelected?.Invoke(obj: selectedItem);
         }
 
         VisualElement MakeItem()

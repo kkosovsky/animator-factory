@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace AnimatorFactory.GenerationControls
     {
         const string m_sprite = "m_Sprite";
         
-        public static void CreateAnimationClip(
+        public static AnimationClip CreateAnimationClip(
             Sprite[] sprites,
             int keyframeCount,
             float frameRate,
@@ -44,11 +45,22 @@ namespace AnimatorFactory.GenerationControls
                 };
             
             AnimationUtility.SetObjectReferenceCurve(clip: clip, binding: spriteBinding, keyframes: spriteKeyFrames);
-            string fullPath = $"{destinationFolderPath}{animationName}.anim";
+            string fullPath = Path.Combine(path1: destinationFolderPath, path2: $"{animationName}.anim");
             AssetDatabase.CreateAsset(asset: clip, path: fullPath);
             Debug.Log(message: $"Created asset at: {fullPath}");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+            
+            // Load the clip from the asset database to ensure we have the proper asset reference
+            AnimationClip loadedClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetPath: fullPath);
+            if (loadedClip == null)
+            {
+                Debug.LogError(message: $"Failed to load animation clip from path: {fullPath}");
+                return clip; // Return the original clip as fallback
+            }
+            
+            Debug.Log(message: $"Successfully loaded animation clip from asset database: {loadedClip.name}");
+            return loadedClip;
         }
     }
 }

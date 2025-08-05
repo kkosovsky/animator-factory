@@ -11,10 +11,13 @@ namespace AnimatorFactory.GenerationControls
         public event Action StartedGeneration;
         public event Action<float> UpdatedGenerationProgress;
         public event Action FinishedGeneration;
+        public event Action<AnimationClip, string> AnimationClipGenerated; // clip, stateName
 
         bool _isGenerating;
         float _generationStartTime;
         float _generationDuration = 1.0f;
+        AnimationClip _generatedClip;
+        string _generatedStateName;
 
         public void GenerateAnimationClips(AnimationSpriteInfo animationInfo)
         {
@@ -30,11 +33,12 @@ namespace AnimatorFactory.GenerationControls
         {
             _isGenerating = true;
             _generationStartTime = (float)EditorApplication.timeSinceStartup;
+            _generatedStateName = animationInfo.animationName;
 
             EditorApplication.update += UpdateGenerationProgress;
 
             StartedGeneration?.Invoke();
-            AnimationClipGenerationService.CreateAnimationClip(
+            _generatedClip = AnimationClipGenerationService.CreateAnimationClip(
                 sprites: animationInfo.keyframes.Select(selector: data => data.sprite).ToArray(),
                 keyframeCount: animationInfo.totalFrames,
                 frameRate: animationInfo.frameRate,
@@ -66,8 +70,26 @@ namespace AnimatorFactory.GenerationControls
 
             EditorApplication.update -= UpdateGenerationProgress;
 
+            Debug.Log(message: $"CompleteGeneration - _generatedClip: {_generatedClip?.name}, _generatedStateName: {_generatedStateName}");
+            Debug.Log(message: $"AnimationClipGenerated event has {AnimationClipGenerated?.GetInvocationList()?.Length ?? 0} subscribers");
+
+            // Fire animation clip generated event with the created clip
+            if (_generatedClip != null && !string.IsNullOrEmpty(value: _generatedStateName))
+            {
+                Debug.Log(message: $"Firing AnimationClipGenerated event with clip: {_generatedClip.name}, state: {_generatedStateName}");
+                AnimationClipGenerated?.Invoke(arg1: _generatedClip, arg2: _generatedStateName);
+            }
+            else
+            {
+                Debug.LogWarning(message: $"Not firing AnimationClipGenerated event - clip is null: {_generatedClip == null}, state name is empty: {string.IsNullOrEmpty(value: _generatedStateName)}");
+            }
+
             FinishedGeneration?.Invoke();
             Debug.Log(message: "...:: Generation Completed ::...");
+            
+            // Clear generated data
+            _generatedClip = null;
+            _generatedStateName = null;
         }
     }
 }

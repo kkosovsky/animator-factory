@@ -42,7 +42,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             for (int i = 0; i < defaultTotalFrames; i++)
             {
                 float time = i / defaultFrameRate;
-                defaultKeyframes.Add(new SpriteKeyframeData(index: i, time: time, sprite: null));
+                defaultKeyframes.Add(item: new SpriteKeyframeData(index: i, time: time, sprite: null));
             }
             
             _currentAnimationInfo = new AnimationSpriteInfo(
@@ -54,7 +54,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 destinationFolderPath: "Assets/Animations"
             );
             
-            _originalKeyframes = new List<SpriteKeyframeData>(defaultKeyframes);
+            _originalKeyframes = new List<SpriteKeyframeData>(collection: defaultKeyframes);
             _hasData = true;
             
             DataChanged?.Invoke(obj: _currentAnimationInfo);
@@ -178,7 +178,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         public void UpdateAnimationName(string name)
         {
             _currentAnimationInfo = _currentAnimationInfo.WithName(name: name);
-            Debug.Log(_currentAnimationInfo);
+            Debug.Log(message: _currentAnimationInfo);
         }
 
         public void UpdateDestinationFolder(string destinationFolderPath)

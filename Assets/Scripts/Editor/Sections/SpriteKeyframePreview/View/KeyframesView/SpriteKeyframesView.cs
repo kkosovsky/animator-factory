@@ -397,7 +397,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 return;
             }
 
-            if (!newValue.EndsWith(Path.DirectorySeparatorChar))
+            if (!newValue.EndsWith(value: Path.DirectorySeparatorChar))
             {
                 _destinationFolderField.value = $"{evt}{Path.DirectorySeparatorChar}";
             }
@@ -431,12 +431,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 return;
             }
 
-            if (!newValue.EndsWith(Path.DirectorySeparatorChar))
+            if (!newValue.EndsWith(value: Path.DirectorySeparatorChar))
             {
                 _destinationFolderField.value = $"{relativePath}{Path.DirectorySeparatorChar}";
             }
 
-            DestinationFolderChanged?.Invoke(_destinationFolderField.value);
+            DestinationFolderChanged?.Invoke(obj: _destinationFolderField.value);
         }
     }
 }
