@@ -102,7 +102,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             _keyframesScrollView = new ScrollView(scrollViewMode: ScrollViewMode.Horizontal)
             {
-                style = { height = 80 }
+                style = { height = 160 }
             };
 
             _keyframesContainer = new VisualElement

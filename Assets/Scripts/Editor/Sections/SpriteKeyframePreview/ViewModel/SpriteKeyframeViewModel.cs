@@ -37,14 +37,14 @@ namespace AnimatorFactory.SpriteKeyframePreview
             // Create a new animation with default empty keyframes
             float defaultFrameRate = 12.0f;
             int defaultTotalFrames = 12;
-            
+
             List<SpriteKeyframeData> defaultKeyframes = new List<SpriteKeyframeData>();
             for (int i = 0; i < defaultTotalFrames; i++)
             {
                 float time = i / defaultFrameRate;
                 defaultKeyframes.Add(item: new SpriteKeyframeData(index: i, time: time, sprite: null));
             }
-            
+
             _currentAnimationInfo = new AnimationSpriteInfo(
                 animationName: stateName,
                 duration: defaultTotalFrames / defaultFrameRate,
@@ -53,10 +53,10 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 keyframes: defaultKeyframes,
                 destinationFolderPath: "Assets/Animations"
             );
-            
+
             _originalKeyframes = new List<SpriteKeyframeData>(collection: defaultKeyframes);
             _hasData = true;
-            
+
             DataChanged?.Invoke(obj: _currentAnimationInfo);
         }
 
@@ -151,8 +151,17 @@ namespace AnimatorFactory.SpriteKeyframePreview
         public void SelectedSpritesChanged(Sprite[] sprites)
         {
             AnimationSpriteInfo currentInfo = _currentAnimationInfo;
+            List<Sprite> spritesList = sprites.ToList();
+            spritesList
+                .Sort(
+                    comparison: (a, b) => string.Compare(
+                        strA: a.name,
+                        strB: b.name,
+                        comparisonType: StringComparison.OrdinalIgnoreCase
+                    )
+                );
 
-            List<SpriteKeyframeData> keyframeData = sprites
+            List<SpriteKeyframeData> keyframeData = spritesList
                 .Select(
                     selector: (sprite, index) => new SpriteKeyframeData(
                         index: index,
