@@ -136,7 +136,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 frameRate: currentInfo.frameRate,
                 totalFrames: sprites.Length,
                 keyframes: keyframeData,
-                path: currentInfo.path
+                destinationFolderPath: currentInfo.destinationFolderPath
             );
 
             _originalKeyframes = keyframeData;
@@ -146,11 +146,13 @@ namespace AnimatorFactory.SpriteKeyframePreview
         public void UpdateAnimationName(string name)
         {
             _currentAnimationInfo = _currentAnimationInfo.WithName(name: name);
+            Debug.Log(_currentAnimationInfo);
         }
 
         public void UpdateDestinationFolder(string destinationFolderPath)
         {
-            _currentAnimationInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
+            _currentAnimationInfo =
+                _currentAnimationInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
         }
 
         void ClearData()
@@ -176,7 +178,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 frameRate: newFrameRate,
                 totalFrames: newTotalFrames,
                 keyframes: newKeyframes,
-                path: original.path
+                destinationFolderPath: original.destinationFolderPath
             );
         }
 

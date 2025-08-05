@@ -52,12 +52,12 @@ namespace AnimatorFactory.Editor
 
         void OnAnimationNameChanged(string newAnimationName)
         {
-            _spriteKeyframeViewModel.UpdateAnimationName(newAnimationName);
+            _spriteKeyframeViewModel.UpdateAnimationName(name: newAnimationName);
         }
 
         void OnDestinationFolderChanged(string newDestinationFolder)
         {
-            _spriteKeyframeViewModel.UpdateDestinationFolder(newDestinationFolder);
+            _spriteKeyframeViewModel.UpdateDestinationFolder(destinationFolderPath: newDestinationFolder);
         }
     }
 }

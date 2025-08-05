@@ -14,7 +14,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         public readonly float frameRate;
         public readonly List<SpriteKeyframeData> keyframes;
         public readonly int totalFrames;
-        public readonly string path;
+        public readonly string destinationFolderPath;
 
         public AnimationSpriteInfo(AnimationClip clip)
         {
@@ -23,7 +23,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             frameRate = clip.frameRate;
             totalFrames = Mathf.RoundToInt(f: duration * frameRate);
             keyframes = new List<SpriteKeyframeData>();
-            path = AssetDatabase.GetAssetPath(assetObject: clip);
+            destinationFolderPath = AssetDatabase.GetAssetPath(assetObject: clip);
         }
 
         public AnimationSpriteInfo(
@@ -32,7 +32,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             float frameRate,
             int totalFrames,
             List<SpriteKeyframeData> keyframes,
-            string path
+            string destinationFolderPath
         )
         {
             this.animationName = animationName;
@@ -40,7 +40,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
             this.frameRate = frameRate;
             this.totalFrames = totalFrames;
             this.keyframes = keyframes;
-            this.path = path;
+            this.destinationFolderPath = destinationFolderPath;
         }
 
         public AnimationSpriteInfo WithName(string name)
@@ -51,7 +51,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 frameRate: frameRate,
                 totalFrames: totalFrames,
                 keyframes: keyframes,
-                path: path
+                destinationFolderPath: destinationFolderPath
             );
         }
         
@@ -63,7 +63,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 frameRate: frameRate,
                 totalFrames: totalFrames,
                 keyframes: keyframes,
-                path: $"{destinationFolderPath}{animationName}.anim"
+                destinationFolderPath: destinationFolderPath
             );
         }
     }

@@ -407,9 +407,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         void OnBrowseFolderClicked()
         {
-            string currentFolder = _destinationFolderField.value;
+            string newValue = _destinationFolderField.value;
+            string currentFolder = newValue;
             if (string.IsNullOrEmpty(value: currentFolder))
+            {
                 currentFolder = "Assets";
+            }
 
             string selectedFolder = EditorUtility.SaveFolderPanel(
                 title: "Select Destination Folder",
@@ -428,10 +431,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 return;
             }
 
-            if (!_destinationFolderField.value.EndsWith(Path.DirectorySeparatorChar))
+            if (!newValue.EndsWith(Path.DirectorySeparatorChar))
             {
                 _destinationFolderField.value = $"{relativePath}{Path.DirectorySeparatorChar}";
             }
+
+            DestinationFolderChanged?.Invoke(_destinationFolderField.value);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace AnimatorFactory.GenerationControls
 
         bool _isGenerating;
         float _generationStartTime;
-        float _generationDuration = 3.0f;
+        float _generationDuration = 1.0f;
 
         public void GenerateAnimationClips(AnimationSpriteInfo animationInfo)
         {
@@ -35,13 +35,13 @@ namespace AnimatorFactory.GenerationControls
 
             StartedGeneration?.Invoke();
             AnimationClipGenerationService.CreateAnimationClip(
-                animationName: animationInfo.animationName,
                 sprites: animationInfo.keyframes.Select(selector: data => data.sprite).ToArray(),
                 keyframeCount: animationInfo.totalFrames,
                 frameRate: animationInfo.frameRate,
                 hasLoopTime: false,
                 wrapMode: WrapMode.Clamp,
-                destinationPath: animationInfo.path
+                animationName: animationInfo.animationName,
+                destinationFolderPath: animationInfo.destinationFolderPath
             );
         }
 
