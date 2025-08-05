@@ -1,0 +1,47 @@
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Animations;
+
+namespace AnimatorFactory.AnimatorStatePreview
+{
+    /// <summary>
+    /// Service responsible for analyzing animator states and controllers.
+    /// Contains stateless logic for state analysis.
+    /// </summary>
+    public static class StateAnalysisService
+    {
+        /// <summary>
+        /// Gets all animator states from an animator controller, including nested state machines.
+        /// </summary>
+        /// <param name="controller">The animator controller to analyze</param>
+        /// <returns>List of all animator states</returns>
+        public static List<AnimatorState> GetAllAnimatorStates(AnimatorController controller)
+        {
+            var allStates = new List<AnimatorState>();
+            
+            foreach (AnimatorControllerLayer layer in controller.layers)
+            {
+                CollectStatesRecursive(stateMachine: layer.stateMachine, states: allStates);
+            }
+            
+            return allStates;
+        }
+
+        /// <summary>
+        /// Recursively collects all states from a state machine and its sub-state machines.
+        /// </summary>
+        /// <param name="stateMachine">The state machine to analyze</param>
+        /// <param name="states">The list to add states to</param>
+        static void CollectStatesRecursive(AnimatorStateMachine stateMachine, List<AnimatorState> states)
+        {
+            // Add all states from current state machine
+            states.AddRange(collection: stateMachine.states.Select(selector: childState => childState.state));
+            
+            // Recursively collect from sub-state machines
+            foreach (ChildAnimatorStateMachine childStateMachine in stateMachine.stateMachines)
+            {
+                CollectStatesRecursive(stateMachine: childStateMachine.stateMachine, states: states);
+            }
+        }
+    }
+}
