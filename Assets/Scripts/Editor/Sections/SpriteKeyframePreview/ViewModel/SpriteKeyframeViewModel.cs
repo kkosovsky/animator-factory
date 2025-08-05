@@ -29,6 +29,38 @@ namespace AnimatorFactory.SpriteKeyframePreview
         bool _hasData;
 
         /// <summary>
+        /// Creates a new empty animation state for editing.
+        /// </summary>
+        /// <param name="stateName">The name of the new state</param>
+        public void CreateNewAnimationState(string stateName)
+        {
+            // Create a new animation with default empty keyframes
+            float defaultFrameRate = 12.0f;
+            int defaultTotalFrames = 12;
+            
+            List<SpriteKeyframeData> defaultKeyframes = new List<SpriteKeyframeData>();
+            for (int i = 0; i < defaultTotalFrames; i++)
+            {
+                float time = i / defaultFrameRate;
+                defaultKeyframes.Add(new SpriteKeyframeData(index: i, time: time, sprite: null));
+            }
+            
+            _currentAnimationInfo = new AnimationSpriteInfo(
+                animationName: stateName,
+                duration: defaultTotalFrames / defaultFrameRate,
+                frameRate: defaultFrameRate,
+                totalFrames: defaultTotalFrames,
+                keyframes: defaultKeyframes,
+                destinationFolderPath: "Assets/Animations"
+            );
+            
+            _originalKeyframes = new List<SpriteKeyframeData>(defaultKeyframes);
+            _hasData = true;
+            
+            DataChanged?.Invoke(obj: _currentAnimationInfo);
+        }
+
+        /// <summary>
         /// Loads sprite keyframes from the given animator state.
         /// </summary>
         /// <param name="state">The animator state to analyze</param>

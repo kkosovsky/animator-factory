@@ -31,7 +31,9 @@ namespace AnimatorFactory.Editor
         void OnAddStateRequested()
         {
             Debug.Log("Add State Clicked");
-            // TODO: Implement add state functionality
+            
+            // Create a new empty animation state for editing
+            _spriteKeyframeViewModel.CreateNewAnimationState("New State");
         }
     }
 }
