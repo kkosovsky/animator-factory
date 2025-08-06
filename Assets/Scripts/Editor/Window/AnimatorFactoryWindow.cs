@@ -22,6 +22,7 @@ namespace AnimatorFactory
         AnimatorStatesView _animatorStatesView;
         SpriteKeyframesView _spriteKeyframesView;
         GenerationControlsView _generationControlsView;
+        UnityEngine.UIElements.Image _spriteImage;
 
         AnimatorFactoryController _controller;
 
@@ -86,6 +87,11 @@ namespace AnimatorFactory
                 spriteKeyframesView: _spriteKeyframesView,
                 generationControlsView: _generationControlsView
             );
+
+            if (_spriteImage != null)
+            {
+                _controller.SetSpriteImage(spriteImage: _spriteImage);
+            }
         }
     }
 }

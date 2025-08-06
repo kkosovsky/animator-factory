@@ -14,7 +14,7 @@ namespace AnimatorFactory
             };
 
             CreateSpriteSelectionSection(container: content);
-            CreateSpriteImage(sprite: null, width: 0, height: 0, container: content);
+            CreateSpriteImage(container: content);
             
             return content;
         }
@@ -31,22 +31,20 @@ namespace AnimatorFactory
             container.Add(child: _prefabField);
         }
         
-        void CreateSpriteImage(Sprite sprite, float width, float height, VisualElement container)
+        void CreateSpriteImage(VisualElement container)
         {
-            Image image = new()
+            _spriteImage = new UnityEngine.UIElements.Image
             {
-                sprite = sprite,
                 scaleMode = ScaleMode.ScaleToFit,
                 style =
                 {
-                    width = width,
-                    height = height,
                     alignSelf = Align.Center,
-                    display = DisplayStyle.None
+                    display = DisplayStyle.None,
+                    marginTop = 10
                 }
             };
             
-            container.Add(child: image);
+            container.Add(child: _spriteImage);
         }
 
         void OnTextureSelected(ChangeEvent<Object> evt)

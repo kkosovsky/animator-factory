@@ -47,6 +47,11 @@ namespace AnimatorFactory.Editor
             _spriteEditionTabController.OnTextureSelectionChanged(texture: texture);
         }
 
+        public void SetSpriteImage(UnityEngine.UIElements.Image spriteImage)
+        {
+            _spriteEditionTabController.SetSpriteImage(spriteImage: spriteImage);
+        }
+
         public void Dispose()
         {
             _animatorStateEditionTabController?.Dispose();
