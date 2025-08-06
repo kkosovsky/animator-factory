@@ -48,9 +48,9 @@ namespace AnimatorFactory.Editor
             _animatorStateEditionTabController.OnPrefabSelectionChanged(prefab: prefab);
         }
 
-        public void OnSpriteSelectionChanged(Sprite sprite)
+        public void OnTextureSelectionChanged(Texture2D texture)
         {
-            _spriteEditionTabController.OnSpriteSelectionChanged(sprite: sprite);
+            _spriteEditionTabController.OnTextureSelectionChanged(texture: texture);
         }
 
         public void Dispose()

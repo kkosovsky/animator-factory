@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -6,17 +7,20 @@ namespace AnimatorFactory.SpriteEdition
 {
     public class SpriteEditionView : VisualElement
     {
-        public event Action<Sprite> SpriteSelectionChanged;
+        public event Action<Texture2D> TextureSelectionChanged;
 
-        Image _spriteImage;
+        Image _textureImage;
         HelpBox _helpBox;
+        VisualElement _spriteModeContainer;
+        Label _spriteModeLabel;
+        Label _spriteCountLabel;
 
         public SpriteEditionView() => CreateUI();
 
-        public void OnSpriteChanged(Sprite sprite)
+        public void OnTextureChanged(Texture2D texture)
         {
             HideStatus();
-            DisplaySprite(sprite: sprite);
+            DisplayTexture(texture: texture);
         }
 
         public void OnStatusChanged(string message, bool isError)
@@ -24,11 +28,16 @@ namespace AnimatorFactory.SpriteEdition
             ShowStatus(message: message, type: isError ? HelpBoxMessageType.Error : HelpBoxMessageType.Info);
         }
 
-        public void SetSpriteSelectionField(UnityEditor.UIElements.ObjectField spriteField)
+        public void OnSpriteModeChanged(SpriteImportMode mode, int spriteCount)
         {
-            if (spriteField != null)
+            UpdateSpriteModeDisplay(mode: mode, spriteCount: spriteCount);
+        }
+
+        public void SetTextureSelectionField(UnityEditor.UIElements.ObjectField textureField)
+        {
+            if (textureField != null)
             {
-                spriteField.RegisterValueChangedCallback(callback: OnSpriteFieldChanged);
+                textureField.RegisterValueChangedCallback(callback: OnTextureFieldChanged);
             }
         }
 
@@ -37,6 +46,7 @@ namespace AnimatorFactory.SpriteEdition
             style.flexGrow = 1;
 
             CreateStatusSection();
+            CreateSpriteModeSection();
             CreateImageSection();
         }
 
@@ -54,9 +64,53 @@ namespace AnimatorFactory.SpriteEdition
             Add(child: _helpBox);
         }
 
+        void CreateSpriteModeSection()
+        {
+            _spriteModeContainer = new VisualElement
+            {
+                style =
+                {
+                    flexDirection = FlexDirection.Row,
+                    justifyContent = Justify.SpaceBetween,
+                    marginBottom = 10,
+                    paddingTop = 5,
+                    paddingBottom = 5,
+                    paddingLeft = 10,
+                    paddingRight = 10,
+                    backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.3f),
+                    borderTopLeftRadius = 4,
+                    borderTopRightRadius = 4,
+                    borderBottomLeftRadius = 4,
+                    borderBottomRightRadius = 4,
+                    display = DisplayStyle.None
+                }
+            };
+
+            _spriteModeLabel = new Label("Mode: Unknown")
+            {
+                style =
+                {
+                    unityFontStyleAndWeight = FontStyle.Bold,
+                    color = Color.white
+                }
+            };
+
+            _spriteCountLabel = new Label("")
+            {
+                style =
+                {
+                    color = new Color(0.8f, 0.8f, 0.8f, 1f)
+                }
+            };
+
+            _spriteModeContainer.Add(_spriteModeLabel);
+            _spriteModeContainer.Add(_spriteCountLabel);
+            Add(child: _spriteModeContainer);
+        }
+
         void CreateImageSection()
         {
-            _spriteImage = new Image
+            _textureImage = new Image
             {
                 scaleMode = ScaleMode.ScaleToFit,
                 style =
@@ -67,22 +121,55 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
 
-            Add(child: _spriteImage);
+            Add(child: _textureImage);
         }
 
-        void DisplaySprite(Sprite sprite)
+        void DisplayTexture(Texture2D texture)
         {
-            if (sprite == null)
+            if (texture == null)
             {
-                _spriteImage.style.display = DisplayStyle.None;
-                _spriteImage.sprite = null;
+                _textureImage.style.display = DisplayStyle.None;
+                _textureImage.sprite = null;
+                _spriteModeContainer.style.display = DisplayStyle.None;
                 return;
             }
 
-            _spriteImage.sprite = sprite;
-            _spriteImage.style.width = sprite.rect.width * 2;
-            _spriteImage.style.height = sprite.rect.height * 2;
-            _spriteImage.style.display = DisplayStyle.Flex;
+            Sprite sprite = CreateSpriteFromTexture(texture);
+            _textureImage.sprite = sprite;
+            _textureImage.style.width = texture.width * 2;
+            _textureImage.style.height = texture.height * 2;
+            _textureImage.style.display = DisplayStyle.Flex;
+        }
+
+        void UpdateSpriteModeDisplay(SpriteImportMode mode, int spriteCount)
+        {
+            if (mode == SpriteImportMode.None)
+            {
+                _spriteModeContainer.style.display = DisplayStyle.None;
+                return;
+            }
+
+            _spriteModeContainer.style.display = DisplayStyle.Flex;
+            
+            string modeText = mode switch
+            {
+                SpriteImportMode.Single => "Single",
+                SpriteImportMode.Multiple => "Multiple",
+                SpriteImportMode.Polygon => "Polygon",
+                _ => "Unknown"
+            };
+
+            _spriteModeLabel.text = $"Mode: {modeText}";
+            
+            if (mode == SpriteImportMode.Multiple)
+            {
+                _spriteCountLabel.text = $"{spriteCount} sprites";
+                _spriteCountLabel.style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                _spriteCountLabel.style.display = DisplayStyle.None;
+            }
         }
 
         void ShowStatus(string message, HelpBoxMessageType type)
@@ -97,10 +184,19 @@ namespace AnimatorFactory.SpriteEdition
             _helpBox.style.display = DisplayStyle.None;
         }
 
-        void OnSpriteFieldChanged(ChangeEvent<UnityEngine.Object> evt)
+        void OnTextureFieldChanged(ChangeEvent<UnityEngine.Object> evt)
         {
-            Sprite selectedSprite = evt.newValue as Sprite;
-            SpriteSelectionChanged?.Invoke(obj: selectedSprite);
+            Texture2D selectedTexture = evt.newValue as Texture2D;
+            TextureSelectionChanged?.Invoke(obj: selectedTexture);
+        }
+
+        Sprite CreateSpriteFromTexture(Texture2D texture)
+        {
+            return Sprite.Create(
+                texture: texture,
+                rect: new Rect(0, 0, texture.width, texture.height),
+                pivot: new Vector2(0.5f, 0.5f)
+            );
         }
     }
 }

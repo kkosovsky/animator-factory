@@ -6,46 +6,66 @@ namespace AnimatorFactory.SpriteEdition
 {
     public class SpriteEditionViewModel
     {
-        public event Action<Sprite> SpriteChanged;
+        public event Action<Texture2D> TextureChanged;
         public event Action<string, bool> StatusChanged;
+        public event Action<SpriteImportMode, int> SpriteModeChanged;
 
-        Sprite _currentSprite;
+        Texture2D _currentTexture;
 
-        public Sprite CurrentSprite => _currentSprite;
+        public Texture2D CurrentTexture => _currentTexture;
 
-        public void LoadSprite(Sprite sprite)
+        public void LoadTexture(Texture2D texture)
         {
-            if (sprite == null)
+            if (texture == null)
             {
-                ClearSprite();
-                ShowStatus(message: "No sprite selected.", isError: false);
+                ClearTexture();
+                ShowStatus(message: "No texture selected.", isError: false);
                 return;
             }
 
-            _currentSprite = sprite;
-            SpriteChanged?.Invoke(obj: sprite);
+            _currentTexture = texture;
+            TextureChanged?.Invoke(obj: texture);
 
-            string spriteMode = GetSpriteMode(sprite);
-            ShowStatus(message: $"Sprite loaded: {sprite.name} - Mode: {spriteMode}", isError: false);
+            var (spriteMode, spriteCount) = GetSpriteInfo(texture);
+            SpriteModeChanged?.Invoke(arg1: spriteMode, arg2: spriteCount);
+            
+            string modeText = GetSpriteModeText(spriteMode);
+            string message = spriteMode == SpriteImportMode.Multiple 
+                ? $"Texture loaded: {texture.name} - Mode: {modeText} ({spriteCount} sprites)"
+                : $"Texture loaded: {texture.name} - Mode: {modeText}";
+                
+            ShowStatus(message: message, isError: false);
         }
 
         public void Clear()
         {
-            ClearSprite();
+            ClearTexture();
         }
 
-        string GetSpriteMode(Sprite sprite)
+        (SpriteImportMode mode, int count) GetSpriteInfo(Texture2D texture)
         {
-            if (sprite == null || sprite.texture == null)
-                return "Unknown";
+            if (texture == null)
+                return (SpriteImportMode.None, 0);
 
-            string assetPath = AssetDatabase.GetAssetPath(sprite.texture);
+            string assetPath = AssetDatabase.GetAssetPath(texture);
             TextureImporter textureImporter = AssetImporter.GetAtPath(assetPath) as TextureImporter;
             
             if (textureImporter == null)
-                return "Unknown";
+                return (SpriteImportMode.None, 0);
 
-            return textureImporter.spriteImportMode switch
+            int spriteCount = 1;
+            if (textureImporter.spriteImportMode == SpriteImportMode.Multiple)
+            {
+                UnityEngine.Object[] sprites = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetPath);
+                spriteCount = sprites?.Length ?? 0;
+            }
+
+            return (textureImporter.spriteImportMode, spriteCount);
+        }
+
+        string GetSpriteModeText(SpriteImportMode mode)
+        {
+            return mode switch
             {
                 SpriteImportMode.Single => "Single",
                 SpriteImportMode.Multiple => "Multiple",
@@ -54,21 +74,22 @@ namespace AnimatorFactory.SpriteEdition
             };
         }
 
-        public bool IsSpriteMultiple(Sprite sprite)
+        public bool IsTextureMultipleSprite(Texture2D texture)
         {
-            if (sprite == null || sprite.texture == null)
+            if (texture == null)
                 return false;
 
-            string assetPath = AssetDatabase.GetAssetPath(sprite.texture);
+            string assetPath = AssetDatabase.GetAssetPath(texture);
             TextureImporter textureImporter = AssetImporter.GetAtPath(assetPath) as TextureImporter;
             
             return textureImporter?.spriteImportMode == SpriteImportMode.Multiple;
         }
 
-        void ClearSprite()
+        void ClearTexture()
         {
-            _currentSprite = null;
-            SpriteChanged?.Invoke(obj: null);
+            _currentTexture = null;
+            TextureChanged?.Invoke(obj: null);
+            SpriteModeChanged?.Invoke(arg1: SpriteImportMode.None, arg2: 0);
         }
 
         void ShowStatus(string message, bool isError)
