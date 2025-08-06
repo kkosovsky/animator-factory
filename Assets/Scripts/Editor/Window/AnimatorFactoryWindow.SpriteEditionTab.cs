@@ -51,6 +51,8 @@ namespace AnimatorFactory
 
         void OnTextureSelected(ChangeEvent<Object> evt)
         {
+            Texture2D selectedTexture = evt.newValue as Texture2D;
+            _controller?.OnTextureSelectionChanged(texture: selectedTexture);
         }
     }
 }
