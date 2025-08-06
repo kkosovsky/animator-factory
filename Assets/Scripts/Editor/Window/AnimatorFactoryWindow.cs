@@ -56,10 +56,10 @@ namespace AnimatorFactory
             };
             rootVisualElement.Add(child: mainContainer);
 
-            CreateTabbedInterface(container: mainContainer);
+            CreateTabs(container: mainContainer);
         }
 
-        void CreateTabbedInterface(VisualElement container)
+        void CreateTabs(VisualElement container)
         {
             _mainTabView = new TabView
             {
@@ -69,26 +69,13 @@ namespace AnimatorFactory
                 }
             };
 
+            VisualElement spriteEditionContent = CreatSpriteEditionContent();
+            _mainTabView.AddTab(title: Strings.spriteEditionTabLabel, content: spriteEditionContent);
+            
             VisualElement animatorStatesContent = CreateAnimatorStatesTabContent();
-            _mainTabView.AddTab(Strings.animatorStatesTabLabel, animatorStatesContent);
+            _mainTabView.AddTab(title: Strings.animatorStatesTabLabel, content: animatorStatesContent);
 
-            container.Add(_mainTabView);
-        }
-
-        VisualElement CreateAnimatorStatesTabContent()
-        {
-            VisualElement content = new VisualElement
-            {
-                style = { flexGrow = 1 }
-            };
-
-            CreatePrefabSelectionSection(container: content);
-            CreateHierarchySection(container: content);
-            CreateAnimatorStatesSection(container: content);
-            CreateSpriteKeyframeSection(container: content);
-            CreateGenerateControlsView(container: content);
-
-            return content;
+            container.Add(child: _mainTabView);
         }
 
         void InitializeController()
@@ -99,58 +86,6 @@ namespace AnimatorFactory
                 spriteKeyframesView: _spriteKeyframesView,
                 generationControlsView: _generationControlsView
             );
-        }
-
-        void CreatePrefabSelectionSection(VisualElement container)
-        {
-            _prefabField = new ObjectField(label: Strings.prefabSelectionLabel)
-            {
-                objectType = typeof(GameObject),
-                allowSceneObjects = false
-            };
-            
-            _prefabField.RegisterValueChangedCallback(callback: OnPrefabSelectionChanged);
-            container.Add(child: _prefabField);
-        }
-
-        void CreateHierarchySection(VisualElement container)
-        {
-            Label hierarchyLabel = new(text: Strings.hierarchyLabel)
-            {
-                style = { 
-                    unityFontStyleAndWeight = FontStyle.Bold,
-                    marginTop = 10,
-                    marginBottom = 5
-                }
-            };
-            container.Add(child: hierarchyLabel);
-
-            _prefabHierarchyView = new PrefabHierarchyView();
-            container.Add(child: _prefabHierarchyView);
-        }
-
-        void CreateAnimatorStatesSection(VisualElement container)
-        {
-            _animatorStatesView = new AnimatorStatesView();
-            container.Add(child: _animatorStatesView);
-        }
-
-        void CreateSpriteKeyframeSection(VisualElement container)
-        {
-            _spriteKeyframesView = new SpriteKeyframesView();
-            container.Add(child: _spriteKeyframesView);
-        }
-        
-        void CreateGenerateControlsView(VisualElement container)
-        {
-            _generationControlsView = new GenerationControlsView();
-            container.Add(child: _generationControlsView);
-        }
-
-        void OnPrefabSelectionChanged(ChangeEvent<Object> evt)
-        {
-            GameObject selectedPrefab = evt.newValue as GameObject;
-            _controller?.OnPrefabSelectionChanged(prefab: selectedPrefab);
         }
     }
 }
