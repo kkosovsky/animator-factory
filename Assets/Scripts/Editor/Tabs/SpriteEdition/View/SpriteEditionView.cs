@@ -6,17 +6,17 @@ namespace AnimatorFactory.SpriteEdition
 {
     public class SpriteEditionView : VisualElement
     {
-        public event Action<Texture2D> TextureSelectionChanged;
+        public event Action<Sprite> SpriteSelectionChanged;
 
         Image _spriteImage;
         HelpBox _helpBox;
 
         public SpriteEditionView() => CreateUI();
 
-        public void OnTextureChanged(Texture2D texture)
+        public void OnSpriteChanged(Sprite sprite)
         {
             HideStatus();
-            DisplayTexture(texture: texture);
+            DisplaySprite(sprite: sprite);
         }
 
         public void OnStatusChanged(string message, bool isError)
@@ -24,11 +24,11 @@ namespace AnimatorFactory.SpriteEdition
             ShowStatus(message: message, type: isError ? HelpBoxMessageType.Error : HelpBoxMessageType.Info);
         }
 
-        public void SetTextureSelectionField(UnityEditor.UIElements.ObjectField textureField)
+        public void SetSpriteSelectionField(UnityEditor.UIElements.ObjectField spriteField)
         {
-            if (textureField != null)
+            if (spriteField != null)
             {
-                textureField.RegisterValueChangedCallback(callback: OnTextureFieldChanged);
+                spriteField.RegisterValueChangedCallback(callback: OnSpriteFieldChanged);
             }
         }
 
@@ -70,19 +70,18 @@ namespace AnimatorFactory.SpriteEdition
             Add(child: _spriteImage);
         }
 
-        void DisplayTexture(Texture2D texture)
+        void DisplaySprite(Sprite sprite)
         {
-            if (texture == null)
+            if (sprite == null)
             {
                 _spriteImage.style.display = DisplayStyle.None;
                 _spriteImage.sprite = null;
                 return;
             }
 
-            Sprite sprite = CreateSpriteFromTexture(texture: texture);
             _spriteImage.sprite = sprite;
-            _spriteImage.style.width = texture.width * 2;
-            _spriteImage.style.height = texture.height * 2;
+            _spriteImage.style.width = sprite.rect.width * 2;
+            _spriteImage.style.height = sprite.rect.height * 2;
             _spriteImage.style.display = DisplayStyle.Flex;
         }
 
@@ -98,19 +97,10 @@ namespace AnimatorFactory.SpriteEdition
             _helpBox.style.display = DisplayStyle.None;
         }
 
-        void OnTextureFieldChanged(ChangeEvent<UnityEngine.Object> evt)
+        void OnSpriteFieldChanged(ChangeEvent<UnityEngine.Object> evt)
         {
-            Texture2D selectedTexture = evt.newValue as Texture2D;
-            TextureSelectionChanged?.Invoke(obj: selectedTexture);
-        }
-
-        Sprite CreateSpriteFromTexture(Texture2D texture)
-        {
-            return Sprite.Create(
-                texture: texture,
-                rect: new Rect(x: 0, y: 0, width: texture.width, height: texture.height),
-                pivot: new Vector2(x: 0.5f, y: 0.5f)
-            );
+            Sprite selectedSprite = evt.newValue as Sprite;
+            SpriteSelectionChanged?.Invoke(obj: selectedSprite);
         }
     }
 }

@@ -1,40 +1,74 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace AnimatorFactory.SpriteEdition
 {
     public class SpriteEditionViewModel
     {
-        public event Action<Texture2D> TextureChanged;
+        public event Action<Sprite> SpriteChanged;
         public event Action<string, bool> StatusChanged;
 
-        Texture2D _currentTexture;
+        Sprite _currentSprite;
 
-        public Texture2D CurrentTexture => _currentTexture;
+        public Sprite CurrentSprite => _currentSprite;
 
-        public void LoadTexture(Texture2D texture)
+        public void LoadSprite(Sprite sprite)
         {
-            if (texture == null)
+            if (sprite == null)
             {
-                ClearTexture();
-                ShowStatus(message: "No texture selected.", isError: false);
+                ClearSprite();
+                ShowStatus(message: "No sprite selected.", isError: false);
                 return;
             }
 
-            _currentTexture = texture;
-            TextureChanged?.Invoke(obj: texture);
-            ShowStatus(message: $"Texture loaded: {texture.name} ({texture.width}x{texture.height})", isError: false);
+            _currentSprite = sprite;
+            SpriteChanged?.Invoke(obj: sprite);
+
+            string spriteMode = GetSpriteMode(sprite);
+            ShowStatus(message: $"Sprite loaded: {sprite.name} - Mode: {spriteMode}", isError: false);
         }
 
         public void Clear()
         {
-            ClearTexture();
+            ClearSprite();
         }
 
-        void ClearTexture()
+        string GetSpriteMode(Sprite sprite)
         {
-            _currentTexture = null;
-            TextureChanged?.Invoke(obj: null);
+            if (sprite == null || sprite.texture == null)
+                return "Unknown";
+
+            string assetPath = AssetDatabase.GetAssetPath(sprite.texture);
+            TextureImporter textureImporter = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            
+            if (textureImporter == null)
+                return "Unknown";
+
+            return textureImporter.spriteImportMode switch
+            {
+                SpriteImportMode.Single => "Single",
+                SpriteImportMode.Multiple => "Multiple",
+                SpriteImportMode.Polygon => "Polygon",
+                _ => "Unknown"
+            };
+        }
+
+        public bool IsSpriteMultiple(Sprite sprite)
+        {
+            if (sprite == null || sprite.texture == null)
+                return false;
+
+            string assetPath = AssetDatabase.GetAssetPath(sprite.texture);
+            TextureImporter textureImporter = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            
+            return textureImporter?.spriteImportMode == SpriteImportMode.Multiple;
+        }
+
+        void ClearSprite()
+        {
+            _currentSprite = null;
+            SpriteChanged?.Invoke(obj: null);
         }
 
         void ShowStatus(string message, bool isError)

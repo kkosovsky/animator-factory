@@ -22,19 +22,16 @@ namespace AnimatorFactory
         
         void CreateSpriteSelectionSection(VisualElement container)
         {
-            ObjectField textureField = new ObjectField(label: Strings.textureSelectionLabel)
+            ObjectField spriteField = new(label: Strings.spriteSelectionLabel)
             {
-                objectType = typeof(Texture2D),
+                objectType = typeof(Sprite),
                 allowSceneObjects = false
             };
 
-            textureField.RegisterValueChangedCallback(callback: OnTextureSelected);
-            container.Insert(index: 0, element: textureField);
+            spriteField.RegisterValueChangedCallback(callback: OnSpriteSelected);
+            container.Insert(index: 0, element: spriteField);
 
-            if (_spriteEditionView != null)
-            {
-                _spriteEditionView.SetTextureSelectionField(textureField: textureField);
-            }
+            _spriteEditionView?.SetSpriteSelectionField(spriteField: spriteField);
         }
         
         void CreateSpriteEditionView(VisualElement container)
@@ -43,10 +40,10 @@ namespace AnimatorFactory
             container.Add(child: _spriteEditionView);
         }
 
-        void OnTextureSelected(ChangeEvent<Object> evt)
+        void OnSpriteSelected(ChangeEvent<Object> evt)
         {
-            Texture2D selectedTexture = evt.newValue as Texture2D;
-            _controller?.OnTextureSelectionChanged(texture: selectedTexture);
+            Sprite selectedSprite = evt.newValue as Sprite;
+            _controller?.OnSpriteSelectionChanged(sprite: selectedSprite);
         }
     }
 }

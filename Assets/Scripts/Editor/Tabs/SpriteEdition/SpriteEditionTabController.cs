@@ -19,25 +19,25 @@ namespace AnimatorFactory.Editor
             BindEvents();
         }
 
-        public void OnTextureSelectionChanged(Texture2D texture)
+        public void OnSpriteSelectionChanged(Sprite sprite)
         {
-            _spriteEditionViewModel.LoadTexture(texture: texture);
+            _spriteEditionViewModel.LoadSprite(sprite: sprite);
         }
 
         public void Dispose() => UnbindEvents();
 
         void BindEvents()
         {
-            _spriteEditionViewModel.TextureChanged += _spriteEditionView.OnTextureChanged;
+            _spriteEditionViewModel.SpriteChanged += _spriteEditionView.OnSpriteChanged;
             _spriteEditionViewModel.StatusChanged += _spriteEditionView.OnStatusChanged;
-            _spriteEditionView.TextureSelectionChanged += OnTextureSelectionChanged;
+            _spriteEditionView.SpriteSelectionChanged += OnSpriteSelectionChanged;
         }
 
         void UnbindEvents()
         {
-            _spriteEditionViewModel.TextureChanged -= _spriteEditionView.OnTextureChanged;
+            _spriteEditionViewModel.SpriteChanged -= _spriteEditionView.OnSpriteChanged;
             _spriteEditionViewModel.StatusChanged -= _spriteEditionView.OnStatusChanged;
-            _spriteEditionView.TextureSelectionChanged -= OnTextureSelectionChanged;
+            _spriteEditionView.SpriteSelectionChanged -= OnSpriteSelectionChanged;
         }
     }
 }
