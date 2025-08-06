@@ -17,6 +17,7 @@ namespace AnimatorFactory.SpriteEdition
         Label _spriteModeLabel;
         Label _spriteCountLabel;
         DropdownField _spriteModeDropdown;
+        Label _textureInfoLabel;
 
         public SpriteEditionView() => CreateUI();
 
@@ -51,6 +52,7 @@ namespace AnimatorFactory.SpriteEdition
             CreateStatusSection();
             CreateSpriteModeSection();
             CreateImageSection();
+            CreateTextureInfoSection();
         }
 
         void CreateStatusSection()
@@ -150,6 +152,23 @@ namespace AnimatorFactory.SpriteEdition
             Add(child: _textureImage);
         }
 
+        void CreateTextureInfoSection()
+        {
+            _textureInfoLabel = new Label("")
+            {
+                style =
+                {
+                    alignSelf = Align.Center,
+                    marginTop = 8,
+                    color = new Color(0.8f, 0.8f, 0.8f, 1f),
+                    fontSize = 12,
+                    display = DisplayStyle.None
+                }
+            };
+
+            Add(child: _textureInfoLabel);
+        }
+
         void DisplayTexture(Texture2D texture)
         {
             if (texture == null)
@@ -157,6 +176,7 @@ namespace AnimatorFactory.SpriteEdition
                 _textureImage.style.display = DisplayStyle.None;
                 _textureImage.sprite = null;
                 _spriteModeContainer.style.display = DisplayStyle.None;
+                _textureInfoLabel.style.display = DisplayStyle.None;
                 return;
             }
 
@@ -165,6 +185,21 @@ namespace AnimatorFactory.SpriteEdition
             _textureImage.style.width = texture.width * 2;
             _textureImage.style.height = texture.height * 2;
             _textureImage.style.display = DisplayStyle.Flex;
+
+            UpdateTextureInfo(texture);
+        }
+
+        void UpdateTextureInfo(Texture2D texture)
+        {
+            if (texture == null)
+            {
+                _textureInfoLabel.style.display = DisplayStyle.None;
+                return;
+            }
+
+            string fileName = System.IO.Path.GetFileName(UnityEditor.AssetDatabase.GetAssetPath(texture));
+            _textureInfoLabel.text = $"{fileName} ({texture.width} x {texture.height})";
+            _textureInfoLabel.style.display = DisplayStyle.Flex;
         }
 
         void UpdateSpriteModeDisplay(SpriteImportMode mode, int spriteCount)
