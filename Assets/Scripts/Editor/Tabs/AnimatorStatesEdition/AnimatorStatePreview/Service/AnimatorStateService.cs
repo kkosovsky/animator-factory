@@ -36,7 +36,7 @@ namespace AnimatorFactory.AnimatorStatePreview
                 return null;
             }
 
-            if (string.IsNullOrEmpty(stateName))
+            if (string.IsNullOrEmpty(value: stateName))
             {
                 Debug.LogError(message: "State name is null or empty, cannot create state");
                 return null;
@@ -66,7 +66,7 @@ namespace AnimatorFactory.AnimatorStatePreview
         /// <returns>List of all animator states</returns>
         public static List<AnimatorState> GetAllAnimatorStates(AnimatorController controller)
         {
-            return StateAnalysisService.GetAllAnimatorStates(controller);
+            return StateAnalysisService.GetAllAnimatorStates(controller: controller);
         }
     }
 }

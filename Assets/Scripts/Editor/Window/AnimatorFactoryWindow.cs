@@ -4,6 +4,7 @@ using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
 using AnimatorFactory.AnimatorStatePreview;
 using AnimatorFactory.GenerationControls;
+using AnimatorFactory.SpriteEdition;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace AnimatorFactory
         AnimatorStatesView _animatorStatesView;
         SpriteKeyframesView _spriteKeyframesView;
         GenerationControlsView _generationControlsView;
-        UnityEngine.UIElements.Image _spriteImage;
+        SpriteEditionView _spriteEditionView;
 
         AnimatorFactoryController _controller;
 
@@ -85,13 +86,9 @@ namespace AnimatorFactory
                 prefabHierarchyView: _prefabHierarchyView,
                 animatorStatesView: _animatorStatesView,
                 spriteKeyframesView: _spriteKeyframesView,
-                generationControlsView: _generationControlsView
+                generationControlsView: _generationControlsView,
+                spriteEditionView: _spriteEditionView
             );
-
-            if (_spriteImage != null)
-            {
-                _controller.SetSpriteImage(spriteImage: _spriteImage);
-            }
         }
     }
 }

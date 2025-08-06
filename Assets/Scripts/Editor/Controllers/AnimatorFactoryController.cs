@@ -2,6 +2,7 @@ using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
 using AnimatorFactory.AnimatorStatePreview;
 using AnimatorFactory.GenerationControls;
+using AnimatorFactory.SpriteEdition;
 using UnityEngine;
 
 namespace AnimatorFactory.Editor
@@ -15,13 +16,15 @@ namespace AnimatorFactory.Editor
             PrefabHierarchyView prefabHierarchyView,
             AnimatorStatesView animatorStatesView,
             SpriteKeyframesView spriteKeyframesView,
-            GenerationControlsView generationControlsView
+            GenerationControlsView generationControlsView,
+            SpriteEditionView spriteEditionView
         )
         {
             PrefabHierarchyViewModel prefabHierarchyViewModel = new();
             AnimatorStatesViewModel animatorStatesViewModel = new();
             SpriteKeyframeViewModel spriteKeyframeViewModel = new();
             GenerationControlsViewModel generationControlsViewModel = new();
+            SpriteEditionViewModel spriteEditionViewModel = new();
 
             _animatorStateEditionTabController = new AnimatorStateEditionTabController(
                 prefabHierarchyViewModel: prefabHierarchyViewModel,
@@ -34,7 +37,10 @@ namespace AnimatorFactory.Editor
                 generationControlsView: generationControlsView
             );
 
-            _spriteEditionTabController = new SpriteEditionTabController();
+            _spriteEditionTabController = new SpriteEditionTabController(
+                spriteEditionViewModel: spriteEditionViewModel,
+                spriteEditionView: spriteEditionView
+            );
         }
 
         public void OnPrefabSelectionChanged(GameObject prefab)
@@ -45,11 +51,6 @@ namespace AnimatorFactory.Editor
         public void OnTextureSelectionChanged(Texture2D texture)
         {
             _spriteEditionTabController.OnTextureSelectionChanged(texture: texture);
-        }
-
-        public void SetSpriteImage(UnityEngine.UIElements.Image spriteImage)
-        {
-            _spriteEditionTabController.SetSpriteImage(spriteImage: spriteImage);
         }
 
         public void Dispose()

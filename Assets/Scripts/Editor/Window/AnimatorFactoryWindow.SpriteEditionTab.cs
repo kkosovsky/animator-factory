@@ -1,3 +1,4 @@
+using AnimatorFactory.SpriteEdition;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -13,38 +14,33 @@ namespace AnimatorFactory
                 style = { flexGrow = 1 }
             };
 
+            CreateSpriteEditionView(container: content);
             CreateSpriteSelectionSection(container: content);
-            CreateSpriteImage(container: content);
             
             return content;
         }
         
         void CreateSpriteSelectionSection(VisualElement container)
         {
-            _prefabField = new ObjectField(label: Strings.textureSelectionLabel)
+            ObjectField textureField = new ObjectField(label: Strings.textureSelectionLabel)
             {
                 objectType = typeof(Texture2D),
                 allowSceneObjects = false
             };
 
-            _prefabField.RegisterValueChangedCallback(callback: OnTextureSelected);
-            container.Add(child: _prefabField);
+            textureField.RegisterValueChangedCallback(callback: OnTextureSelected);
+            container.Insert(index: 0, element: textureField);
+
+            if (_spriteEditionView != null)
+            {
+                _spriteEditionView.SetTextureSelectionField(textureField: textureField);
+            }
         }
         
-        void CreateSpriteImage(VisualElement container)
+        void CreateSpriteEditionView(VisualElement container)
         {
-            _spriteImage = new UnityEngine.UIElements.Image
-            {
-                scaleMode = ScaleMode.ScaleToFit,
-                style =
-                {
-                    alignSelf = Align.Center,
-                    display = DisplayStyle.None,
-                    marginTop = 10
-                }
-            };
-            
-            container.Add(child: _spriteImage);
+            _spriteEditionView = new SpriteEditionView();
+            container.Add(child: _spriteEditionView);
         }
 
         void OnTextureSelected(ChangeEvent<Object> evt)
