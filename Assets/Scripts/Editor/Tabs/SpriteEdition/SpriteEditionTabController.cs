@@ -1,4 +1,5 @@
 using AnimatorFactory.SpriteEdition;
+using UnityEditor;
 using UnityEngine;
 
 namespace AnimatorFactory.Editor
@@ -32,6 +33,7 @@ namespace AnimatorFactory.Editor
             _spriteEditionViewModel.StatusChanged += _spriteEditionView.OnStatusChanged;
             _spriteEditionViewModel.SpriteModeChanged += _spriteEditionView.OnSpriteModeChanged;
             _spriteEditionView.TextureSelectionChanged += OnTextureSelectionChanged;
+            _spriteEditionView.SpriteModeChangeRequested += OnSpriteModeChangeRequested;
         }
 
         void UnbindEvents()
@@ -40,6 +42,12 @@ namespace AnimatorFactory.Editor
             _spriteEditionViewModel.StatusChanged -= _spriteEditionView.OnStatusChanged;
             _spriteEditionViewModel.SpriteModeChanged -= _spriteEditionView.OnSpriteModeChanged;
             _spriteEditionView.TextureSelectionChanged -= OnTextureSelectionChanged;
+            _spriteEditionView.SpriteModeChangeRequested -= OnSpriteModeChangeRequested;
+        }
+
+        void OnSpriteModeChangeRequested(SpriteImportMode newMode)
+        {
+            _spriteEditionViewModel.ChangeSpriteMode(newMode: newMode);
         }
     }
 }

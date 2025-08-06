@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -8,12 +9,14 @@ namespace AnimatorFactory.SpriteEdition
     public class SpriteEditionView : VisualElement
     {
         public event Action<Texture2D> TextureSelectionChanged;
+        public event Action<SpriteImportMode> SpriteModeChangeRequested;
 
         Image _textureImage;
         HelpBox _helpBox;
         VisualElement _spriteModeContainer;
         Label _spriteModeLabel;
         Label _spriteCountLabel;
+        DropdownField _spriteModeDropdown;
 
         public SpriteEditionView() => CreateUI();
 
@@ -70,11 +73,9 @@ namespace AnimatorFactory.SpriteEdition
             {
                 style =
                 {
-                    flexDirection = FlexDirection.Row,
-                    justifyContent = Justify.SpaceBetween,
                     marginBottom = 10,
-                    paddingTop = 5,
-                    paddingBottom = 5,
+                    paddingTop = 8,
+                    paddingBottom = 8,
                     paddingLeft = 10,
                     paddingRight = 10,
                     backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.3f),
@@ -86,7 +87,18 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
 
-            _spriteModeLabel = new Label("Mode: Unknown")
+            VisualElement topRow = new VisualElement
+            {
+                style =
+                {
+                    flexDirection = FlexDirection.Row,
+                    justifyContent = Justify.SpaceBetween,
+                    alignItems = Align.Center,
+                    marginBottom = 5
+                }
+            };
+
+            _spriteModeLabel = new Label("Current Mode:")
             {
                 style =
                 {
@@ -103,8 +115,22 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
 
-            _spriteModeContainer.Add(_spriteModeLabel);
-            _spriteModeContainer.Add(_spriteCountLabel);
+            topRow.Add(_spriteModeLabel);
+            topRow.Add(_spriteCountLabel);
+
+            _spriteModeDropdown = new DropdownField("Change Mode:", 
+                new List<string> { "Single", "Multiple" }, 0)
+            {
+                style =
+                {
+                    marginTop = 3,
+                    width = 200
+                }
+            };
+            _spriteModeDropdown.RegisterValueChangedCallback(OnSpriteModeDropdownChanged);
+
+            _spriteModeContainer.Add(topRow);
+            _spriteModeContainer.Add(_spriteModeDropdown);
             Add(child: _spriteModeContainer);
         }
 
@@ -155,11 +181,10 @@ namespace AnimatorFactory.SpriteEdition
             {
                 SpriteImportMode.Single => "Single",
                 SpriteImportMode.Multiple => "Multiple",
-                SpriteImportMode.Polygon => "Polygon",
                 _ => "Unknown"
             };
 
-            _spriteModeLabel.text = $"Mode: {modeText}";
+            _spriteModeLabel.text = $"Current Mode: {modeText}";
             
             if (mode == SpriteImportMode.Multiple)
             {
@@ -169,6 +194,15 @@ namespace AnimatorFactory.SpriteEdition
             else
             {
                 _spriteCountLabel.style.display = DisplayStyle.None;
+            }
+
+            // Update dropdown to reflect current mode without triggering callback
+            string currentValue = _spriteModeDropdown.value;
+            string newValue = modeText;
+            
+            if (currentValue != newValue)
+            {
+                _spriteModeDropdown.SetValueWithoutNotify(newValue);
             }
         }
 
@@ -188,6 +222,20 @@ namespace AnimatorFactory.SpriteEdition
         {
             Texture2D selectedTexture = evt.newValue as Texture2D;
             TextureSelectionChanged?.Invoke(obj: selectedTexture);
+        }
+
+        void OnSpriteModeDropdownChanged(ChangeEvent<string> evt)
+        {
+            string selectedMode = evt.newValue;
+            
+            SpriteImportMode mode = selectedMode switch
+            {
+                "Single" => SpriteImportMode.Single,
+                "Multiple" => SpriteImportMode.Multiple,
+                _ => SpriteImportMode.Single
+            };
+
+            SpriteModeChangeRequested?.Invoke(obj: mode);
         }
 
         Sprite CreateSpriteFromTexture(Texture2D texture)

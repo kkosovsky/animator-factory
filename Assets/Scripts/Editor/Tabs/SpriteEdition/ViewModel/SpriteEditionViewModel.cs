@@ -69,7 +69,6 @@ namespace AnimatorFactory.SpriteEdition
             {
                 SpriteImportMode.Single => "Single",
                 SpriteImportMode.Multiple => "Multiple",
-                SpriteImportMode.Polygon => "Polygon",
                 _ => "Unknown"
             };
         }
@@ -83,6 +82,46 @@ namespace AnimatorFactory.SpriteEdition
             TextureImporter textureImporter = AssetImporter.GetAtPath(assetPath) as TextureImporter;
             
             return textureImporter?.spriteImportMode == SpriteImportMode.Multiple;
+        }
+
+        public void ChangeSpriteMode(SpriteImportMode newMode)
+        {
+            if (_currentTexture == null)
+            {
+                ShowStatus(message: "No texture selected to change mode.", isError: true);
+                return;
+            }
+
+            string assetPath = AssetDatabase.GetAssetPath(_currentTexture);
+            TextureImporter textureImporter = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            
+            if (textureImporter == null)
+            {
+                ShowStatus(message: "Cannot change sprite mode - texture importer not found.", isError: true);
+                return;
+            }
+
+            if (textureImporter.spriteImportMode == newMode)
+            {
+                ShowStatus(message: $"Texture is already in {GetSpriteModeText(newMode)} mode.", isError: false);
+                return;
+            }
+
+            SpriteImportMode oldMode = textureImporter.spriteImportMode;
+            textureImporter.spriteImportMode = newMode;
+            
+            AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
+            
+            var (spriteMode, spriteCount) = GetSpriteInfo(_currentTexture);
+            SpriteModeChanged?.Invoke(arg1: spriteMode, arg2: spriteCount);
+            
+            string message = $"Changed sprite mode from {GetSpriteModeText(oldMode)} to {GetSpriteModeText(newMode)}";
+            if (newMode == SpriteImportMode.Multiple)
+            {
+                message += $" ({spriteCount} sprites detected)";
+            }
+            
+            ShowStatus(message: message, isError: false);
         }
 
         void ClearTexture()
