@@ -18,6 +18,11 @@ namespace AnimatorFactory.SpriteEdition
         Label _spriteCountLabel;
         DropdownField _spriteModeDropdown;
         Label _textureInfoLabel;
+        VisualElement _frameCalculationContainer;
+        TextField _rowsField;
+        TextField _columnsField;
+        Button _applyButton;
+        Label _frameSizeLabel;
 
         public SpriteEditionView() => CreateUI();
 
@@ -53,6 +58,7 @@ namespace AnimatorFactory.SpriteEdition
             CreateSpriteModeSection();
             CreateImageSection();
             CreateTextureInfoSection();
+            CreateFrameCalculationSection();
         }
 
         void CreateStatusSection()
@@ -169,6 +175,108 @@ namespace AnimatorFactory.SpriteEdition
             Add(child: _textureInfoLabel);
         }
 
+        void CreateFrameCalculationSection()
+        {
+            _frameCalculationContainer = new VisualElement
+            {
+                style =
+                {
+                    marginTop = 15,
+                    paddingTop = 10,
+                    paddingBottom = 10,
+                    paddingLeft = 10,
+                    paddingRight = 10,
+                    backgroundColor = new Color(0.15f, 0.15f, 0.15f, 0.5f),
+                    borderTopLeftRadius = 4,
+                    borderTopRightRadius = 4,
+                    borderBottomLeftRadius = 4,
+                    borderBottomRightRadius = 4,
+                    display = DisplayStyle.None
+                }
+            };
+
+            Label titleLabel = new Label("Frame Calculation")
+            {
+                style =
+                {
+                    unityFontStyleAndWeight = FontStyle.Bold,
+                    marginBottom = 8,
+                    color = Color.white
+                }
+            };
+
+            VisualElement inputRow = new VisualElement
+            {
+                style =
+                {
+                    flexDirection = FlexDirection.Row,
+                    alignItems = Align.Center,
+                    marginBottom = 8
+                }
+            };
+
+            Label rowsLabel = new Label("Rows:")
+            {
+                style =
+                {
+                    fontSize = 11,
+                    color = Color.gray,
+                    marginRight = 5
+                }
+            };
+            inputRow.Add(rowsLabel);
+
+            _rowsField = new TextField
+            {
+                value = "1",
+                style = { width = 50, marginRight = 15 }
+            };
+
+            Label columnsLabel = new Label("Columns:")
+            {
+                style =
+                {
+                    fontSize = 11,
+                    color = Color.gray,
+                    marginRight = 5
+                }
+            };
+
+            _columnsField = new TextField
+            {
+                value = "1",
+                style = { width = 50, marginRight = 15 }
+            };
+
+            _applyButton = new Button(OnApplyButtonClicked)
+            {
+                text = "Apply",
+                style = { width = 60 }
+            };
+
+            inputRow.Add(_rowsField);
+            inputRow.Add(columnsLabel);
+            inputRow.Add(_columnsField);
+            inputRow.Add(_applyButton);
+
+            _frameSizeLabel = new Label("")
+            {
+                style =
+                {
+                    marginTop = 5,
+                    color = new Color(0.9f, 0.9f, 0.9f, 1f),
+                    fontSize = 12,
+                    display = DisplayStyle.None
+                }
+            };
+
+            _frameCalculationContainer.Add(titleLabel);
+            _frameCalculationContainer.Add(inputRow);
+            _frameCalculationContainer.Add(_frameSizeLabel);
+
+            Add(child: _frameCalculationContainer);
+        }
+
         void DisplayTexture(Texture2D texture)
         {
             if (texture == null)
@@ -177,6 +285,7 @@ namespace AnimatorFactory.SpriteEdition
                 _textureImage.sprite = null;
                 _spriteModeContainer.style.display = DisplayStyle.None;
                 _textureInfoLabel.style.display = DisplayStyle.None;
+                _frameCalculationContainer.style.display = DisplayStyle.None;
                 return;
             }
 
@@ -187,6 +296,10 @@ namespace AnimatorFactory.SpriteEdition
             _textureImage.style.display = DisplayStyle.Flex;
 
             UpdateTextureInfo(texture);
+            _frameCalculationContainer.style.display = DisplayStyle.Flex;
+            
+            // Reset frame size display when new texture is loaded
+            _frameSizeLabel.style.display = DisplayStyle.None;
         }
 
         void UpdateTextureInfo(Texture2D texture)
@@ -271,6 +384,36 @@ namespace AnimatorFactory.SpriteEdition
             };
 
             SpriteModeChangeRequested?.Invoke(obj: mode);
+        }
+
+        void OnApplyButtonClicked()
+        {
+            if (_textureImage.sprite == null)
+                return;
+
+            if (!int.TryParse(_rowsField.value, out int rows) || rows <= 0)
+            {
+                _frameSizeLabel.text = "Error: Invalid rows value. Must be a positive integer.";
+                _frameSizeLabel.style.color = Color.red;
+                _frameSizeLabel.style.display = DisplayStyle.Flex;
+                return;
+            }
+
+            if (!int.TryParse(_columnsField.value, out int columns) || columns <= 0)
+            {
+                _frameSizeLabel.text = "Error: Invalid columns value. Must be a positive integer.";
+                _frameSizeLabel.style.color = Color.red;
+                _frameSizeLabel.style.display = DisplayStyle.Flex;
+                return;
+            }
+
+            Texture2D texture = _textureImage.sprite.texture;
+            int frameWidth = texture.width / columns;
+            int frameHeight = texture.height / rows;
+
+            _frameSizeLabel.text = $"Frame Size: {frameWidth} x {frameHeight} pixels";
+            _frameSizeLabel.style.color = new Color(0.9f, 0.9f, 0.9f, 1f);
+            _frameSizeLabel.style.display = DisplayStyle.Flex;
         }
 
         Sprite CreateSpriteFromTexture(Texture2D texture)
