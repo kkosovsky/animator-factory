@@ -131,6 +131,21 @@ namespace AnimatorFactory.SpriteEdition
             SpriteModeChanged?.Invoke(arg1: SpriteImportMode.None, arg2: 0);
         }
 
+        public void GenerateFrames(FrameGenerationData generationData)
+        {
+            // TODO: Implement frame generation logic
+            // This method will:
+            // 1. Change the sprite mode to Multiple if needed
+            // 2. Cut the texture into individual frames based on rows/columns
+            // 3. Create individual sprite assets
+            // 4. Update the texture importer with the new sprite data
+            
+            string message = $"Frame generation requested: {generationData.Rows}x{generationData.Columns} = {generationData.Rows * generationData.Columns} frames ";
+            message += $"(Frame size: {generationData.FrameWidth}x{generationData.FrameHeight})";
+            
+            ShowStatus(message: message, isError: false);
+        }
+
         void ShowStatus(string message, bool isError)
         {
             StatusChanged?.Invoke(arg1: message, arg2: isError);

@@ -6,10 +6,20 @@ using UnityEngine.UIElements;
 
 namespace AnimatorFactory.SpriteEdition
 {
+    public struct FrameGenerationData
+    {
+        public Texture2D Texture;
+        public int Rows;
+        public int Columns;
+        public int FrameWidth;
+        public int FrameHeight;
+    }
+
     public class SpriteEditionView : VisualElement
     {
         public event Action<Texture2D> TextureSelectionChanged;
         public event Action<SpriteImportMode> SpriteModeChangeRequested;
+        public event Action<FrameGenerationData> FrameGenerationRequested;
 
         Image _textureImage;
         HelpBox _helpBox;
@@ -22,6 +32,7 @@ namespace AnimatorFactory.SpriteEdition
         TextField _rowsField;
         TextField _columnsField;
         Button _applyButton;
+        Button _generateButton;
         Label _frameSizeLabel;
         SpriteGridOverlay _gridOverlay;
 
@@ -283,6 +294,33 @@ namespace AnimatorFactory.SpriteEdition
             _frameCalculationContainer.Add(titleLabel);
             _frameCalculationContainer.Add(inputRow);
             _frameCalculationContainer.Add(_frameSizeLabel);
+            
+            // Create Generate button row
+            VisualElement generateRow = new VisualElement
+            {
+                style =
+                {
+                    flexDirection = FlexDirection.Row,
+                    justifyContent = Justify.Center,
+                    marginTop = 10
+                }
+            };
+            
+            _generateButton = new Button(OnGenerateButtonClicked)
+            {
+                text = "Generate Frames",
+                style =
+                {
+                    width = 120,
+                    height = 25,
+                    backgroundColor = new Color(0.2f, 0.6f, 0.2f, 1f),
+                    color = Color.white,
+                    unityFontStyleAndWeight = FontStyle.Bold
+                }
+            };
+            
+            generateRow.Add(_generateButton);
+            _frameCalculationContainer.Add(generateRow);
 
             Add(child: _frameCalculationContainer);
         }
@@ -435,6 +473,42 @@ namespace AnimatorFactory.SpriteEdition
 
             // Show grid overlay on existing image
             _gridOverlay?.ShowGrid(rows, columns, frameWidth, frameHeight);
+        }
+        
+        void OnGenerateButtonClicked()
+        {
+            if (_textureImage.sprite == null)
+            {
+                ShowStatus("No texture selected for frame generation.", HelpBoxMessageType.Warning);
+                return;
+            }
+
+            if (!int.TryParse(_rowsField.value, out int rows) || rows <= 0)
+            {
+                ShowStatus("Invalid rows value. Must be a positive integer.", HelpBoxMessageType.Error);
+                return;
+            }
+
+            if (!int.TryParse(_columnsField.value, out int columns) || columns <= 0)
+            {
+                ShowStatus("Invalid columns value. Must be a positive integer.", HelpBoxMessageType.Error);
+                return;
+            }
+
+            Texture2D texture = _textureImage.sprite.texture;
+            int frameWidth = texture.width / columns;
+            int frameHeight = texture.height / rows;
+
+            FrameGenerationData generationData = new FrameGenerationData
+            {
+                Texture = texture,
+                Rows = rows,
+                Columns = columns,
+                FrameWidth = frameWidth,
+                FrameHeight = frameHeight
+            };
+
+            FrameGenerationRequested?.Invoke(generationData);
         }
 
         Sprite CreateSpriteFromTexture(Texture2D texture)

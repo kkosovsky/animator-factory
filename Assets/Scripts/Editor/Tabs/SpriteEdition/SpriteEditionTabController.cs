@@ -34,6 +34,7 @@ namespace AnimatorFactory.Editor
             _spriteEditionViewModel.SpriteModeChanged += _spriteEditionView.OnSpriteModeChanged;
             _spriteEditionView.TextureSelectionChanged += OnTextureSelectionChanged;
             _spriteEditionView.SpriteModeChangeRequested += OnSpriteModeChangeRequested;
+            _spriteEditionView.FrameGenerationRequested += OnFrameGenerationRequested;
         }
 
         void UnbindEvents()
@@ -43,11 +44,17 @@ namespace AnimatorFactory.Editor
             _spriteEditionViewModel.SpriteModeChanged -= _spriteEditionView.OnSpriteModeChanged;
             _spriteEditionView.TextureSelectionChanged -= OnTextureSelectionChanged;
             _spriteEditionView.SpriteModeChangeRequested -= OnSpriteModeChangeRequested;
+            _spriteEditionView.FrameGenerationRequested -= OnFrameGenerationRequested;
         }
 
         void OnSpriteModeChangeRequested(SpriteImportMode newMode)
         {
             _spriteEditionViewModel.ChangeSpriteMode(newMode: newMode);
+        }
+        
+        void OnFrameGenerationRequested(FrameGenerationData generationData)
+        {
+            _spriteEditionViewModel.GenerateFrames(generationData: generationData);
         }
     }
 }
