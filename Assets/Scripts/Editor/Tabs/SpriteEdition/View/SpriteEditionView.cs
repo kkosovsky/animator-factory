@@ -23,6 +23,7 @@ namespace AnimatorFactory.SpriteEdition
         TextField _columnsField;
         Button _applyButton;
         Label _frameSizeLabel;
+        VisualElement _gridOverlay;
 
         public SpriteEditionView() => CreateUI();
 
@@ -277,6 +278,8 @@ namespace AnimatorFactory.SpriteEdition
             Add(child: _frameCalculationContainer);
         }
 
+
+
         void DisplayTexture(Texture2D texture)
         {
             if (texture == null)
@@ -286,6 +289,7 @@ namespace AnimatorFactory.SpriteEdition
                 _spriteModeContainer.style.display = DisplayStyle.None;
                 _textureInfoLabel.style.display = DisplayStyle.None;
                 _frameCalculationContainer.style.display = DisplayStyle.None;
+                ClearGridOverlay();
                 return;
             }
 
@@ -338,10 +342,13 @@ namespace AnimatorFactory.SpriteEdition
             {
                 _spriteCountLabel.text = $"{spriteCount} sprites";
                 _spriteCountLabel.style.display = DisplayStyle.Flex;
+                _frameCalculationContainer.style.display = DisplayStyle.Flex;
             }
             else
             {
                 _spriteCountLabel.style.display = DisplayStyle.None;
+                _frameCalculationContainer.style.display = DisplayStyle.None;
+                ClearGridOverlay();
             }
 
             // Update dropdown to reflect current mode without triggering callback
@@ -396,6 +403,7 @@ namespace AnimatorFactory.SpriteEdition
                 _frameSizeLabel.text = "Error: Invalid rows value. Must be a positive integer.";
                 _frameSizeLabel.style.color = Color.red;
                 _frameSizeLabel.style.display = DisplayStyle.Flex;
+                ClearGridOverlay();
                 return;
             }
 
@@ -404,6 +412,7 @@ namespace AnimatorFactory.SpriteEdition
                 _frameSizeLabel.text = "Error: Invalid columns value. Must be a positive integer.";
                 _frameSizeLabel.style.color = Color.red;
                 _frameSizeLabel.style.display = DisplayStyle.Flex;
+                ClearGridOverlay();
                 return;
             }
 
@@ -414,6 +423,9 @@ namespace AnimatorFactory.SpriteEdition
             _frameSizeLabel.text = $"Frame Size: {frameWidth} x {frameHeight} pixels";
             _frameSizeLabel.style.color = new Color(0.9f, 0.9f, 0.9f, 1f);
             _frameSizeLabel.style.display = DisplayStyle.Flex;
+
+            // Show grid overlay on existing image
+            ShowGridOverlay(rows, columns, frameWidth, frameHeight);
         }
 
         Sprite CreateSpriteFromTexture(Texture2D texture)
@@ -423,6 +435,82 @@ namespace AnimatorFactory.SpriteEdition
                 rect: new Rect(0, 0, texture.width, texture.height),
                 pivot: new Vector2(0.5f, 0.5f)
             );
+        }
+
+        void ShowGridOverlay(int rows, int columns, int frameWidth, int frameHeight)
+        {
+            ClearGridOverlay();
+            
+            if (_textureImage.sprite == null)
+                return;
+                
+            // Get the actual displayed image dimensions (image is scaled 2x)
+            float displayedWidth = _textureImage.sprite.texture.width * 2;
+            float displayedHeight = _textureImage.sprite.texture.height * 2;
+            
+            // Calculate frame dimensions in display coordinates
+            float displayFrameWidth = displayedWidth / columns;
+            float displayFrameHeight = displayedHeight / rows;
+                
+            _gridOverlay = new VisualElement
+            {
+                style =
+                {
+                    position = Position.Absolute,
+                    top = 0,
+                    left = 0,
+                    width = displayedWidth,
+                    height = displayedHeight
+                }
+            };
+            
+            // Create vertical grid lines (including start and end borders)
+            for (int col = 0; col <= columns; col++)
+            {
+                VisualElement verticalLine = new VisualElement
+                {
+                    style =
+                    {
+                        position = Position.Absolute,
+                        left = col * displayFrameWidth,
+                        top = 0,
+                        width = 1,
+                        height = Length.Percent(100),
+                        backgroundColor = Color.white
+                    }
+                };
+                _gridOverlay.Add(verticalLine);
+            }
+            
+            // Create horizontal grid lines
+            for (int row = 1; row < rows; row++)
+            {
+                VisualElement horizontalLine = new VisualElement
+                {
+                    style =
+                    {
+                        position = Position.Absolute,
+                        left = 0,
+                        top = row * displayFrameHeight,
+                        width = Length.Percent(100),
+                        height = 1,
+                        backgroundColor = Color.white
+                    }
+                };
+                _gridOverlay.Add(horizontalLine);
+            }
+            
+            // Add overlay as a child of the image itself
+            _textureImage.Add(_gridOverlay);
+        }
+        
+        void ClearGridOverlay()
+        {
+            if (_gridOverlay != null)
+            {
+                _gridOverlay.RemoveFromHierarchy();
+                _gridOverlay = null;
+            }
         }
     }
 }
