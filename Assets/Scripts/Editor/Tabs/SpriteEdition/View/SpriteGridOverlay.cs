@@ -40,11 +40,11 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
             
-            CreateVerticalGridLines(columns, displayFrameWidth);
-            CreateHorizontalGridLines(rows, displayFrameHeight);
+            CreateVerticalGridLines(columns: columns, displayFrameWidth: displayFrameWidth);
+            CreateHorizontalGridLines(rows: rows, displayFrameHeight: displayFrameHeight);
             
             // Add overlay as a child of the image itself
-            _targetImage.Add(_gridOverlay);
+            _targetImage.Add(child: _gridOverlay);
         }
         
         public void ClearGrid()
@@ -69,11 +69,11 @@ namespace AnimatorFactory.SpriteEdition
                         left = col * displayFrameWidth,
                         top = 0,
                         width = 1,
-                        height = Length.Percent(100),
+                        height = Length.Percent(value: 100),
                         backgroundColor = Color.white
                     }
                 };
-                _gridOverlay.Add(verticalLine);
+                _gridOverlay.Add(child: verticalLine);
             }
         }
 
@@ -89,12 +89,12 @@ namespace AnimatorFactory.SpriteEdition
                         position = Position.Absolute,
                         left = 0,
                         top = row * displayFrameHeight,
-                        width = Length.Percent(100),
+                        width = Length.Percent(value: 100),
                         height = 1,
                         backgroundColor = Color.white
                     }
                 };
-                _gridOverlay.Add(horizontalLine);
+                _gridOverlay.Add(child: horizontalLine);
             }
         }
     }

@@ -6,15 +6,6 @@ using UnityEngine.UIElements;
 
 namespace AnimatorFactory.SpriteEdition
 {
-    public struct FrameGenerationData
-    {
-        public Texture2D Texture;
-        public int Rows;
-        public int Columns;
-        public int FrameWidth;
-        public int FrameHeight;
-    }
-
     public class SpriteEditionView : VisualElement
     {
         public event Action<Texture2D> TextureSelectionChanged;
@@ -22,12 +13,12 @@ namespace AnimatorFactory.SpriteEdition
         public event Action<FrameGenerationData> FrameGenerationRequested;
 
         Image _textureImage;
+        Label _textureInfoLabel;
         HelpBox _helpBox;
         VisualElement _spriteModeContainer;
         Label _spriteModeLabel;
         Label _spriteCountLabel;
         DropdownField _spriteModeDropdown;
-        Label _textureInfoLabel;
         VisualElement _frameCalculationContainer;
         TextField _rowsField;
         TextField _columnsField;
@@ -79,7 +70,7 @@ namespace AnimatorFactory.SpriteEdition
 
         void InitializeGridOverlay()
         {
-            _gridOverlay = new SpriteGridOverlay(_textureImage);
+            _gridOverlay = new SpriteGridOverlay(targetImage: _textureImage);
         }
 
         void CreateStatusSection()
@@ -107,7 +98,7 @@ namespace AnimatorFactory.SpriteEdition
                     paddingBottom = 8,
                     paddingLeft = 10,
                     paddingRight = 10,
-                    backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.3f),
+                    backgroundColor = new Color(r: 0.2f, g: 0.2f, b: 0.2f, a: 0.3f),
                     borderTopLeftRadius = 4,
                     borderTopRightRadius = 4,
                     borderBottomLeftRadius = 4,
@@ -127,7 +118,7 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
 
-            _spriteModeLabel = new Label("Current Mode:")
+            _spriteModeLabel = new Label(text: "Current Mode:")
             {
                 style =
                 {
@@ -136,19 +127,19 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
 
-            _spriteCountLabel = new Label("")
+            _spriteCountLabel = new Label(text: "")
             {
                 style =
                 {
-                    color = new Color(0.8f, 0.8f, 0.8f, 1f)
+                    color = new Color(r: 0.8f, g: 0.8f, b: 0.8f, a: 1f)
                 }
             };
 
-            topRow.Add(_spriteModeLabel);
-            topRow.Add(_spriteCountLabel);
+            topRow.Add(child: _spriteModeLabel);
+            topRow.Add(child: _spriteCountLabel);
 
-            _spriteModeDropdown = new DropdownField("Change Mode:", 
-                new List<string> { "Single", "Multiple" }, 0)
+            _spriteModeDropdown = new DropdownField(label: "Change Mode:", 
+                choices: new List<string> { "Single", "Multiple" }, defaultIndex: 0)
             {
                 style =
                 {
@@ -156,10 +147,10 @@ namespace AnimatorFactory.SpriteEdition
                     width = 200
                 }
             };
-            _spriteModeDropdown.RegisterValueChangedCallback(OnSpriteModeDropdownChanged);
+            _spriteModeDropdown.RegisterValueChangedCallback(callback: OnSpriteModeDropdownChanged);
 
-            _spriteModeContainer.Add(topRow);
-            _spriteModeContainer.Add(_spriteModeDropdown);
+            _spriteModeContainer.Add(child: topRow);
+            _spriteModeContainer.Add(child: _spriteModeDropdown);
             Add(child: _spriteModeContainer);
         }
 
@@ -181,13 +172,13 @@ namespace AnimatorFactory.SpriteEdition
 
         void CreateTextureInfoSection()
         {
-            _textureInfoLabel = new Label("")
+            _textureInfoLabel = new Label(text: "")
             {
                 style =
                 {
                     alignSelf = Align.Center,
                     marginTop = 8,
-                    color = new Color(0.8f, 0.8f, 0.8f, 1f),
+                    color = new Color(r: 0.8f, g: 0.8f, b: 0.8f, a: 1f),
                     fontSize = 12,
                     display = DisplayStyle.None
                 }
@@ -207,7 +198,7 @@ namespace AnimatorFactory.SpriteEdition
                     paddingBottom = 10,
                     paddingLeft = 10,
                     paddingRight = 10,
-                    backgroundColor = new Color(0.15f, 0.15f, 0.15f, 0.5f),
+                    backgroundColor = new Color(r: 0.15f, g: 0.15f, b: 0.15f, a: 0.5f),
                     borderTopLeftRadius = 4,
                     borderTopRightRadius = 4,
                     borderBottomLeftRadius = 4,
@@ -216,7 +207,7 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
 
-            Label titleLabel = new Label("Frame Calculation")
+            Label titleLabel = new Label(text: "Frame Calculation")
             {
                 style =
                 {
@@ -236,7 +227,7 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
 
-            Label rowsLabel = new Label("Rows:")
+            Label rowsLabel = new Label(text: "Rows:")
             {
                 style =
                 {
@@ -245,7 +236,7 @@ namespace AnimatorFactory.SpriteEdition
                     marginRight = 5
                 }
             };
-            inputRow.Add(rowsLabel);
+            inputRow.Add(child: rowsLabel);
 
             _rowsField = new TextField
             {
@@ -253,7 +244,7 @@ namespace AnimatorFactory.SpriteEdition
                 style = { width = 50, marginRight = 15 }
             };
 
-            Label columnsLabel = new Label("Columns:")
+            Label columnsLabel = new Label(text: "Columns:")
             {
                 style =
                 {
@@ -269,34 +260,34 @@ namespace AnimatorFactory.SpriteEdition
                 style = { width = 50, marginRight = 15 }
             };
 
-            _applyButton = new Button(OnApplyButtonClicked)
+            _applyButton = new Button(clickEvent: OnApplyButtonClicked)
             {
                 text = "Apply",
                 style = { width = 60 }
             };
 
-            inputRow.Add(_rowsField);
-            inputRow.Add(columnsLabel);
-            inputRow.Add(_columnsField);
-            inputRow.Add(_applyButton);
+            inputRow.Add(child: _rowsField);
+            inputRow.Add(child: columnsLabel);
+            inputRow.Add(child: _columnsField);
+            inputRow.Add(child: _applyButton);
 
-            _frameSizeLabel = new Label("")
+            _frameSizeLabel = new Label(text: "")
             {
                 style =
                 {
                     marginTop = 5,
-                    color = new Color(0.9f, 0.9f, 0.9f, 1f),
+                    color = new Color(r: 0.9f, g: 0.9f, b: 0.9f, a: 1f),
                     fontSize = 12,
                     display = DisplayStyle.None
                 }
             };
 
-            _frameCalculationContainer.Add(titleLabel);
-            _frameCalculationContainer.Add(inputRow);
-            _frameCalculationContainer.Add(_frameSizeLabel);
+            _frameCalculationContainer.Add(child: titleLabel);
+            _frameCalculationContainer.Add(child: inputRow);
+            _frameCalculationContainer.Add(child: _frameSizeLabel);
             
             // Create Generate button row
-            VisualElement generateRow = new VisualElement
+            VisualElement generateRow = new()
             {
                 style =
                 {
@@ -306,21 +297,21 @@ namespace AnimatorFactory.SpriteEdition
                 }
             };
             
-            _generateButton = new Button(OnGenerateButtonClicked)
+            _generateButton = new Button(clickEvent: OnGenerateButtonClicked)
             {
                 text = "Generate Frames",
                 style =
                 {
                     width = 120,
                     height = 25,
-                    backgroundColor = new Color(0.2f, 0.6f, 0.2f, 1f),
+                    backgroundColor = new Color(r: 0.2f, g: 0.6f, b: 0.2f, a: 1f),
                     color = Color.white,
                     unityFontStyleAndWeight = FontStyle.Bold
                 }
             };
             
-            generateRow.Add(_generateButton);
-            _frameCalculationContainer.Add(generateRow);
+            generateRow.Add(child: _generateButton);
+            _frameCalculationContainer.Add(child: generateRow);
 
             Add(child: _frameCalculationContainer);
         }
@@ -340,16 +331,15 @@ namespace AnimatorFactory.SpriteEdition
                 return;
             }
 
-            Sprite sprite = CreateSpriteFromTexture(texture);
+            Sprite sprite = CreateSpriteFromTexture(texture: texture);
             _textureImage.sprite = sprite;
             _textureImage.style.width = texture.width * 2;
             _textureImage.style.height = texture.height * 2;
             _textureImage.style.display = DisplayStyle.Flex;
 
-            UpdateTextureInfo(texture);
+            UpdateTextureInfo(texture: texture);
             _frameCalculationContainer.style.display = DisplayStyle.Flex;
             
-            // Reset frame size display when new texture is loaded
             _frameSizeLabel.style.display = DisplayStyle.None;
         }
 
@@ -361,7 +351,7 @@ namespace AnimatorFactory.SpriteEdition
                 return;
             }
 
-            string fileName = System.IO.Path.GetFileName(UnityEditor.AssetDatabase.GetAssetPath(texture));
+            string fileName = System.IO.Path.GetFileName(path: UnityEditor.AssetDatabase.GetAssetPath(assetObject: texture));
             _textureInfoLabel.text = $"{fileName} ({texture.width} x {texture.height})";
             _textureInfoLabel.style.display = DisplayStyle.Flex;
         }
@@ -404,7 +394,7 @@ namespace AnimatorFactory.SpriteEdition
             
             if (currentValue != newValue)
             {
-                _spriteModeDropdown.SetValueWithoutNotify(newValue);
+                _spriteModeDropdown.SetValueWithoutNotify(newValue: newValue);
             }
         }
 
@@ -445,7 +435,7 @@ namespace AnimatorFactory.SpriteEdition
             if (_textureImage.sprite == null)
                 return;
 
-            if (!int.TryParse(_rowsField.value, out int rows) || rows <= 0)
+            if (!int.TryParse(s: _rowsField.value, result: out int rows) || rows <= 0)
             {
                 _frameSizeLabel.text = "Error: Invalid rows value. Must be a positive integer.";
                 _frameSizeLabel.style.color = Color.red;
@@ -454,7 +444,7 @@ namespace AnimatorFactory.SpriteEdition
                 return;
             }
 
-            if (!int.TryParse(_columnsField.value, out int columns) || columns <= 0)
+            if (!int.TryParse(s: _columnsField.value, result: out int columns) || columns <= 0)
             {
                 _frameSizeLabel.text = "Error: Invalid columns value. Must be a positive integer.";
                 _frameSizeLabel.style.color = Color.red;
@@ -468,30 +458,29 @@ namespace AnimatorFactory.SpriteEdition
             int frameHeight = texture.height / rows;
 
             _frameSizeLabel.text = $"Frame Size: {frameWidth} x {frameHeight} pixels";
-            _frameSizeLabel.style.color = new Color(0.9f, 0.9f, 0.9f, 1f);
+            _frameSizeLabel.style.color = new Color(r: 0.9f, g: 0.9f, b: 0.9f, a: 1f);
             _frameSizeLabel.style.display = DisplayStyle.Flex;
 
-            // Show grid overlay on existing image
-            _gridOverlay?.ShowGrid(rows, columns, frameWidth, frameHeight);
+            _gridOverlay?.ShowGrid(rows: rows, columns: columns, frameWidth: frameWidth, frameHeight: frameHeight);
         }
         
         void OnGenerateButtonClicked()
         {
             if (_textureImage.sprite == null)
             {
-                ShowStatus("No texture selected for frame generation.", HelpBoxMessageType.Warning);
+                ShowStatus(message: "No texture selected for frame generation.", type: HelpBoxMessageType.Warning);
                 return;
             }
 
-            if (!int.TryParse(_rowsField.value, out int rows) || rows <= 0)
+            if (!int.TryParse(s: _rowsField.value, result: out int rows) || rows <= 0)
             {
-                ShowStatus("Invalid rows value. Must be a positive integer.", HelpBoxMessageType.Error);
+                ShowStatus(message: "Invalid rows value. Must be a positive integer.", type: HelpBoxMessageType.Error);
                 return;
             }
 
-            if (!int.TryParse(_columnsField.value, out int columns) || columns <= 0)
+            if (!int.TryParse(s: _columnsField.value, result: out int columns) || columns <= 0)
             {
-                ShowStatus("Invalid columns value. Must be a positive integer.", HelpBoxMessageType.Error);
+                ShowStatus(message: "Invalid columns value. Must be a positive integer.", type: HelpBoxMessageType.Error);
                 return;
             }
 
@@ -508,18 +497,16 @@ namespace AnimatorFactory.SpriteEdition
                 FrameHeight = frameHeight
             };
 
-            FrameGenerationRequested?.Invoke(generationData);
+            FrameGenerationRequested?.Invoke(obj: generationData);
         }
 
         Sprite CreateSpriteFromTexture(Texture2D texture)
         {
             return Sprite.Create(
                 texture: texture,
-                rect: new Rect(0, 0, texture.width, texture.height),
-                pivot: new Vector2(0.5f, 0.5f)
+                rect: new Rect(x: 0, y: 0, width: texture.width, height: texture.height),
+                pivot: new Vector2(x: 0.5f, y: 0.5f)
             );
         }
-
-
     }
 }
