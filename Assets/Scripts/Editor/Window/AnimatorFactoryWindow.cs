@@ -71,7 +71,7 @@ namespace AnimatorFactory
                 }
             };
 
-            VisualElement spriteEditionContent = CreatSpriteEditionContent();
+            VisualElement spriteEditionContent = CreateSpriteEditionContent();
             _mainTabView.AddTab(title: Strings.spriteEditionTabLabel, content: spriteEditionContent);
             
             VisualElement animatorStatesContent = CreateAnimatorStatesTabContent();

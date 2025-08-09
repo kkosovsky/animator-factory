@@ -134,6 +134,7 @@ namespace AnimatorFactory.SpriteEdition
                             width: generationData.FrameWidth,
                             height: generationData.FrameHeight
                         ),
+                        // TODO: Add pivot setting options
                         pivot = new Vector2(x: 0.5f, y: 0.5f),
                         alignment = SpriteAlignment.Center
                     };

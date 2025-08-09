@@ -7,7 +7,7 @@ namespace AnimatorFactory
 {
     public partial class AnimatorFactoryWindow
     {
-        VisualElement CreatSpriteEditionContent()
+        VisualElement CreateSpriteEditionContent()
         {
             VisualElement content = new()
             {
