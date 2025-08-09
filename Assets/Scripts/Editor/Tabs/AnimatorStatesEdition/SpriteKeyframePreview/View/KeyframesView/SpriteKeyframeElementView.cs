@@ -25,8 +25,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
             (float width, float height) = CalculateOptimalSpriteSize(sprite: keyframe.sprite);
             VisualElement container = CreateContainer(spriteWidth: width, spriteHeight: height);
         
-            Debug.Log($"width: {width}, height: {height}");
-            
             VisualElement child = keyframe.sprite != null
                 ? CreateSpriteImage(sprite: keyframe.sprite, width: width, height: height)
                 : CreateEmptyPlaceholder();
