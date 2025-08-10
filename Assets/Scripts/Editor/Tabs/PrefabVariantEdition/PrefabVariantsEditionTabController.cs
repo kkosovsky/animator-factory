@@ -19,5 +19,9 @@ namespace AnimatorFactory.PrefabVariants
         void BindEvents()
         {
         }
+
+        void UnbindEvents()
+        {
+        }
     }
 }
