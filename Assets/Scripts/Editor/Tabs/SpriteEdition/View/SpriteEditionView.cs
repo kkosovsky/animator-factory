@@ -51,10 +51,7 @@ namespace AnimatorFactory.SpriteEdition
 
         public void SetTextureSelectionField(UnityEditor.UIElements.ObjectField textureField)
         {
-            if (textureField != null)
-            {
-                textureField.RegisterValueChangedCallback(callback: OnTextureFieldChanged);
-            }
+            textureField?.RegisterValueChangedCallback(callback: OnTextureFieldChanged);
         }
 
         void CreateUI()
