@@ -16,7 +16,6 @@ namespace AnimatorFactory
     /// </summary>
     public partial class AnimatorFactoryWindow : EditorWindow
     {
-        ObjectField _prefabField;
         TabView _mainTabView;
         PrefabHierarchyView _prefabHierarchyView;
         AnimatorStatesView _animatorStatesView;

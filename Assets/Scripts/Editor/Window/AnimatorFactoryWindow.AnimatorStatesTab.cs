@@ -1,8 +1,8 @@
 using AnimatorFactory.AnimatorStatePreview;
+using AnimatorFactory.Core.UI;
 using AnimatorFactory.GenerationControls;
 using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -10,6 +10,8 @@ namespace AnimatorFactory
 {
     public partial class AnimatorFactoryWindow
     {
+        PrefabField _prefabField;
+        
         VisualElement CreateAnimatorStatesTabContent()
         {
             VisualElement content = new()
@@ -28,12 +30,7 @@ namespace AnimatorFactory
 
         void CreatePrefabSelectionSection(VisualElement container)
         {
-            _prefabField = new ObjectField(label: Strings.prefabSelectionLabel)
-            {
-                objectType = typeof(GameObject),
-                allowSceneObjects = false
-            };
-
+            _prefabField = new PrefabField(label: Strings.prefabSelectionLabel);
             _prefabField.RegisterValueChangedCallback(callback: OnPrefabSelectionChanged);
             container.Add(child: _prefabField);
         }
