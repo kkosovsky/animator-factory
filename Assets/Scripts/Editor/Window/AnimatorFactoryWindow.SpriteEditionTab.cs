@@ -19,7 +19,13 @@ namespace AnimatorFactory
             
             return content;
         }
-        
+
+        void CreateSpriteEditionView(VisualElement container)
+        {
+            _spriteEditionView = new SpriteEditionView();
+            container.Add(child: _spriteEditionView);
+        }
+
         void CreateSpriteSelectionSection(VisualElement container)
         {
             ObjectField textureField = new(label: Strings.textureSelectionLabel)
@@ -32,12 +38,6 @@ namespace AnimatorFactory
             container.Insert(index: 0, element: textureField);
 
             _spriteEditionView?.SetTextureSelectionField(textureField: textureField);
-        }
-        
-        void CreateSpriteEditionView(VisualElement container)
-        {
-            _spriteEditionView = new SpriteEditionView();
-            container.Add(child: _spriteEditionView);
         }
 
         void OnTextureSelected(ChangeEvent<Object> evt)

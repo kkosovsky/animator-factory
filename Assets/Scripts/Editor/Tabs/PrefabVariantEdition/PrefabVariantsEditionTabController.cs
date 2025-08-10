@@ -16,6 +16,10 @@ namespace AnimatorFactory.PrefabVariants
             BindEvents();
         }
 
+        public void Dispose()
+        {
+        }
+
         void BindEvents()
         {
         }

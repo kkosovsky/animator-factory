@@ -17,7 +17,6 @@ namespace AnimatorFactory.Core.UI.SelectionList
         Button clearAllButton;
 
         public SelectionListView(
-            
             string headerText,
             Action OnSelectAllClicked,
             EventCallback<ChangeEvent<string>> OnSearchChanged,

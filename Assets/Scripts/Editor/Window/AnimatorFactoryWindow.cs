@@ -4,9 +4,9 @@ using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
 using AnimatorFactory.AnimatorStatePreview;
 using AnimatorFactory.GenerationControls;
+using AnimatorFactory.PrefabVariants;
 using AnimatorFactory.SpriteEdition;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace AnimatorFactory
@@ -22,6 +22,7 @@ namespace AnimatorFactory
         SpriteKeyframesView _spriteKeyframesView;
         GenerationControlsView _generationControlsView;
         SpriteEditionView _spriteEditionView;
+        PrefabVariantsEditionView _prefabVariantsEditionView;
 
         AnimatorFactoryController _controller;
 
@@ -71,13 +72,13 @@ namespace AnimatorFactory
 
             VisualElement spriteEditionContent = CreateSpriteEditionContent();
             _mainTabView.AddTab(title: Strings.spriteEditionTabLabel, content: spriteEditionContent);
-            
+
             VisualElement animatorStatesContent = CreateAnimatorStatesTabContent();
             _mainTabView.AddTab(title: Strings.animatorStatesTabLabel, content: animatorStatesContent);
 
             VisualElement prefabVariantsContent = CreatePrefabVariantsTabContent();
             _mainTabView.AddTab(title: Strings.prefabVariantsTabLabel, content: prefabVariantsContent);
-            
+
             container.Add(child: _mainTabView);
         }
 
@@ -88,7 +89,8 @@ namespace AnimatorFactory
                 animatorStatesView: _animatorStatesView,
                 spriteKeyframesView: _spriteKeyframesView,
                 generationControlsView: _generationControlsView,
-                spriteEditionView: _spriteEditionView
+                spriteEditionView: _spriteEditionView,
+                prefabEditionView: _prefabVariantsEditionView
             );
         }
     }

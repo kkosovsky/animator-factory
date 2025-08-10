@@ -1,4 +1,5 @@
 using AnimatorFactory.Core.UI;
+using AnimatorFactory.PrefabVariants;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -6,7 +7,7 @@ namespace AnimatorFactory
 {
     public partial class AnimatorFactoryWindow
     {
-        PrefabField _prefabParentField;
+        // PrefabField _prefabParentField;
 
         VisualElement CreatePrefabVariantsTabContent()
         {
@@ -15,10 +16,9 @@ namespace AnimatorFactory
                 style =
                 {
                     flexGrow = 1,
-                    backgroundColor = new Color(r: 0.3f, g: 0.3f, b: 0.3f)
                 }
             };
-            
+
             CreatePrefabParentSection(container: content);
 
             return content;
@@ -26,11 +26,13 @@ namespace AnimatorFactory
 
         void CreatePrefabParentSection(VisualElement container)
         {
-            _prefabField = PrefabField.Make(
-                label: Strings.prefabSelectionLabel,
-                OnPrefabSelectionChanged: OnPrefabParentSelectionChanged
-            );
-            container.Add(child: _prefabField);
+            // _prefabField = PrefabField.Make(
+            //     label: Strings.prefabSelectionLabel,
+            //     OnPrefabSelectionChanged: OnPrefabParentSelectionChanged
+            // );
+
+            _prefabVariantsEditionView = new PrefabVariantsEditionView();
+            container.Add(child: _prefabVariantsEditionView);
         }
 
         void OnPrefabParentSelectionChanged(ChangeEvent<Object> evt)

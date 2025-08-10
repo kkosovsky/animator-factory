@@ -2,6 +2,7 @@ using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
 using AnimatorFactory.AnimatorStatePreview;
 using AnimatorFactory.GenerationControls;
+using AnimatorFactory.PrefabVariants;
 using AnimatorFactory.SpriteEdition;
 using UnityEngine;
 
@@ -11,13 +12,15 @@ namespace AnimatorFactory.Editor
     {
         readonly AnimatorStateEditionTabController _animatorStateEditionTabController;
         readonly SpriteEditionTabController _spriteEditionTabController;
+        readonly PrefabVariantsEditionTabController _prefabVariantsEditionTabController;
 
         public AnimatorFactoryController(
             PrefabHierarchyView prefabHierarchyView,
             AnimatorStatesView animatorStatesView,
             SpriteKeyframesView spriteKeyframesView,
             GenerationControlsView generationControlsView,
-            SpriteEditionView spriteEditionView
+            SpriteEditionView spriteEditionView,
+            PrefabVariantsEditionView prefabEditionView
         )
         {
             PrefabHierarchyViewModel prefabHierarchyViewModel = new();
@@ -41,6 +44,11 @@ namespace AnimatorFactory.Editor
                 spriteEditionViewModel: spriteEditionViewModel,
                 spriteEditionView: spriteEditionView
             );
+
+            _prefabVariantsEditionTabController = new PrefabVariantsEditionTabController(
+                view: prefabEditionView,
+                viewModel: new PrefabVariantsEditionViewModel()
+            );
         }
 
         public void OnPrefabSelectionChanged(GameObject prefab)
@@ -57,6 +65,7 @@ namespace AnimatorFactory.Editor
         {
             _animatorStateEditionTabController?.Dispose();
             _spriteEditionTabController?.Dispose();
+            _prefabVariantsEditionTabController?.Dispose();
         }
     }
 }
