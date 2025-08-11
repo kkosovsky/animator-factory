@@ -1,60 +1,60 @@
 using AnimatorFactory.SpriteEdition;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AnimatorFactory.Editor
 {
     public class SpriteEditionTabController
     {
-        readonly SpriteEditionViewModel _spriteEditionViewModel;
-        readonly SpriteEditionView _spriteEditionView;
+        readonly SpriteEditionViewModel _viewModel;
+        readonly SpriteEditionView _view;
 
-        public SpriteEditionTabController(
-            SpriteEditionViewModel spriteEditionViewModel,
-            SpriteEditionView spriteEditionView
-        )
+        public SpriteEditionTabController()
         {
-            _spriteEditionViewModel = spriteEditionViewModel;
-            _spriteEditionView = spriteEditionView;
+            _viewModel = new SpriteEditionViewModel();
+            _view = new SpriteEditionView();
 
             BindEvents();
         }
 
         public void OnTextureSelectionChanged(Texture2D texture)
         {
-            _spriteEditionViewModel.LoadTexture(texture: texture);
+            _viewModel.LoadTexture(texture: texture);
         }
 
         public void Dispose() => UnbindEvents();
 
+        public VisualElement GetContent() => _view;
+
         void BindEvents()
         {
-            _spriteEditionViewModel.TextureChanged += _spriteEditionView.OnTextureChanged;
-            _spriteEditionViewModel.StatusChanged += _spriteEditionView.OnStatusChanged;
-            _spriteEditionViewModel.SpriteModeChanged += _spriteEditionView.OnSpriteModeChanged;
-            _spriteEditionView.TextureSelectionChanged += OnTextureSelectionChanged;
-            _spriteEditionView.SpriteModeChangeRequested += OnSpriteModeChangeRequested;
-            _spriteEditionView.FrameGenerationRequested += OnFrameGenerationRequested;
+            _viewModel.TextureChanged += _view.OnTextureChanged;
+            _viewModel.StatusChanged += _view.OnStatusChanged;
+            _viewModel.SpriteModeChanged += _view.OnSpriteModeChanged;
+            _view.TextureSelectionChanged += OnTextureSelectionChanged;
+            _view.SpriteModeChangeRequested += OnSpriteModeChangeRequested;
+            _view.FrameGenerationRequested += OnFrameGenerationRequested;
         }
 
         void UnbindEvents()
         {
-            _spriteEditionViewModel.TextureChanged -= _spriteEditionView.OnTextureChanged;
-            _spriteEditionViewModel.StatusChanged -= _spriteEditionView.OnStatusChanged;
-            _spriteEditionViewModel.SpriteModeChanged -= _spriteEditionView.OnSpriteModeChanged;
-            _spriteEditionView.TextureSelectionChanged -= OnTextureSelectionChanged;
-            _spriteEditionView.SpriteModeChangeRequested -= OnSpriteModeChangeRequested;
-            _spriteEditionView.FrameGenerationRequested -= OnFrameGenerationRequested;
+            _viewModel.TextureChanged -= _view.OnTextureChanged;
+            _viewModel.StatusChanged -= _view.OnStatusChanged;
+            _viewModel.SpriteModeChanged -= _view.OnSpriteModeChanged;
+            _view.TextureSelectionChanged -= OnTextureSelectionChanged;
+            _view.SpriteModeChangeRequested -= OnSpriteModeChangeRequested;
+            _view.FrameGenerationRequested -= OnFrameGenerationRequested;
         }
 
         void OnSpriteModeChangeRequested(SpriteImportMode newMode)
         {
-            _spriteEditionViewModel.ChangeSpriteMode(newMode: newMode);
+            _viewModel.ChangeSpriteMode(newMode: newMode);
         }
-        
+
         void OnFrameGenerationRequested(FrameGenerationData generationData)
         {
-            _spriteEditionViewModel.GenerateFrames(generationData: generationData);
+            _viewModel.GenerateFrames(generationData: generationData);
         }
     }
 }

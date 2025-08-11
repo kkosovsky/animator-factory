@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,6 +13,7 @@ namespace AnimatorFactory.SpriteEdition
         public event Action<SpriteImportMode> SpriteModeChangeRequested;
         public event Action<FrameGenerationData> FrameGenerationRequested;
 
+        ObjectField _textureField;
         Image _textureImage;
         Label _textureInfoLabel;
         HelpBox _helpBox;
@@ -49,20 +51,28 @@ namespace AnimatorFactory.SpriteEdition
             UpdateSpriteModeDisplay(mode: mode, spriteCount: spriteCount);
         }
 
-        public void SetTextureSelectionField(UnityEditor.UIElements.ObjectField textureField)
-        {
-            textureField?.RegisterValueChangedCallback(callback: OnTextureFieldChanged);
-        }
-
         void CreateUI()
         {
             style.flexGrow = 1;
 
+            CreateSpriteSelectionSection();
             CreateStatusSection();
             CreateSpriteModeSection();
             CreateImageSection();
             CreateTextureInfoSection();
             CreateFrameCalculationSection();
+        }
+
+        void CreateSpriteSelectionSection()
+        {
+            _textureField = new ObjectField(label: "Select Texture")
+            {
+                objectType = typeof(Texture2D),
+                allowSceneObjects = false
+            };
+
+            _textureField.RegisterValueChangedCallback(callback: OnTextureFieldChanged);
+            Add(child: _textureField);
         }
 
         void InitializeGridOverlay()
@@ -135,8 +145,11 @@ namespace AnimatorFactory.SpriteEdition
             topRow.Add(child: _spriteModeLabel);
             topRow.Add(child: _spriteCountLabel);
 
-            _spriteModeDropdown = new DropdownField(label: "Change Mode:", 
-                choices: new List<string> { "Single", "Multiple" }, defaultIndex: 0)
+            _spriteModeDropdown = new DropdownField(
+                label: "Change Mode:",
+                choices: new List<string> { "Single", "Multiple" },
+                defaultIndex: 0
+            )
             {
                 style =
                 {
@@ -282,7 +295,7 @@ namespace AnimatorFactory.SpriteEdition
             _frameCalculationContainer.Add(child: titleLabel);
             _frameCalculationContainer.Add(child: inputRow);
             _frameCalculationContainer.Add(child: _frameSizeLabel);
-            
+
             // Create Generate button row
             VisualElement generateRow = new()
             {
@@ -293,7 +306,7 @@ namespace AnimatorFactory.SpriteEdition
                     marginTop = 10
                 }
             };
-            
+
             _generateButton = new Button(clickEvent: OnGenerateButtonClicked)
             {
                 text = "Generate Frames",
@@ -306,13 +319,12 @@ namespace AnimatorFactory.SpriteEdition
                     unityFontStyleAndWeight = FontStyle.Bold
                 }
             };
-            
+
             generateRow.Add(child: _generateButton);
             _frameCalculationContainer.Add(child: generateRow);
 
             Add(child: _frameCalculationContainer);
         }
-
 
 
         void DisplayTexture(Texture2D texture)
@@ -336,7 +348,7 @@ namespace AnimatorFactory.SpriteEdition
 
             UpdateTextureInfo(texture: texture);
             _frameCalculationContainer.style.display = DisplayStyle.Flex;
-            
+
             _frameSizeLabel.style.display = DisplayStyle.None;
         }
 
@@ -348,7 +360,7 @@ namespace AnimatorFactory.SpriteEdition
                 return;
             }
 
-            string fileName = System.IO.Path.GetFileName(path: UnityEditor.AssetDatabase.GetAssetPath(assetObject: texture));
+            string fileName = System.IO.Path.GetFileName(path: AssetDatabase.GetAssetPath(assetObject: texture));
             _textureInfoLabel.text = $"{fileName} ({texture.width} x {texture.height})";
             _textureInfoLabel.style.display = DisplayStyle.Flex;
         }
@@ -362,7 +374,7 @@ namespace AnimatorFactory.SpriteEdition
             }
 
             _spriteModeContainer.style.display = DisplayStyle.Flex;
-            
+
             string modeText = mode switch
             {
                 SpriteImportMode.Single => "Single",
@@ -371,7 +383,7 @@ namespace AnimatorFactory.SpriteEdition
             };
 
             _spriteModeLabel.text = $"Current Mode: {modeText}";
-            
+
             if (mode == SpriteImportMode.Multiple)
             {
                 _spriteCountLabel.text = $"{spriteCount} sprites";
@@ -388,7 +400,7 @@ namespace AnimatorFactory.SpriteEdition
             // Update dropdown to reflect current mode without triggering callback
             string currentValue = _spriteModeDropdown.value;
             string newValue = modeText;
-            
+
             if (currentValue != newValue)
             {
                 _spriteModeDropdown.SetValueWithoutNotify(newValue: newValue);
@@ -416,7 +428,7 @@ namespace AnimatorFactory.SpriteEdition
         void OnSpriteModeDropdownChanged(ChangeEvent<string> evt)
         {
             string selectedMode = evt.newValue;
-            
+
             SpriteImportMode mode = selectedMode switch
             {
                 "Single" => SpriteImportMode.Single,
@@ -460,7 +472,7 @@ namespace AnimatorFactory.SpriteEdition
 
             _gridOverlay?.ShowGrid(rows: rows, columns: columns, frameWidth: frameWidth, frameHeight: frameHeight);
         }
-        
+
         void OnGenerateButtonClicked()
         {
             if (_textureImage.sprite == null)
@@ -477,7 +489,10 @@ namespace AnimatorFactory.SpriteEdition
 
             if (!int.TryParse(s: _columnsField.value, result: out int columns) || columns <= 0)
             {
-                ShowStatus(message: "Invalid columns value. Must be a positive integer.", type: HelpBoxMessageType.Error);
+                ShowStatus(
+                    message: "Invalid columns value. Must be a positive integer.",
+                    type: HelpBoxMessageType.Error
+                );
                 return;
             }
 

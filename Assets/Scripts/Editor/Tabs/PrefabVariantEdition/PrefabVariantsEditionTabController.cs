@@ -1,5 +1,5 @@
-using AnimatorFactory.Core.UI.SelectionList;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AnimatorFactory.PrefabVariants
 {
@@ -9,13 +9,10 @@ namespace AnimatorFactory.PrefabVariants
         readonly PrefabVariantsEditionViewModel _viewModel;
         readonly PrefabVariantListController _listController;
 
-        public PrefabVariantsEditionTabController(
-            PrefabVariantsEditionView view,
-            PrefabVariantsEditionViewModel viewModel
-        )
+        public PrefabVariantsEditionTabController()
         {
-            _view = view;
-            _viewModel = viewModel;
+            _view = new PrefabVariantsEditionView();
+            _viewModel = new PrefabVariantsEditionViewModel();
             _listController = new PrefabVariantListController(
                 viewModel: new PrefabVariantSelectionListViewModel(),
                 itemViewFactory: new PrefabVariantListItemFactory()
@@ -24,23 +21,14 @@ namespace AnimatorFactory.PrefabVariants
             BindEvents();
         }
 
-        public void Dispose()
-        {
-        }
+        public VisualElement GetContent() => _view;
 
-        void BindEvents()
-        {
-            _view.DidSelectPrefab += OnDidSelectPrefab;
-        }
+        public void Dispose() => UnbindEvents();
 
-        void UnbindEvents()
-        {
-            _view.DidSelectPrefab -= OnDidSelectPrefab;
-        }
+        void BindEvents() => _view.DidSelectPrefab += OnDidSelectPrefab;
 
-        void OnDidSelectPrefab(GameObject prefab)
-        {
-            _listController.OnPrefabSelected(prefab: prefab);
-        }
+        void UnbindEvents() => _view.DidSelectPrefab -= OnDidSelectPrefab;
+
+        void OnDidSelectPrefab(GameObject prefab) => _listController.OnPrefabSelected(prefab: prefab);
     }
 }

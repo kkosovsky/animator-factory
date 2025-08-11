@@ -1,11 +1,5 @@
 using AnimatorFactory.Core.UI;
 using AnimatorFactory.Editor;
-using AnimatorFactory.PrefabHierarchy;
-using AnimatorFactory.SpriteKeyframePreview;
-using AnimatorFactory.AnimatorStatePreview;
-using AnimatorFactory.GenerationControls;
-using AnimatorFactory.PrefabVariants;
-using AnimatorFactory.SpriteEdition;
 using UnityEditor;
 using UnityEngine.UIElements;
 
@@ -17,13 +11,6 @@ namespace AnimatorFactory
     public partial class AnimatorFactoryWindow : EditorWindow
     {
         TabView _mainTabView;
-        PrefabHierarchyView _prefabHierarchyView;
-        AnimatorStatesView _animatorStatesView;
-        SpriteKeyframesView _spriteKeyframesView;
-        GenerationControlsView _generationControlsView;
-        SpriteEditionView _spriteEditionView;
-        PrefabVariantsEditionView _prefabVariantsEditionView;
-
         AnimatorFactoryController _controller;
 
         /// <summary>
@@ -34,8 +21,8 @@ namespace AnimatorFactory
 
         void OnEnable()
         {
+            _controller = new AnimatorFactoryController();
             CreateUIElements();
-            InitializeController();
         }
 
         void OnDisable() => _controller?.Dispose();
@@ -70,28 +57,11 @@ namespace AnimatorFactory
                 }
             };
 
-            VisualElement spriteEditionContent = CreateSpriteEditionContent();
-            _mainTabView.AddTab(title: Strings.spriteEditionTabLabel, content: spriteEditionContent);
-
-            VisualElement animatorStatesContent = CreateAnimatorStatesTabContent();
-            _mainTabView.AddTab(title: Strings.animatorStatesTabLabel, content: animatorStatesContent);
-
-            VisualElement prefabVariantsContent = CreatePrefabVariantsTabContent();
-            _mainTabView.AddTab(title: Strings.prefabVariantsTabLabel, content: prefabVariantsContent);
+            _mainTabView.AddTab(title: Strings.spriteEditionTabLabel, content: _controller.GetSpriteEditionContent());
+            _mainTabView.AddTab(title: Strings.animatorStatesTabLabel, content: _controller.GetAnimatorStatesContent());
+            _mainTabView.AddTab(title: Strings.prefabVariantsTabLabel, content: _controller.GetPrefabVariantsContent());
 
             container.Add(child: _mainTabView);
-        }
-
-        void InitializeController()
-        {
-            _controller = new AnimatorFactoryController(
-                prefabHierarchyView: _prefabHierarchyView,
-                animatorStatesView: _animatorStatesView,
-                spriteKeyframesView: _spriteKeyframesView,
-                generationControlsView: _generationControlsView,
-                spriteEditionView: _spriteEditionView,
-                prefabEditionView: _prefabVariantsEditionView
-            );
         }
     }
 }

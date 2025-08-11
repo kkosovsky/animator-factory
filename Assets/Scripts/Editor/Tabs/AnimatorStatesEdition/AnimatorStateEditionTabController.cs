@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using AnimatorFactory.PrefabHierarchy;
 using AnimatorFactory.SpriteKeyframePreview;
 using AnimatorFactory.AnimatorStatePreview;
+using AnimatorFactory.AnimatorStates;
 using AnimatorFactory.GenerationControls;
 using UnityEditor.Animations;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AnimatorFactory.Editor
 {
@@ -14,56 +16,26 @@ namespace AnimatorFactory.Editor
         readonly AnimatorStatesViewModel _animatorStatesViewModel;
         readonly SpriteKeyframeViewModel _spriteKeyframeViewModel;
         readonly GenerationControlsViewModel _generationControlsViewModel;
+        readonly AnimatorStatesEditionRootView _view;
 
-        readonly PrefabHierarchyView _prefabHierarchyView;
-        readonly AnimatorStatesView _animatorStatesView;
-        readonly SpriteKeyframesView _spriteKeyframesView;
-        readonly GenerationControlsView _generationControlsView;
-
-        public AnimatorStateEditionTabController(
-            PrefabHierarchyViewModel prefabHierarchyViewModel,
-            AnimatorStatesViewModel animatorStatesViewModel,
-            SpriteKeyframeViewModel spriteKeyframeViewModel,
-            GenerationControlsViewModel generationControlsViewModel,
-            PrefabHierarchyView prefabHierarchyView,
-            AnimatorStatesView animatorStatesView,
-            SpriteKeyframesView spriteKeyframesView,
-            GenerationControlsView generationControlsView
-        )
+        public AnimatorStateEditionTabController()
         {
-            _prefabHierarchyViewModel = prefabHierarchyViewModel;
-            _animatorStatesViewModel = animatorStatesViewModel;
-            _spriteKeyframeViewModel = spriteKeyframeViewModel;
-            _generationControlsViewModel = generationControlsViewModel;
-
-            _prefabHierarchyView = prefabHierarchyView;
-            _animatorStatesView = animatorStatesView;
-            _spriteKeyframesView = spriteKeyframesView;
-            _generationControlsView = generationControlsView;
+            _prefabHierarchyViewModel = new PrefabHierarchyViewModel();
+            _animatorStatesViewModel = new AnimatorStatesViewModel();
+            _spriteKeyframeViewModel = new SpriteKeyframeViewModel();
+            _generationControlsViewModel = new GenerationControlsViewModel();
+            _view = new AnimatorStatesEditionRootView();
 
             BindEvents();
         }
 
-        public void OnPrefabSelectionChanged(GameObject prefab)
-        {
-            if (prefab == null)
-            {
-                _prefabHierarchyViewModel.Clear();
-                _animatorStatesViewModel.Clear();
-                _spriteKeyframeViewModel.Clear();
-            }
-            else
-            {
-                _prefabHierarchyViewModel.LoadHierarchy(prefab: prefab);
-                _animatorStatesViewModel.Clear();
-                _spriteKeyframeViewModel.Clear();
-            }
-        }
-
         public void Dispose() => UnbindEvents();
+
+        public VisualElement GetContent() => _view;
 
         void BindEvents()
         {
+            BindPrefabSelectionEvents();
             BindPrefabHierarchyPreviewEvents();
             BindAnimatorStatesPreviewEvents();
             BindSpriteKeyFramePreviewEvents();
@@ -73,6 +45,7 @@ namespace AnimatorFactory.Editor
 
         void UnbindEvents()
         {
+            UnbindPrefabSelectionEvents();
             UnbindPrefabHierarchyEvents();
             UnbindAnimatorStatesPreviewEvents();
             UnbindSpriteKeyFramePreviewEvents();
@@ -80,39 +53,40 @@ namespace AnimatorFactory.Editor
             UnbindHierarchyChangedEvent();
         }
 
-        void BindHierarchyChangedEvent()
-        {
-            _prefabHierarchyViewModel.HierarchyChanged += OnPrefabHierarchyChanged;
-        }
+        void BindPrefabSelectionEvents() => _view.PrefabSelectionChanged += OnPrefabSelectionChanged;
+
+        void BindHierarchyChangedEvent() => _prefabHierarchyViewModel.HierarchyChanged += OnPrefabHierarchyChanged;
 
         void BindPrefabHierarchyPreviewEvents()
         {
-            _prefabHierarchyViewModel.HierarchyChanged += _prefabHierarchyView.OnHierarchyChanged;
-            _prefabHierarchyView.ItemSelected += OnPrefabHierarchyItemSelected;
+            _prefabHierarchyViewModel.HierarchyChanged += _view.prefabHierarchyView.OnHierarchyChanged;
+            _view.prefabHierarchyView.ItemSelected += OnPrefabHierarchyItemSelected;
         }
+
+        void UnbindPrefabSelectionEvents() => _view.PrefabSelectionChanged -= OnPrefabSelectionChanged;
 
         void UnbindPrefabHierarchyEvents()
         {
-            _prefabHierarchyViewModel.HierarchyChanged -= _prefabHierarchyView.OnHierarchyChanged;
-            _prefabHierarchyView.ItemSelected -= OnPrefabHierarchyItemSelected;
+            _prefabHierarchyViewModel.HierarchyChanged -= _view.prefabHierarchyView.OnHierarchyChanged;
+            _view.prefabHierarchyView.ItemSelected -= OnPrefabHierarchyItemSelected;
         }
 
         void BindAnimatorStatesPreviewEvents()
         {
-            _animatorStatesViewModel.StatesChanged += _animatorStatesView.OnStatesChanged;
-            _animatorStatesViewModel.StatusChanged += _animatorStatesView.OnStatusChanged;
+            _animatorStatesViewModel.StatesChanged += _view.animatorStatesView.OnStatesChanged;
+            _animatorStatesViewModel.StatusChanged += _view.animatorStatesView.OnStatusChanged;
 
-            _animatorStatesView.SelectedState += OnAnimatorStateSelected;
-            _animatorStatesView.AddStateRequested += OnAddStateRequested;
+            _view.animatorStatesView.SelectedState += OnAnimatorStateSelected;
+            _view.animatorStatesView.AddStateRequested += OnAddStateRequested;
         }
 
         void UnbindAnimatorStatesPreviewEvents()
         {
-            _animatorStatesViewModel.StatesChanged -= _animatorStatesView.OnStatesChanged;
-            _animatorStatesViewModel.StatusChanged -= _animatorStatesView.OnStatusChanged;
-            
-            _animatorStatesView.SelectedState -= OnAnimatorStateSelected;
-            _animatorStatesView.AddStateRequested -= OnAddStateRequested;
+            _animatorStatesViewModel.StatesChanged -= _view.animatorStatesView.OnStatesChanged;
+            _animatorStatesViewModel.StatusChanged -= _view.animatorStatesView.OnStatusChanged;
+
+            _view.animatorStatesView.SelectedState -= OnAnimatorStateSelected;
+            _view.animatorStatesView.AddStateRequested -= OnAddStateRequested;
         }
 
         void OnPrefabHierarchyChanged(List<PrefabHierarchyListItem> hierarchy)
@@ -138,31 +112,31 @@ namespace AnimatorFactory.Editor
 
         void BindSpriteKeyFramePreviewEvents()
         {
-            _spriteKeyframeViewModel.StatusChanged += _spriteKeyframesView.OnStatusChanged;
+            _spriteKeyframeViewModel.StatusChanged += _view.spriteKeyframesView.OnStatusChanged;
             _spriteKeyframeViewModel.DataChanged += OnKeyframeDataChanged;
-            
-            _spriteKeyframesView.FrameRateChanged += OnFrameRateChanged;
-            _spriteKeyframesView.TotalFramesChanged += OnTotalFramesChanged;
-            _spriteKeyframesView.SpritesSelected += OnSpritesSelected;
-            _spriteKeyframesView.AnimationNameChanged += OnAnimationNameChanged;
-            _spriteKeyframesView.DestinationFolderChanged += OnDestinationFolderChanged;
+
+            _view.spriteKeyframesView.FrameRateChanged += OnFrameRateChanged;
+            _view.spriteKeyframesView.TotalFramesChanged += OnTotalFramesChanged;
+            _view.spriteKeyframesView.SpritesSelected += OnSpritesSelected;
+            _view.spriteKeyframesView.AnimationNameChanged += OnAnimationNameChanged;
+            _view.spriteKeyframesView.DestinationFolderChanged += OnDestinationFolderChanged;
         }
 
         void UnbindSpriteKeyFramePreviewEvents()
         {
-            _spriteKeyframeViewModel.StatusChanged -= _spriteKeyframesView.OnStatusChanged;
+            _spriteKeyframeViewModel.StatusChanged -= _view.spriteKeyframesView.OnStatusChanged;
             _spriteKeyframeViewModel.DataChanged -= OnKeyframeDataChanged;
-            
-            _spriteKeyframesView.FrameRateChanged -= OnFrameRateChanged;
-            _spriteKeyframesView.TotalFramesChanged -= OnTotalFramesChanged;
-            _spriteKeyframesView.SpritesSelected -= OnSpritesSelected;
-            _spriteKeyframesView.AnimationNameChanged -= OnAnimationNameChanged;
-            _spriteKeyframesView.DestinationFolderChanged -= OnDestinationFolderChanged;
+
+            _view.spriteKeyframesView.FrameRateChanged -= OnFrameRateChanged;
+            _view.spriteKeyframesView.TotalFramesChanged -= OnTotalFramesChanged;
+            _view.spriteKeyframesView.SpritesSelected -= OnSpritesSelected;
+            _view.spriteKeyframesView.AnimationNameChanged -= OnAnimationNameChanged;
+            _view.spriteKeyframesView.DestinationFolderChanged -= OnDestinationFolderChanged;
         }
 
         void OnKeyframeDataChanged(AnimationSpriteInfo spriteInfo)
         {
-            _spriteKeyframesView.OnDataChanged(spriteInfo: spriteInfo);
+            _view.spriteKeyframesView.OnDataChanged(spriteInfo: spriteInfo);
         }
 
         void OnFrameRateChanged(float newFrameRate)
@@ -178,7 +152,7 @@ namespace AnimatorFactory.Editor
         void OnSpritesSelected(Sprite[] sprites)
         {
             _spriteKeyframeViewModel.SelectedSpritesChanged(sprites: sprites);
-            _generationControlsView.ShowButton();
+            _view.generationControlsView.ShowButton();
         }
 
         void OnAnimationNameChanged(string newAnimationName)
@@ -193,36 +167,52 @@ namespace AnimatorFactory.Editor
 
         void BindGenerationControlsEvents()
         {
-            _generationControlsView.GenerateButtonClicked += OnGenerateButtonClicked;
+            _view.generationControlsView.GenerateButtonClicked += OnGenerateButtonClicked;
             _generationControlsViewModel.StartedGeneration +=
-                _generationControlsView.ShowIsGeneratingDialogue;
+                _view.generationControlsView.ShowIsGeneratingDialogue;
             _generationControlsViewModel.UpdatedGenerationProgress +=
-                _generationControlsView.UpdateGenerationProgressDialogue;
+                _view.generationControlsView.UpdateGenerationProgressDialogue;
             _generationControlsViewModel.FinishedGeneration +=
-                _generationControlsView.HideGeneratingDialogue;
+                _view.generationControlsView.HideGeneratingDialogue;
             _generationControlsViewModel.AnimationClipGenerated += OnAnimationClipGenerated;
         }
 
         void UnbindGenerationControlsEvents()
         {
-            _generationControlsView.GenerateButtonClicked -= OnGenerateButtonClicked;
+            _view.generationControlsView.GenerateButtonClicked -= OnGenerateButtonClicked;
             _generationControlsViewModel.StartedGeneration -=
-                _generationControlsView.ShowIsGeneratingDialogue;
+                _view.generationControlsView.ShowIsGeneratingDialogue;
             _generationControlsViewModel.UpdatedGenerationProgress -=
-                _generationControlsView.UpdateGenerationProgressDialogue;
+                _view.generationControlsView.UpdateGenerationProgressDialogue;
             _generationControlsViewModel.FinishedGeneration -=
-                _generationControlsView.HideGeneratingDialogue;
+                _view.generationControlsView.HideGeneratingDialogue;
             _generationControlsViewModel.AnimationClipGenerated -= OnAnimationClipGenerated;
         }
-        
+
         void UnbindHierarchyChangedEvent()
         {
             _prefabHierarchyViewModel.HierarchyChanged -= OnPrefabHierarchyChanged;
         }
 
+        void OnPrefabSelectionChanged(GameObject prefab)
+        {
+            if (prefab == null)
+            {
+                _prefabHierarchyViewModel.Clear();
+                _animatorStatesViewModel.Clear();
+                _spriteKeyframeViewModel.Clear();
+            }
+            else
+            {
+                _prefabHierarchyViewModel.LoadHierarchy(prefab: prefab);
+                _animatorStatesViewModel.Clear();
+                _spriteKeyframeViewModel.Clear();
+            }
+        }
+
         void OnGenerateButtonClicked()
         {
-            _generationControlsView.ShowIsGeneratingDialogue();
+            _view.generationControlsView.ShowIsGeneratingDialogue();
             _generationControlsViewModel.GenerateAnimationClips(animationInfo: _spriteKeyframeViewModel.AnimationInfo);
         }
 
