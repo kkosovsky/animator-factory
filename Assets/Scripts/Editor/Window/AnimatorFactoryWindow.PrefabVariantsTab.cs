@@ -26,11 +26,6 @@ namespace AnimatorFactory
 
         void CreatePrefabParentSection(VisualElement container)
         {
-            // _prefabField = PrefabField.Make(
-            //     label: Strings.prefabSelectionLabel,
-            //     OnPrefabSelectionChanged: OnPrefabParentSelectionChanged
-            // );
-
             _prefabVariantsEditionView = new PrefabVariantsEditionView();
             container.Add(child: _prefabVariantsEditionView);
         }
