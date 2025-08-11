@@ -329,7 +329,10 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         void BindListItem(VisualElement element, int index)
         {
-            if (index >= _filteredSprites.Count) return;
+            if (index >= _filteredSprites.Count)
+            {
+                return;
+            }
 
             Sprite sprite = _filteredSprites[index: index];
             Label nameLabel = element.Q<Label>();
