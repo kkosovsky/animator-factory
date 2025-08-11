@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace AnimatorFactory.Core.UI.SelectionList
 {
-    public interface ISelectionListViewModel<ListItem>
+    public interface ISelectionListViewModel<SourceItem, ListItem>
     {
         string currentFilter { get; }
         List<ListItem> allItems { get; set; }
@@ -15,6 +15,8 @@ namespace AnimatorFactory.Core.UI.SelectionList
 
         bool Filter(ListItem item);
 
+        void OnSourceItemChanged(SourceItem item);
+        
         void LoadAllItems();
 
         void OnSearchChanged(ChangeEvent<string> evt);

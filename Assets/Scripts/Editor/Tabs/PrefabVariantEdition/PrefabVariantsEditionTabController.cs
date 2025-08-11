@@ -7,7 +7,7 @@ namespace AnimatorFactory.PrefabVariants
     {
         readonly PrefabVariantsEditionView _view;
         readonly PrefabVariantsEditionViewModel _viewModel;
-        readonly SelectionListViewController<GameObject> _listController;
+        readonly PrefabVariantListController _listController;
 
         public PrefabVariantsEditionTabController(
             PrefabVariantsEditionView view,
@@ -16,12 +16,11 @@ namespace AnimatorFactory.PrefabVariants
         {
             _view = view;
             _viewModel = viewModel;
-            _listController = new SelectionListViewController<GameObject>(
-                headerText: "Select Variants:",
+            _listController = new PrefabVariantListController(
                 viewModel: new PrefabVariantSelectionListViewModel(),
                 itemViewFactory: new PrefabVariantListItemFactory()
             );
-            
+
             BindEvents();
         }
 
@@ -31,10 +30,17 @@ namespace AnimatorFactory.PrefabVariants
 
         void BindEvents()
         {
+            _view.DidSelectPrefab += OnDidSelectPrefab;
         }
 
         void UnbindEvents()
         {
+            _view.DidSelectPrefab -= OnDidSelectPrefab;
+        }
+
+        void OnDidSelectPrefab(GameObject prefab)
+        {
+            _listController.OnPrefabSelected(prefab: prefab);
         }
     }
 }

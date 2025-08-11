@@ -5,10 +5,10 @@ using UnityEngine.UIElements;
 
 namespace AnimatorFactory.PrefabVariants
 {
-    public class PrefabVariantSelectionListViewModel: ISelectionListViewModel<GameObject>
+    public class PrefabVariantSelectionListViewModel : ISelectionListViewModel<GameObject, GameObject>
     {
         public string currentFilter { get; }
-        
+
         public List<GameObject> allItems { get; set; }
         public List<GameObject> filteredItems { get; }
 
@@ -16,14 +16,16 @@ namespace AnimatorFactory.PrefabVariants
         {
         }
 
+        public void OnSourceItemChanged(GameObject item)
+        {
+        }
+
         public void BindItem(VisualElement element, int index)
         {
-            
         }
 
         public void Sort(List<GameObject> items)
         {
-            
         }
 
         public bool Filter(GameObject item)
@@ -31,10 +33,16 @@ namespace AnimatorFactory.PrefabVariants
             return false;
         }
 
-        public void LoadAllItems() => throw new System.NotImplementedException();
+        public void LoadAllItems()
+        {
+        }
 
-        public void OnSearchChanged(ChangeEvent<string> evt) => throw new System.NotImplementedException();
+        public void OnSearchChanged(ChangeEvent<string> evt)
+        {
+        }
 
-        public void RefreshAllFilteredItems() => throw new System.NotImplementedException();
+        public void RefreshAllFilteredItems()
+        {
+        }
     }
 }

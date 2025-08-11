@@ -9,7 +9,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
     /// Custom UIElement for multi-selecting items from the project.
     /// Provides search, filtering, and multi-select functionality.
     /// </summary>
-    public class SelectionListViewController<ListItem> : VisualElement
+    public class SelectionListViewController<SourceItem, ListItem> : VisualElement
     {
         /// <summary>
         /// Fired when items selection changes.
@@ -26,17 +26,17 @@ namespace AnimatorFactory.Core.UI.SelectionList
         /// </summary>
         public event Action CancelRequested;
 
-        readonly SelectionListView _listView;
-        readonly ISelectionListViewModel<ListItem> _viewModel;
+        protected readonly SelectionListView view;
+        protected readonly ISelectionListViewModel<SourceItem, ListItem> viewModel;
 
         public SelectionListViewController(
             string headerText,
-            ISelectionListViewModel<ListItem> viewModel,
+            ISelectionListViewModel<SourceItem, ListItem> viewModel,
             ListItemViewFactory itemViewFactory
         )
         {
-            _viewModel = viewModel;
-            _listView = new SelectionListView(
+            this.viewModel = viewModel;
+            view = new SelectionListView(
                 headerText: headerText,
                 OnSelectAllClicked: OnSelectAllClicked,
                 OnSearchChanged: viewModel.OnSearchChanged,
@@ -47,7 +47,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
                 OnApplyClicked: OnApplyClicked,
                 OnCancelClicked: OnCancelClicked
             );
-            _viewModel.LoadAllItems();
+            this.viewModel.LoadAllItems();
             RefreshAllFilteredItems();
         }
 
@@ -56,7 +56,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
         /// </summary>
         public ListItem[] GetSelectedItems()
         {
-            return _listView.list.selectedItems?.Cast<ListItem>().ToArray() ?? Array.Empty<ListItem>();
+            return view.list.selectedItems?.Cast<ListItem>().ToArray() ?? Array.Empty<ListItem>();
         }
 
         /// <summary>
@@ -70,26 +70,26 @@ namespace AnimatorFactory.Core.UI.SelectionList
             }
 
             List<ListItem> elementsToSelect = items
-                .Where(predicate: s => _viewModel.filteredItems.Contains(item: s))
+                .Where(predicate: s => viewModel.filteredItems.Contains(item: s))
                 .ToList();
             List<int> indices = elementsToSelect
-                .Select(selector: s => _viewModel.filteredItems.IndexOf(item: s))
+                .Select(selector: s => viewModel.filteredItems.IndexOf(item: s))
                 .ToList();
 
-            _listView.list.SetSelection(indices: indices);
+            view.list.SetSelection(indices: indices);
         }
 
         /// <summary>
         /// Clears all selections.
         /// </summary>
-        public void ClearSelection() => _listView.list.ClearSelection();
+        public void ClearSelection() => view.list.ClearSelection();
 
         /// <summary>
         /// Refreshes the items list from the project.
         /// </summary>
         public void RefreshItems()
         {
-            _viewModel.LoadAllItems();
+            viewModel.LoadAllItems();
             RefreshAllFilteredItems();
         }
 
@@ -106,9 +106,9 @@ namespace AnimatorFactory.Core.UI.SelectionList
             //         .ToList();
             // }
 
-            _viewModel.RefreshAllFilteredItems();
-            _listView.list.itemsSource = _viewModel.filteredItems;
-            _listView.list.RefreshItems();
+            viewModel.RefreshAllFilteredItems();
+            view.list.itemsSource = viewModel.filteredItems;
+            view.list.RefreshItems();
             UpdateSelectionCount();
         }
 
@@ -121,15 +121,15 @@ namespace AnimatorFactory.Core.UI.SelectionList
         void OnSelectAllClicked()
         {
             List<int> allIndices = new List<int>();
-            for (int i = 0; i < _viewModel.filteredItems.Count; i++)
+            for (int i = 0; i < viewModel.filteredItems.Count; i++)
             {
                 allIndices.Add(item: i);
             }
             
-            _listView.list.SetSelection(indices: allIndices);
+            view.list.SetSelection(indices: allIndices);
         }
 
-        void OnClearAllClicked() => _listView.list.ClearSelection();
+        void OnClearAllClicked() => view.list.ClearSelection();
 
         void OnListSelectionChanged(IEnumerable<object> selectedItems)
         {
@@ -156,9 +156,9 @@ namespace AnimatorFactory.Core.UI.SelectionList
 
         void UpdateSelectionCount()
         {
-            int count = _listView.list.selectedIndices?.Count() ?? 0;
-            _listView.selectionCountLabel.text = $"Selected: {count}";
-            _listView.applyButton.SetEnabled(value: count > 0);
+            int count = view.list.selectedIndices?.Count() ?? 0;
+            view.selectionCountLabel.text = $"Selected: {count}";
+            view.applyButton.SetEnabled(value: count > 0);
         }
     }
 }

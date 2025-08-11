@@ -1,3 +1,4 @@
+using System;
 using AnimatorFactory.Core.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -6,6 +7,8 @@ namespace AnimatorFactory.PrefabVariants
 {
     public class PrefabVariantsEditionView : VisualElement
     {
+        public event Action<GameObject> DidSelectPrefab;
+
         PrefabField _prefabField;
 
         public PrefabVariantsEditionView() => CreateUI();
@@ -31,16 +34,10 @@ namespace AnimatorFactory.PrefabVariants
             Add(child: _prefabField);
         }
 
-        void OnPrefabSelected(ChangeEvent<Object> evt)
+        void OnPrefabSelected(ChangeEvent<UnityEngine.Object> evt)
         {
-            GameObject value = (GameObject) evt.newValue;
-            ShowVariantsList(value: value);
-        }
-
-        void ShowVariantsList(GameObject value)
-        {
-            //
-            
+            GameObject value = (GameObject)evt.newValue;
+            DidSelectPrefab?.Invoke(obj: value);
         }
     }
 }

@@ -40,6 +40,11 @@ namespace AnimatorFactory.Core.UI.SelectionList
             CreateButtonSection(OnApplyClicked: OnApplyClicked, OnCancelClicked: OnCancelClicked);
         }
 
+        public void Hide()
+        {
+            
+        }
+
         void SetStyle()
         {
             style.backgroundColor = new Color(r: 0.2f, g: 0.2f, b: 0.2f, a: 0.95f);
