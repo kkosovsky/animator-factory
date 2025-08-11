@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UIElements;
 
 namespace AnimatorFactory.Core.UI.SelectionList
 {
@@ -9,7 +8,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
     /// Custom UIElement for multi-selecting items from the project.
     /// Provides search, filtering, and multi-select functionality.
     /// </summary>
-    public class SelectionListViewController<SourceItem, ListItem> : VisualElement
+    public class SelectionListViewController<SourceItem, ListItem>
     {
         /// <summary>
         /// Fired when items selection changes.
