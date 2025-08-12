@@ -18,7 +18,7 @@ namespace AnimatorFactory.Core.UI
         )
         {
             PrefabField prefabField = new(label: label);
-            prefabField.RegisterValueChangedCallback(OnPrefabSelectionChanged);
+            prefabField.RegisterValueChangedCallback(callback: OnPrefabSelectionChanged);
             return prefabField;
         }
     }

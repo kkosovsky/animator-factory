@@ -5,7 +5,6 @@ namespace AnimatorFactory.Core.UI.SelectionList
 {
     public interface ISelectionListViewModel<SourceItem, ListItem>
     {
-        string currentFilter { get; }
         List<ListItem> allItems { get; set; }
         List<ListItem> filteredItems { get; }
 

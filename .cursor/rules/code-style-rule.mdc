@@ -1,0 +1,10 @@
+---
+description: Set of rules to follow when writing C# code
+globs:
+alwaysApply: true
+---
+
+1. Don't use `private` keyword
+2. Don't write comments.
+3. Always add argument names in method calls.
+4. Always add curly braces after if, else, if-else, while statements.

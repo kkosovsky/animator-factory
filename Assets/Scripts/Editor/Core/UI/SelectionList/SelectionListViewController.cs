@@ -25,6 +25,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
         /// </summary>
         public event Action CancelRequested;
 
+        public SelectionListView View => view;
         protected readonly SelectionListView view;
         protected readonly ISelectionListViewModel<SourceItem, ListItem> viewModel;
 
@@ -91,31 +92,23 @@ namespace AnimatorFactory.Core.UI.SelectionList
             viewModel.LoadAllItems();
             RefreshAllFilteredItems();
         }
+        
+        public void Show() => view.Show();
 
-        void RefreshAllFilteredItems()
+        public void Hide() => view.Hide();
+
+        protected void RefreshList()
         {
-            // if (string.IsNullOrEmpty(value: _filter.currentFilter))
-            // {
-            //     _filteredItems = new List<ListItem>(collection: _allItems);
-            // }
-            // else
-            // {
-            //     _filteredItems = _allItems
-            //         .Where(predicate: _filter.Filter)
-            //         .ToList();
-            // }
-
-            viewModel.RefreshAllFilteredItems();
             view.list.itemsSource = viewModel.filteredItems;
             view.list.RefreshItems();
             UpdateSelectionCount();
         }
 
-        // void OnSearchChanged(ChangeEvent<string> evt)
-        // {
-        //     _filter.currentFilter = evt.newValue ?? "";
-        //     RefreshAllFilteredItems();
-        // }
+        void RefreshAllFilteredItems()
+        {
+            viewModel.RefreshAllFilteredItems();
+            RefreshList();
+        }
 
         void OnSelectAllClicked()
         {
@@ -124,7 +117,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
             {
                 allIndices.Add(item: i);
             }
-            
+
             view.list.SetSelection(indices: allIndices);
         }
 

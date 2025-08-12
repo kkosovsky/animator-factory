@@ -12,6 +12,14 @@ namespace AnimatorFactory.PrefabVariants
         {
         }
 
-        public void OnPrefabSelected(GameObject prefab) => viewModel.OnSourceItemChanged(item: prefab);
+        public void OnPrefabSelected(GameObject prefab)
+        {
+            viewModel.OnSourceItemChanged(item: prefab);
+            RefreshList();
+            if (view.list.itemsSource.Count > 0)
+            {
+                Show();
+            }
+        }
     }
 }

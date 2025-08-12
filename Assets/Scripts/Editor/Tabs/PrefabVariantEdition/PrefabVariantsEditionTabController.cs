@@ -7,6 +7,7 @@ namespace AnimatorFactory.PrefabVariants
     {
         readonly PrefabVariantsEditionView _view;
         readonly PrefabVariantsEditionViewModel _viewModel;
+        
         readonly PrefabVariantListController _listController;
 
         public PrefabVariantsEditionTabController()
@@ -18,6 +19,8 @@ namespace AnimatorFactory.PrefabVariants
                 itemViewFactory: new PrefabVariantListItemFactory()
             );
 
+            _view.Add(child: _listController.View);
+            _listController.Hide();
             BindEvents();
         }
 

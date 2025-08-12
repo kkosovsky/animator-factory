@@ -10,39 +10,42 @@ namespace AnimatorFactory.PrefabVariants
 {
     public class PrefabVariantSelectionListViewModel : ISelectionListViewModel<GameObject, GameObject>
     {
-        public string currentFilter { get; }
+        public List<GameObject> allItems { get; set; } = new();
+        public List<GameObject> filteredItems { get; } = new();
 
-        public List<GameObject> allItems { get; set; }
-        public List<GameObject> filteredItems { get; }
-
-        public PrefabVariantSelectionListViewModel()
-        {
-            currentFilter = string.Empty;
-            allItems = new List<GameObject>();
-            filteredItems = new List<GameObject>();
-        }
+        string _currentFilter = string.Empty;
 
         public void OnSourceItemChanged(GameObject item)
         {
-            PrefabAssetType type = PrefabUtility.GetPrefabAssetType(componentOrGameObject: item);
-            if (type != PrefabAssetType.Regular)
+            if (item == null)
             {
                 return;
             }
 
-            Debug.Log(message: "Is regular prefab type");
+            PrefabAssetType type = PrefabUtility.GetPrefabAssetType(componentOrGameObject: item);
+            if (type != PrefabAssetType.Regular)
+            {
+                Debug.Log(message: "Prefab type is not .Regular. Stopping execution.");
+                return;
+            }
+
             List<GameObject> variants = FindAllPrefabVariants(parent: item).ToList();
             Sort(items: variants);
             allItems = variants;
-            foreach (GameObject anItem in allItems)
-            {
-                Debug.Log(message: anItem);
-            }
+            RefreshAllFilteredItems();
         }
 
         public void BindItem(VisualElement element, int index)
         {
-            
+            if (element is not PrefabVariantCell cell || index >= filteredItems.Count)
+            {
+                return;
+            }
+
+            GameObject prefab = filteredItems[index: index];
+
+            Texture2D previewTexture = AssetPreview.GetAssetPreview(asset: prefab);
+            cell.SetUp(image: previewTexture, labelText: prefab.name);
         }
 
         public void Sort(List<GameObject> items)
@@ -56,21 +59,21 @@ namespace AnimatorFactory.PrefabVariants
             );
         }
 
-        public bool Filter(GameObject item)
-        {
-            return false;
-        }
+        public bool Filter(GameObject item) =>
+            string.IsNullOrEmpty(value: _currentFilter)
+            || item.name.Contains(
+                value: _currentFilter,
+                comparisonType: StringComparison.OrdinalIgnoreCase
+            );
 
-        public void LoadAllItems()
-        {
-        }
+        public void LoadAllItems() {}
 
-        public void OnSearchChanged(ChangeEvent<string> evt)
-        {
-        }
+        public void OnSearchChanged(ChangeEvent<string> evt) => _currentFilter = evt.newValue;
 
         public void RefreshAllFilteredItems()
         {
+            filteredItems.Clear();
+            filteredItems.AddRange(collection: allItems.Where(predicate: Filter));
         }
 
         public static IEnumerable<GameObject> FindAllPrefabVariants(GameObject parent)
@@ -85,7 +88,7 @@ namespace AnimatorFactory.PrefabVariants
                         PrefabUtility.GetPrefabAssetType(componentOrGameObject: go) == PrefabAssetType.Variant
                 )
                 .Where(
-                    predicate: go => 
+                    predicate: go =>
                         PrefabUtility.GetCorrespondingObjectFromSource(componentOrGameObject: go) == parent
                 );
         }

@@ -5,13 +5,6 @@ namespace AnimatorFactory.PrefabVariants
 {
     public sealed class PrefabVariantListItemFactory: ListItemViewFactory
     {
-        public PrefabVariantListItemFactory()
-        {
-        }
-
-        public override VisualElement MakeListItem()
-        {
-            return new VisualElement();
-        }
+        public override VisualElement MakeListItem() => new PrefabVariantCell();
     }
 }

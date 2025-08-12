@@ -14,6 +14,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
         TextField searchField;
         Button cancelButton;
         Button selectAllButton;
+
         Button clearAllButton;
 
         public SelectionListView(
@@ -40,10 +41,9 @@ namespace AnimatorFactory.Core.UI.SelectionList
             CreateButtonSection(OnApplyClicked: OnApplyClicked, OnCancelClicked: OnCancelClicked);
         }
 
-        public void Hide()
-        {
-            
-        }
+        public void Show() => style.display = DisplayStyle.Flex;
+
+        public void Hide() => style.display = DisplayStyle.None;
 
         void SetStyle()
         {
