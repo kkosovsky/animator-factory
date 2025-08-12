@@ -8,7 +8,7 @@ namespace AnimatorFactory.PrefabVariants
     public class PrefabVariantsEditionView : VisualElement
     {
         public event Action<GameObject> PrefabSelected;
-        public event Action<string> DestinationChanged;
+        public event Action<string> SpritesSourceFolderChanged;
         public event Action GenerateButtonClicked;
 
         PrefabField _prefabField;
@@ -90,7 +90,7 @@ namespace AnimatorFactory.PrefabVariants
             PrefabSelected?.Invoke(obj: value);
         }
 
-        void OnSourceFolderChanged(string path) => DestinationChanged?.Invoke(obj: path);
+        void OnSourceFolderChanged(string path) => SpritesSourceFolderChanged?.Invoke(obj: path);
 
         void OnGenerateButtonClicked() => GenerateButtonClicked?.Invoke();
     }

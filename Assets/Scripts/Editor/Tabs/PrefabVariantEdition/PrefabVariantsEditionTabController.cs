@@ -30,15 +30,17 @@ namespace AnimatorFactory.PrefabVariants
         void BindEvents()
         {
             _view.PrefabSelected += OnPrefabSelected;
-            _view.DestinationChanged += OnDestinationChanged;
+            _view.SpritesSourceFolderChanged += _viewModel.SourceFolderChanged;
+            _view.GenerateButtonClicked += _viewModel.OnGenerateClicked;
             _listController.ItemsApplied += OnVariantItemsApplied;
         }
 
         void UnbindEvents()
         {
             _view.PrefabSelected -= OnPrefabSelected;
-            _view.DestinationChanged -= OnDestinationChanged;
             _listController.ItemsApplied -= OnVariantItemsApplied;
+            _view.SpritesSourceFolderChanged -= _viewModel.SourceFolderChanged;
+            _view.GenerateButtonClicked -= _viewModel.OnGenerateClicked;
         }
 
         void OnPrefabSelected(GameObject prefab)
@@ -46,8 +48,6 @@ namespace AnimatorFactory.PrefabVariants
             _listController.OnPrefabSelected(prefab: prefab);
             _viewModel.PrefabSelected(prefab: prefab);
         }
-
-        void OnDestinationChanged(string path) => _viewModel.DestinationChanged(path: path);
 
         void OnVariantItemsApplied(GameObject[] items)
         {
