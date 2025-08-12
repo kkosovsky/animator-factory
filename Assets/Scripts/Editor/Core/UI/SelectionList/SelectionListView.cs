@@ -10,12 +10,11 @@ namespace AnimatorFactory.Core.UI.SelectionList
         public ListView list;
         public Label selectionCountLabel;
         public Button applyButton;
-
+        public Button cancelButton;
+        public Button selectAllButton;
+        public Button clearAllButton;
+        
         TextField searchField;
-        Button cancelButton;
-        Button selectAllButton;
-
-        Button clearAllButton;
 
         public SelectionListView(
             string headerText,

@@ -1,5 +1,6 @@
 using AnimatorFactory.Core.UI.SelectionList;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AnimatorFactory.PrefabVariants
 {
@@ -10,6 +11,8 @@ namespace AnimatorFactory.PrefabVariants
             ListItemViewFactory itemViewFactory
         ) : base(headerText: "Select Variants:", viewModel: viewModel, itemViewFactory: itemViewFactory)
         {
+            view.clearAllButton.style.display = DisplayStyle.None;
+            view.selectAllButton.style.display = DisplayStyle.None;
         }
 
         public void OnPrefabSelected(GameObject prefab)
