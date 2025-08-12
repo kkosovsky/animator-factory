@@ -16,10 +16,18 @@ namespace AnimatorFactory.PrefabVariants
         {
             viewModel.OnSourceItemChanged(item: prefab);
             RefreshList();
-            if (view.list.itemsSource.Count > 0)
+            UpdateVisibility();
+        }
+
+        void UpdateVisibility()
+        {
+            if (view.list.itemsSource.Count == 0)
             {
-                Show();
+                Hide();
+                return;
             }
+            
+            Show();
         }
     }
 }

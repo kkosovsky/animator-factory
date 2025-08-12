@@ -26,6 +26,8 @@ namespace AnimatorFactory.PrefabVariants
             if (type != PrefabAssetType.Regular)
             {
                 Debug.Log(message: "Prefab type is not .Regular. Stopping execution.");
+                allItems.Clear();
+                filteredItems.Clear();
                 return;
             }
 
