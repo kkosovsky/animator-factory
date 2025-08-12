@@ -317,7 +317,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         void CreateDestinationFolderSection()
         {
-            _folderField = new FolderField();
+            _folderField = new FolderField(labelText: "Destination:");
             Add(child: _folderField);
         }
 

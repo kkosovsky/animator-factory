@@ -17,9 +17,9 @@ namespace AnimatorFactory.Core.UI
         Button _browseFolderButton;
         bool _isUpdatingValue;
 
-        public FolderField() => CreateGUI();
+        public FolderField(string labelText) => CreateGUI(labelText: labelText);
 
-        void CreateGUI()
+        void CreateGUI(string labelText)
         {
             VisualElement folderRow = new()
             {
@@ -32,7 +32,7 @@ namespace AnimatorFactory.Core.UI
                 }
             };
 
-            Label folderLabel = new(text: Strings.destination)
+            Label folderLabel = new(text: labelText)
             {
                 style =
                 {
@@ -130,15 +130,14 @@ namespace AnimatorFactory.Core.UI
             {
                 _destinationFolderField.value = relativePath;
             }
-            _isUpdatingValue = false;
 
+            _isUpdatingValue = false;
             DestinationFolderChanged?.Invoke(obj: _destinationFolderField.value);
         }
 
         static class Strings
         {
             internal const string selectDestinationFolder = "Select Destination Folder";
-            internal const string destination = "Destination:";
             internal const string browse = "Browse...";
             internal static readonly string assetsPath = $"Assets{Path.DirectorySeparatorChar}";
         }
