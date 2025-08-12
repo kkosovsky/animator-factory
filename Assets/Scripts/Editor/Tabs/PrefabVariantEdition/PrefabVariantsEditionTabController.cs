@@ -7,7 +7,6 @@ namespace AnimatorFactory.PrefabVariants
     {
         readonly PrefabVariantsEditionView _view;
         readonly PrefabVariantsEditionViewModel _viewModel;
-        
         readonly PrefabVariantListController _listController;
 
         public PrefabVariantsEditionTabController()
@@ -28,10 +27,22 @@ namespace AnimatorFactory.PrefabVariants
 
         public void Dispose() => UnbindEvents();
 
-        void BindEvents() => _view.DidSelectPrefab += OnDidSelectPrefab;
+        void BindEvents()
+        {
+            _view.DidSelectPrefab += OnDidSelectPrefab;
+            _listController.ItemsApplied += OnItemsApplied;
+        }
 
-        void UnbindEvents() => _view.DidSelectPrefab -= OnDidSelectPrefab;
+        void UnbindEvents()
+        {
+            _view.DidSelectPrefab -= OnDidSelectPrefab;
+            _listController.ItemsApplied -= OnItemsApplied;
+        }
 
         void OnDidSelectPrefab(GameObject prefab) => _listController.OnPrefabSelected(prefab: prefab);
+
+        void OnItemsApplied(GameObject[] items)
+        {
+        }
     }
 }

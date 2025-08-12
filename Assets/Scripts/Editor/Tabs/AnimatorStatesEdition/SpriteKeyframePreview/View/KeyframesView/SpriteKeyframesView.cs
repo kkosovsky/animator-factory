@@ -308,13 +308,12 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             Add(child: _editableInfoContainer);
 
-            // Destination folder row
             CreateDestinationFolderSection();
         }
 
         void CreateDestinationFolderSection()
         {
-            VisualElement folderRow = new VisualElement
+            VisualElement folderRow = new()
             {
                 style =
                 {
@@ -325,7 +324,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 }
             };
 
-            Label folderLabel = new Label(text: "Destination:")
+            Label folderLabel = new(text: "Destination:")
             {
                 style =
                 {
@@ -339,7 +338,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
             _destinationFolderField = new TextField
             {
-                value = "Assets/Animations",
+                value = "Assets/",
                 style =
                 {
                     width = 200,
