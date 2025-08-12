@@ -1,10 +1,11 @@
+using System.IO;
 using UnityEngine;
 
 namespace AnimatorFactory.PrefabVariants
 {
     public class PrefabVariantsEditionViewModel
     {
-        string spriteSourcePath = string.Empty;
+        string spriteSourcePath = $"Assets{Path.DirectorySeparatorChar}";
         GameObject _rootPrefab;
         GameObject[] _variants;
 
@@ -16,14 +17,6 @@ namespace AnimatorFactory.PrefabVariants
 
         public void OnGenerateClicked()
         {
-            Debug.Log($"Root Prefab: {_rootPrefab.name}");
-            Debug.Log($"---------------------------------");
-            foreach (GameObject variant in _variants)
-            {
-                Debug.Log($"Variant: {variant.name}");
-            }
-            Debug.Log($"---------------------------------");
-            Debug.Log($"Destination");
         }
     }
 }

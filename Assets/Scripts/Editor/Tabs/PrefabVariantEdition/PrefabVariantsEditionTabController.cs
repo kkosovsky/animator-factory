@@ -49,10 +49,11 @@ namespace AnimatorFactory.PrefabVariants
             _viewModel.PrefabSelected(prefab: prefab);
         }
 
-        void OnVariantItemsApplied(GameObject[] items)
+        void OnVariantItemsApplied(GameObject[] variants)
         {
             _listController.Hide();
-            _view.ShowSelectedItemsLabel(count: items.Length);
+            _view.ShowSelectedItemsLabel(count: variants.Length);
+            _viewModel.VariantsSelected(variants: variants);
         }
     }
 }

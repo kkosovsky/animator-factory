@@ -1,3 +1,4 @@
+using System.IO;
 using AnimatorFactory.Core.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -16,7 +17,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         IntegerField _totalFramesField;
 
         FolderField _folderField;
-        
+
         ScrollView _keyframesScrollView;
         VisualElement _keyframesContainer;
         HelpBox _helpBox;
@@ -287,7 +288,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
             _totalFramesField.RegisterValueChangedCallback(callback: OnTotalFramesChanged);
             _editableInfoContainer.Add(child: _totalFramesField);
 
-            // Change button next to total frames
             Button changeButton = new()
             {
                 text = "Replace Sprites",
@@ -317,7 +317,11 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         void CreateDestinationFolderSection()
         {
-            _folderField = new FolderField(labelText: "Destination:");
+            _folderField = new FolderField(
+                labelText: "Destination:",
+                initialValue: $"Assets{Path.DirectorySeparatorChar}"
+            );
+
             Add(child: _folderField);
         }
 

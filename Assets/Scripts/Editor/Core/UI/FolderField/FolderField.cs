@@ -17,9 +17,10 @@ namespace AnimatorFactory.Core.UI
         Button _browseFolderButton;
         bool _isUpdatingValue;
 
-        public FolderField(string labelText) => CreateGUI(labelText: labelText);
+        public FolderField(string labelText, string initialValue) =>
+            CreateGUI(labelText: labelText, initialValue: initialValue);
 
-        void CreateGUI(string labelText)
+        void CreateGUI(string labelText, string initialValue)
         {
             VisualElement folderRow = new()
             {
@@ -46,7 +47,7 @@ namespace AnimatorFactory.Core.UI
 
             _destinationFolderField = new TextField
             {
-                value = Strings.assetsPath,
+                value = initialValue,
                 style =
                 {
                     width = 200,

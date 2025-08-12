@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using AnimatorFactory.Core.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -43,7 +44,7 @@ namespace AnimatorFactory.PrefabVariants
                     display = DisplayStyle.None
                 }
             };
-            
+
             Add(child: _selectedItemsLabel);
         }
 
@@ -58,7 +59,7 @@ namespace AnimatorFactory.PrefabVariants
                     height = 24.0f
                 }
             };
-            
+
             Add(child: _generateButton);
         }
 
@@ -79,7 +80,10 @@ namespace AnimatorFactory.PrefabVariants
 
         void AddSourceFolderField()
         {
-            _sourceFolderField = new FolderField(labelText: "Variants Sprites:");
+            _sourceFolderField = new FolderField(
+                labelText: "Variants Sprites:",
+                initialValue: $"Assets{Path.DirectorySeparatorChar}"
+            );
             Add(child: _sourceFolderField);
             _sourceFolderField.DestinationFolderChanged += OnSourceFolderChanged;
         }
