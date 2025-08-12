@@ -15,8 +15,10 @@ namespace AnimatorFactory.SpriteKeyframePreview
         Label _durationLabel;
         FloatField _frameRateField;
         IntegerField _totalFramesField;
+        
         TextField _destinationFolderField;
         Button _browseFolderButton;
+        
         ScrollView _keyframesScrollView;
         VisualElement _keyframesContainer;
         HelpBox _helpBox;
