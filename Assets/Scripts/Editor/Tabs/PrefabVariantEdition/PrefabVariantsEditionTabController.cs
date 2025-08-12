@@ -31,13 +31,14 @@ namespace AnimatorFactory.PrefabVariants
         {
             _view.PrefabSelected += OnPrefabSelected;
             _view.DestinationChanged += OnDestinationChanged;
-            _listController.ItemsApplied += OnItemsApplied;
+            _listController.ItemsApplied += OnVariantItemsApplied;
         }
 
         void UnbindEvents()
         {
             _view.PrefabSelected -= OnPrefabSelected;
-            _listController.ItemsApplied -= OnItemsApplied;
+            _view.DestinationChanged -= OnDestinationChanged;
+            _listController.ItemsApplied -= OnVariantItemsApplied;
         }
 
         void OnPrefabSelected(GameObject prefab)
@@ -48,6 +49,10 @@ namespace AnimatorFactory.PrefabVariants
 
         void OnDestinationChanged(string path) => _viewModel.DestinationChanged(path: path);
 
-        void OnItemsApplied(GameObject[] items) => _listController.Hide();
+        void OnVariantItemsApplied(GameObject[] items)
+        {
+            _listController.Hide();
+            _view.ShowSelectedItemsLabel(count: items.Length);
+        }
     }
 }

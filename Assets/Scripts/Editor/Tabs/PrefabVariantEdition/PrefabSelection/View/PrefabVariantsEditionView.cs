@@ -9,17 +9,57 @@ namespace AnimatorFactory.PrefabVariants
     {
         public event Action<GameObject> PrefabSelected;
         public event Action<string> DestinationChanged;
+        public event Action GenerateButtonClicked;
 
         PrefabField _prefabField;
         FolderField _sourceFolderField;
+        Label _selectedItemsLabel;
+        Button _generateButton;
 
         public PrefabVariantsEditionView() => CreateUI();
+
+        public void ShowSelectedItemsLabel(int count)
+        {
+            _selectedItemsLabel.text = $"Selected {count} variants";
+            _selectedItemsLabel.style.display = DisplayStyle.Flex;
+            _generateButton.style.display = DisplayStyle.Flex;
+        }
 
         void CreateUI()
         {
             SetStyle();
             AddPrefabSelection();
             AddSourceFolderField();
+            AddSelectedItemsLabel();
+            AddGenerateButton();
+        }
+
+        void AddSelectedItemsLabel()
+        {
+            _selectedItemsLabel = new Label
+            {
+                style =
+                {
+                    display = DisplayStyle.None
+                }
+            };
+            
+            Add(child: _selectedItemsLabel);
+        }
+
+        void AddGenerateButton()
+        {
+            _generateButton = new Button(clickEvent: OnGenerateButtonClicked)
+            {
+                text = "Generate",
+                style =
+                {
+                    display = DisplayStyle.None,
+                    height = 24.0f
+                }
+            };
+            
+            Add(child: _generateButton);
         }
 
         void SetStyle()
@@ -51,5 +91,7 @@ namespace AnimatorFactory.PrefabVariants
         }
 
         void OnSourceFolderChanged(string path) => DestinationChanged?.Invoke(obj: path);
+
+        void OnGenerateButtonClicked() => GenerateButtonClicked?.Invoke();
     }
 }
