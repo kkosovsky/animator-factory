@@ -15,6 +15,7 @@ namespace AnimatorFactory.Core.UI
 
         TextField _destinationFolderField;
         Button _browseFolderButton;
+        bool _isUpdatingValue;
 
         public FolderField() => CreateGUI();
 
@@ -72,6 +73,11 @@ namespace AnimatorFactory.Core.UI
 
         void OnDestinationFolderChanged(ChangeEvent<string> evt)
         {
+            if (_isUpdatingValue)
+            {
+                return;
+            }
+
             string newValue = evt.newValue;
             if (string.IsNullOrEmpty(value: newValue))
             {
@@ -80,7 +86,10 @@ namespace AnimatorFactory.Core.UI
 
             if (!newValue.EndsWith(value: Path.DirectorySeparatorChar))
             {
+                _isUpdatingValue = true;
                 _destinationFolderField.value = $"{newValue}{Path.DirectorySeparatorChar}";
+                _isUpdatingValue = false;
+                newValue = _destinationFolderField.value;
             }
 
             DestinationFolderChanged?.Invoke(obj: newValue);
@@ -112,10 +121,16 @@ namespace AnimatorFactory.Core.UI
                 return;
             }
 
-            if (!newValue.EndsWith(value: Path.DirectorySeparatorChar))
+            _isUpdatingValue = true;
+            if (!relativePath.EndsWith(value: Path.DirectorySeparatorChar))
             {
                 _destinationFolderField.value = $"{relativePath}{Path.DirectorySeparatorChar}";
             }
+            else
+            {
+                _destinationFolderField.value = relativePath;
+            }
+            _isUpdatingValue = false;
 
             DestinationFolderChanged?.Invoke(obj: _destinationFolderField.value);
         }

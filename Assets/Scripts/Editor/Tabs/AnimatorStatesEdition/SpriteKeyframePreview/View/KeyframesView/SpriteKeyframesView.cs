@@ -1,7 +1,6 @@
-using System.IO;
+using AnimatorFactory.Core.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor;
 
 namespace AnimatorFactory.SpriteKeyframePreview
 {
@@ -15,9 +14,8 @@ namespace AnimatorFactory.SpriteKeyframePreview
         Label _durationLabel;
         FloatField _frameRateField;
         IntegerField _totalFramesField;
-        
-        TextField _destinationFolderField;
-        Button _browseFolderButton;
+
+        FolderField _folderField;
         
         ScrollView _keyframesScrollView;
         VisualElement _keyframesContainer;
@@ -47,7 +45,11 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// <summary>
         /// Fired when destination folder is changed by user.
         /// </summary>
-        public event System.Action<string> DestinationFolderChanged;
+        public event System.Action<string> DestinationFolderChanged
+        {
+            add => _folderField.DestinationFolderChanged += value;
+            remove => _folderField.DestinationFolderChanged -= value;
+        }
 
         public SpriteKeyframesView() => CreateUI();
 
@@ -315,56 +317,9 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         void CreateDestinationFolderSection()
         {
-            VisualElement folderRow = new()
-            {
-                style =
-                {
-                    flexDirection = FlexDirection.Row,
-                    alignItems = Align.Center,
-                    marginBottom = 10,
-                    width = Length.Percent(value: 100)
-                }
-            };
-
-            Label folderLabel = new(text: "Destination:")
-            {
-                style =
-                {
-                    fontSize = 11,
-                    color = Color.gray,
-                    marginRight = 5,
-                    width = 80
-                }
-            };
-            folderRow.Add(child: folderLabel);
-
-            _destinationFolderField = new TextField
-            {
-                value = "Assets/",
-                style =
-                {
-                    width = 200,
-                    marginRight = 5
-                }
-            };
-            _destinationFolderField.RegisterValueChangedCallback(callback: OnDestinationFolderChanged);
-            folderRow.Add(child: _destinationFolderField);
-
-            _browseFolderButton = new Button
-            {
-                text = "Browse...",
-                style =
-                {
-                    width = 70,
-                    height = 20
-                }
-            };
-            _browseFolderButton.clicked += OnBrowseFolderClicked;
-            folderRow.Add(child: _browseFolderButton);
-
-            Add(child: folderRow);
+            _folderField = new FolderField();
+            Add(child: _folderField);
         }
-
 
         void OnFrameRateChanged(ChangeEvent<float> evt)
         {
@@ -388,56 +343,6 @@ namespace AnimatorFactory.SpriteKeyframePreview
             {
                 AnimationNameChanged?.Invoke(obj: evt.newValue);
             }
-        }
-
-        void OnDestinationFolderChanged(ChangeEvent<string> evt)
-        {
-            string newValue = evt.newValue;
-            if (string.IsNullOrEmpty(value: newValue))
-            {
-                return;
-            }
-
-            if (!newValue.EndsWith(value: Path.DirectorySeparatorChar))
-            {
-                _destinationFolderField.value = $"{evt}{Path.DirectorySeparatorChar}";
-            }
-
-            DestinationFolderChanged?.Invoke(obj: newValue);
-        }
-
-        void OnBrowseFolderClicked()
-        {
-            string newValue = _destinationFolderField.value;
-            string currentFolder = newValue;
-            if (string.IsNullOrEmpty(value: currentFolder))
-            {
-                currentFolder = "Assets";
-            }
-
-            string selectedFolder = EditorUtility.SaveFolderPanel(
-                title: "Select Destination Folder",
-                folder: currentFolder,
-                defaultName: ""
-            );
-
-            if (string.IsNullOrEmpty(value: selectedFolder))
-            {
-                return;
-            }
-
-            string relativePath = FileUtil.GetProjectRelativePath(path: selectedFolder);
-            if (string.IsNullOrEmpty(value: relativePath))
-            {
-                return;
-            }
-
-            if (!newValue.EndsWith(value: Path.DirectorySeparatorChar))
-            {
-                _destinationFolderField.value = $"{relativePath}{Path.DirectorySeparatorChar}";
-            }
-
-            DestinationFolderChanged?.Invoke(obj: _destinationFolderField.value);
         }
     }
 }
