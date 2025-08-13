@@ -23,11 +23,19 @@ namespace AnimatorFactory.PrefabVariants
             List<AnimatorState> validAnimatorStates = GetAllAnimatorStatesInParentHierarchy();
             foreach (GameObject variant in _variants)
             {
-                CreateOverrideAnimator(variant: variant, spritesSourcePath: spriteSourcePath);
+                CreateOverrideAnimator(
+                    variant: variant,
+                    parentAnimatorStates: validAnimatorStates,
+                    spritesSourcePath: spriteSourcePath
+                );
             }
         }
 
-        void CreateOverrideAnimator(GameObject variant, string spritesSourcePath)
+        void CreateOverrideAnimator(
+            GameObject variant,
+            List<AnimatorState> parentAnimatorStates,
+            string spritesSourcePath
+        )
         {
             PrefabVariantsEditionService.CreateAnimatorOverrideControllerAsSubAsset(
                 prefabVariant: variant,
@@ -47,18 +55,19 @@ namespace AnimatorFactory.PrefabVariants
         {
             List<GameObject> parentPrefabObjectsWithAnimator = GetAllObjectsWithAnimator(rootObject: _rootPrefab);
 
-            IEnumerable<AnimatorState> allAnimatorStatesInParentHierarchy = parentPrefabObjectsWithAnimator.SelectMany(
+            IEnumerable<AnimatorState> parentStates = parentPrefabObjectsWithAnimator.SelectMany(
                 selector: gameObject =>
                 {
                     AnimatorController parentObjectAnimator =
                         gameObject.GetComponent<Animator>().runtimeAnimatorController as AnimatorController;
                     List<AnimatorState> parentObjectAnimatorStates =
                         AnimatorStateAnalysisService.GetAllAnimatorStates(controller: parentObjectAnimator);
+
                     return parentObjectAnimatorStates;
                 }
             );
 
-            return allAnimatorStatesInParentHierarchy.ToList();
+            return parentStates.ToList();
         }
 
         List<GameObject> GetAllObjectsWithAnimator(GameObject rootObject)
