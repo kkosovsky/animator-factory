@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AnimatorFactory.GenerationControls;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -38,9 +39,8 @@ namespace AnimatorFactory.PrefabVariants
                 }
             }
 
-            // TODO: Uncomment - Save all changes
-            //PrefabUtility.SavePrefabAsset(asset: prefabVariant);
-            //AssetDatabase.SaveAssets();
+            PrefabUtility.SavePrefabAsset(asset: prefabVariant);
+            AssetDatabase.SaveAssets();
         }
 
         static bool IsValidVariant(GameObject variant, string path)
@@ -81,6 +81,12 @@ namespace AnimatorFactory.PrefabVariants
             );
 
             overrideController.ApplyOverrides(overrides: newAnimationClips);
+            string overrideControllerName = $"{originalAnimator.gameObject.name}_AnimatorOverride";
+            overrideController.name = overrideControllerName;
+    
+            AssetDatabase.AddObjectToAsset(objectToAdd: overrideController, assetObject: prefabVariant);
+            originalAnimator.runtimeAnimatorController = overrideController;
+            PrefabUtility.RecordPrefabInstancePropertyModifications(targetObject: originalAnimator);
         }
 
         static bool IsOriginalAnimatorValid(Animator animator)
@@ -112,22 +118,43 @@ namespace AnimatorFactory.PrefabVariants
                 rootPath: replacementSpritesPath
             );
 
+            Dictionary<AnimationClip, string> clipToStateName = CreateClipToStateMapping(states: originalStates);
+
             for (int i = 0; i < overrides.Count; i++)
             {
                 KeyValuePair<AnimationClip, AnimationClip> @override = overrides[index: i];
-                overrides[index: i] = new KeyValuePair<AnimationClip, AnimationClip>(
-                    key: @override.Key,
-                    value: MakeAnimationClip(original: @override.Key)
-                );
+                if
+                (
+                    clipToStateName.TryGetValue(key: @override.Key, value: out string stateName)
+                    && sprites.TryGetValue(key: stateName, value: out List<Sprite> keyframes)
+                )
+                {
+                    overrides[index: i] = new KeyValuePair<AnimationClip, AnimationClip>(
+                        key: @override.Key,
+                        value: MakeAnimationClip(original: @override.Key, newKeyframes: keyframes.ToArray())
+                    );
+                }
+                else
+                {
+                    Debug.Log(message: $"{@override.Key.name} is not assigned to any of the original animator states!");
+                }
             }
 
             return overrides;
         }
 
-        static AnimationClip MakeAnimationClip(AnimationClip original)
+
+        static AnimationClip MakeAnimationClip(AnimationClip original, Sprite[] newKeyframes)
         {
-            // TODO: Implement
-            return original;
+            return AnimationClipGenerationService.CreateAnimationClip(
+                sprites: newKeyframes,
+                keyframeCount: newKeyframes.Length,
+                frameRate: original.frameRate,
+                hasLoopTime: false,
+                wrapMode: WrapMode.Clamp,
+                animationName: $"{original.name}_green",
+                destinationFolderPath: "Assets/TestGeneration/"
+            );
         }
 
         static Dictionary<string, List<Sprite>> LoadAllSpritesRecursively(List<AnimatorState> states, string rootPath)
@@ -156,7 +183,7 @@ namespace AnimatorFactory.PrefabVariants
                 {
                     if (asset is not Sprite sprite)
                     {
-                        Debug.Log($"Asset is not a sprite: {asset.name}");
+                        Debug.Log(message: $"Asset is not a sprite: {asset.name}");
                         continue;
                     }
 
@@ -165,7 +192,7 @@ namespace AnimatorFactory.PrefabVariants
                         states.Any(predicate: state => spriteName.Contains(value: state.name.ToLower()));
                     if (!matchingStateExists)
                     {
-                        Debug.Log($"{spriteName} doesn't match any existing state");
+                        Debug.Log(message: $"{spriteName} doesn't match any existing state");
                         continue;
                     }
 
@@ -179,7 +206,7 @@ namespace AnimatorFactory.PrefabVariants
                     else
                     {
                         List<Sprite> newKeyframes = new List<Sprite>();
-                        newKeyframes.Add(sprite);
+                        newKeyframes.Add(item: sprite);
                         spriteDict[key: stateName] = newKeyframes;
                     }
                 }
@@ -197,6 +224,44 @@ namespace AnimatorFactory.PrefabVariants
             }
 
             return spriteDict;
+        }
+
+        static Dictionary<AnimationClip, string> CreateClipToStateMapping(List<AnimatorState> states)
+        {
+            Dictionary<AnimationClip, string> clipToStateName = new Dictionary<AnimationClip, string>();
+
+            foreach (AnimatorState state in states)
+            {
+                if (state.motion is AnimationClip clip)
+                {
+                    clipToStateName[key: clip] = state.name;
+                }
+                else if (state.motion is BlendTree blendTree)
+                {
+                    AddBlendTreeClipsToMapping(blendTree: blendTree, stateName: state.name, mapping: clipToStateName);
+                }
+            }
+
+            return clipToStateName;
+        }
+
+        static void AddBlendTreeClipsToMapping(
+            BlendTree blendTree,
+            string stateName,
+            Dictionary<AnimationClip, string> mapping
+        )
+        {
+            foreach (ChildMotion childMotion in blendTree.children)
+            {
+                if (childMotion.motion is AnimationClip clip)
+                {
+                    mapping[key: clip] = stateName;
+                }
+                else if (childMotion.motion is BlendTree nestedBlendTree)
+                {
+                    AddBlendTreeClipsToMapping(blendTree: nestedBlendTree, stateName: stateName, mapping: mapping);
+                }
+            }
         }
     }
 }

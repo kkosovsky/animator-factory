@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace AnimatorFactory.PrefabVariants
@@ -20,65 +17,13 @@ namespace AnimatorFactory.PrefabVariants
 
         public void OnGenerateClicked()
         {
-            List<AnimatorState> validAnimatorStates = GetAllAnimatorStatesInParentHierarchy();
             foreach (GameObject variant in _variants)
             {
-                CreateOverrideAnimator(
-                    variant: variant,
-                    parentAnimatorStates: validAnimatorStates,
-                    spritesSourcePath: spriteSourcePath
+                PrefabVariantsEditionService.CreateAnimatorOverrideControllerAsSubAsset(
+                    prefabVariant: variant,
+                    replacementSpritesPath: spriteSourcePath
                 );
             }
-        }
-
-        void CreateOverrideAnimator(
-            GameObject variant,
-            List<AnimatorState> parentAnimatorStates,
-            string spritesSourcePath
-        )
-        {
-            PrefabVariantsEditionService.CreateAnimatorOverrideControllerAsSubAsset(
-                prefabVariant: variant,
-                replacementSpritesPath: spritesSourcePath
-            );
-        }
-
-        List<SpriteAnimationInfo> GetSpriteAnimationInfos(
-            AnimatorController animatorController,
-            List<AnimatorState> validAnimatorStates
-        ) => animatorController
-            .animationClips
-            .Select(selector: SpriteInfoExtractionService.ExtractSpriteKeyframes)
-            .ToList();
-
-        List<AnimatorState> GetAllAnimatorStatesInParentHierarchy()
-        {
-            List<GameObject> parentPrefabObjectsWithAnimator = GetAllObjectsWithAnimator(rootObject: _rootPrefab);
-
-            IEnumerable<AnimatorState> parentStates = parentPrefabObjectsWithAnimator.SelectMany(
-                selector: gameObject =>
-                {
-                    AnimatorController parentObjectAnimator =
-                        gameObject.GetComponent<Animator>().runtimeAnimatorController as AnimatorController;
-                    List<AnimatorState> parentObjectAnimatorStates =
-                        AnimatorStateAnalysisService.GetAllAnimatorStates(controller: parentObjectAnimator);
-
-                    return parentObjectAnimatorStates;
-                }
-            );
-
-            return parentStates.ToList();
-        }
-
-        List<GameObject> GetAllObjectsWithAnimator(GameObject rootObject)
-        {
-            List<GameObject> parentPrefabObjectsWithAnimator = new List<GameObject>();
-            AnimatorStateAnalysisService.GetAllObjectsWithAnimator(
-                gameObject: rootObject,
-                objects: parentPrefabObjectsWithAnimator
-            );
-
-            return parentPrefabObjectsWithAnimator;
         }
     }
 }
