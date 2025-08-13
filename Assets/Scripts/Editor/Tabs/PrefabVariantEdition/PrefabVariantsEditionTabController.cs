@@ -29,7 +29,6 @@ namespace AnimatorFactory.PrefabVariants
         void BindEvents()
         {
             _view.PrefabSelected += _listController.OnParentPrefabSelected;
-            _view.SpritesSourceFolderChanged += _viewModel.SourceFolderChanged;
             _view.GenerateButtonClicked += _viewModel.OnGenerateClicked;
             _listController.ItemsApplied += OnVariantItemsApplied;
         }
@@ -38,7 +37,6 @@ namespace AnimatorFactory.PrefabVariants
         {
             _view.PrefabSelected -= _listController.OnParentPrefabSelected;
             _listController.ItemsApplied -= OnVariantItemsApplied;
-            _view.SpritesSourceFolderChanged -= _viewModel.SourceFolderChanged;
             _view.GenerateButtonClicked -= _viewModel.OnGenerateClicked;
         }
 

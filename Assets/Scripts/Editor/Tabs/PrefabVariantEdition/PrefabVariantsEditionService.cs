@@ -14,13 +14,9 @@ namespace AnimatorFactory.PrefabVariants
         /// Replaces the AnimatorController with AnimatorOverrideController as a sub-asset
         /// </summary>
         /// <param name="prefabVariant">The prefab variant to modify</param>
-        /// <param name="replacementSpritesPath">The path to look for replacement animation sprites</param>
-        public static void CreateAnimatorOverrideControllerAsSubAsset(
-            PrefabVariant prefabVariant,
-            string replacementSpritesPath
-        )
+        public static void CreateAnimatorOverrideControllerAsSubAsset(PrefabVariant prefabVariant)
         {
-            if (!IsValidVariant(variant: prefabVariant.gameObject, path: replacementSpritesPath))
+            if (!IsValidVariant(variant: prefabVariant.gameObject))
             {
                 return;
             }
@@ -42,17 +38,11 @@ namespace AnimatorFactory.PrefabVariants
             AssetDatabase.SaveAssets();
         }
 
-        static bool IsValidVariant(GameObject variant, string path)
+        static bool IsValidVariant(GameObject variant)
         {
             if (variant == null)
             {
                 Debug.LogError(message: "PrefabVariant is null");
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(value: path))
-            {
-                Debug.LogError(message: "Sprite source path is null");
                 return false;
             }
 

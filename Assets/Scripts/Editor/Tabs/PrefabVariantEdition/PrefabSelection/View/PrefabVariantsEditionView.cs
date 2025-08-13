@@ -9,7 +9,6 @@ namespace AnimatorFactory.PrefabVariants
     public class PrefabVariantsEditionView : VisualElement
     {
         public event Action<GameObject> PrefabSelected;
-        public event Action<string> SpritesSourceFolderChanged;
         public event Action GenerateButtonClicked;
 
         PrefabField _prefabField;
@@ -30,7 +29,6 @@ namespace AnimatorFactory.PrefabVariants
         {
             SetStyle();
             AddPrefabSelection();
-            AddSourceFolderField();
             AddSelectedItemsLabel();
             AddGenerateButton();
         }
@@ -78,23 +76,11 @@ namespace AnimatorFactory.PrefabVariants
             Add(child: _prefabField);
         }
 
-        void AddSourceFolderField()
-        {
-            _sourceFolderField = new FolderField(
-                labelText: "Variants Sprites:",
-                initialValue: $"Assets{Path.DirectorySeparatorChar}"
-            );
-            Add(child: _sourceFolderField);
-            _sourceFolderField.FolderPathChanged += OnSourceFolderPathChanged;
-        }
-
         void OnPrefabSelected(ChangeEvent<UnityEngine.Object> evt)
         {
             GameObject value = (GameObject)evt.newValue;
             PrefabSelected?.Invoke(obj: value);
         }
-
-        void OnSourceFolderPathChanged(string path) => SpritesSourceFolderChanged?.Invoke(obj: path);
 
         void OnGenerateButtonClicked() => GenerateButtonClicked?.Invoke();
     }

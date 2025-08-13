@@ -90,13 +90,29 @@ namespace AnimatorFactory.PrefabVariants
             filteredItems.AddRange(collection: allItems.Where(predicate: Filter));
         }
 
-        void UpdateClipsDestinationDir(Guid id, string path) => allItems
-            .First(variant => variant.id == id)
-            .generatedClipsPath = path;
+        void UpdateClipsDestinationDir(Guid id, string path)
+        {
+            if (!allItems.Any())
+            {
+                return;
+            }
 
-        void UpdateVariantSpriteSourceDir(Guid id, string path) => allItems
-            .First(variant => variant.id == id)
-            .spriteSourcesDirPath = path;
+            allItems
+                .First(variant => variant.id == id)
+                .generatedClipsPath = path;
+        }
+
+        void UpdateVariantSpriteSourceDir(Guid id, string path)
+        {
+            if (!allItems.Any())
+            {
+                return;
+            }
+
+            allItems
+                .First(variant => variant.id == id)
+                .spriteSourcesDirPath = path;
+        }
 
         public static IEnumerable<GameObject> FindAllPrefabVariants(GameObject parent)
         {
