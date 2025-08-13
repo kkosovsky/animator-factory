@@ -23,35 +23,24 @@ namespace AnimatorFactory.PrefabVariants
             List<AnimatorState> validAnimatorStates = GetAllAnimatorStatesInParentHierarchy();
             foreach (GameObject variant in _variants)
             {
-                CreateOverrideAnimator(variant: variant, validAnimatorStates: validAnimatorStates);
+                CreateOverrideAnimator(variant: variant, spritesSourcePath: spriteSourcePath);
             }
         }
 
-        void CreateOverrideAnimator(GameObject variant, List<AnimatorState> validAnimatorStates)
+        void CreateOverrideAnimator(GameObject variant, string spritesSourcePath)
         {
-            List<AnimatorController> allAnimatorControllers = GetAllObjectsWithAnimator(rootObject: variant)
-                .Select(
-                    selector: gameObject =>
-                        gameObject.GetComponent<Animator>().runtimeAnimatorController as AnimatorController
-                )
-                .ToList();
-            
-            foreach (AnimatorController animatorController in allAnimatorControllers)
-            {
-                List<SpriteAnimationInfo> animationInfos = GetSpriteAnimationInfos(
-                    animatorController: animatorController,
-                    validAnimatorStates: validAnimatorStates
-                );
-                
-                Debug.Log(animationInfos);
-            }
+            PrefabVariantsEditionService.CreateAnimatorOverrideControllerAsSubAsset(
+                prefabVariant: variant,
+                replacementSpritesPath: spritesSourcePath
+            );
         }
 
         List<SpriteAnimationInfo> GetSpriteAnimationInfos(
             AnimatorController animatorController,
             List<AnimatorState> validAnimatorStates
-        ) => animatorController.animationClips
-            .Select(SpriteInfoExtractionService.ExtractSpriteKeyframes)
+        ) => animatorController
+            .animationClips
+            .Select(selector: SpriteInfoExtractionService.ExtractSpriteKeyframes)
             .ToList();
 
         List<AnimatorState> GetAllAnimatorStatesInParentHierarchy()
