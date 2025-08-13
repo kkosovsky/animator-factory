@@ -2,36 +2,36 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace AnimatorFactory.SpriteKeyframePreview
+namespace AnimatorFactory
 {
     /// <summary>
     /// Contains all sprite keyframe information for an animation clip.
     /// </summary>
-    public readonly struct AnimationSpriteInfo
+    public readonly struct SpriteAnimationInfo
     {
         public readonly string animationName;
         public readonly float duration;
         public readonly float frameRate;
-        public readonly List<SpriteKeyframeData> keyframes;
+        public readonly List<SpriteAnimationKeyframe> keyframes;
         public readonly int totalFrames;
         public readonly string destinationFolderPath;
 
-        public AnimationSpriteInfo(AnimationClip clip)
+        public SpriteAnimationInfo(AnimationClip clip)
         {
             animationName = clip.name;
             duration = clip.length;
             frameRate = clip.frameRate;
             totalFrames = Mathf.RoundToInt(f: duration * frameRate);
-            keyframes = new List<SpriteKeyframeData>();
+            keyframes = new List<SpriteAnimationKeyframe>();
             destinationFolderPath = AssetDatabase.GetAssetPath(assetObject: clip);
         }
 
-        public AnimationSpriteInfo(
+        public SpriteAnimationInfo(
             string animationName,
             float duration,
             float frameRate,
             int totalFrames,
-            List<SpriteKeyframeData> keyframes,
+            List<SpriteAnimationKeyframe> keyframes,
             string destinationFolderPath
         )
         {
@@ -43,9 +43,9 @@ namespace AnimatorFactory.SpriteKeyframePreview
             this.destinationFolderPath = destinationFolderPath;
         }
 
-        public AnimationSpriteInfo WithName(string name)
+        public SpriteAnimationInfo WithName(string name)
         {
-            return new AnimationSpriteInfo(
+            return new SpriteAnimationInfo(
                 animationName: name,
                 duration: duration,
                 frameRate: frameRate,
@@ -55,9 +55,9 @@ namespace AnimatorFactory.SpriteKeyframePreview
             );
         }
         
-        public AnimationSpriteInfo WithDestinationFolderPath(string destinationFolderPath)
+        public SpriteAnimationInfo WithDestinationFolderPath(string destinationFolderPath)
         {
-            return new AnimationSpriteInfo(
+            return new SpriteAnimationInfo(
                 animationName: animationName,
                 duration: duration,
                 frameRate: frameRate,

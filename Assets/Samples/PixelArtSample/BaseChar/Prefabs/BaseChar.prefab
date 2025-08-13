@@ -150,7 +150,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6685450880581043570}
   m_Layer: 0
-  m_Name: Test (1)
+  m_Name: Dummy_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -183,7 +183,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2263192465332612443}
   m_Layer: 0
-  m_Name: Test2
+  m_Name: Dummy_1_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -214,7 +214,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8741161792268829474}
   m_Layer: 0
-  m_Name: Test2 (1)
+  m_Name: Dummy_1_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -246,7 +246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7559823297606359763}
   m_Layer: 0
-  m_Name: Test3
+  m_Name: Dummy_1_1_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -277,7 +277,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3198814786281692055}
   m_Layer: 0
-  m_Name: Test
+  m_Name: Dummy_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

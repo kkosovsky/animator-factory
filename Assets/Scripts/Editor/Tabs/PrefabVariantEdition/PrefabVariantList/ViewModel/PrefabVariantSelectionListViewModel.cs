@@ -45,7 +45,6 @@ namespace AnimatorFactory.PrefabVariants
             }
 
             GameObject prefab = filteredItems[index: index];
-
             Texture2D previewTexture = AssetPreview.GetAssetPreview(asset: prefab);
             cell.SetUp(image: previewTexture, labelText: prefab.name);
         }

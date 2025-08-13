@@ -16,17 +16,17 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// <summary>
         /// Fired when sprite keyframe data changes.
         /// </summary>
-        public event Action<AnimationSpriteInfo> DataChanged;
+        public event Action<SpriteAnimationInfo> DataChanged;
 
         /// <summary>
         /// Fired when status message changes.
         /// </summary>
         public event Action<string, bool> StatusChanged; // message, isError
 
-        public AnimationSpriteInfo AnimationInfo => _currentAnimationInfo;
+        public SpriteAnimationInfo SpriteAnimationInfo => _currentSpriteAnimationInfo;
 
-        AnimationSpriteInfo _currentAnimationInfo;
-        List<SpriteKeyframeData> _originalKeyframes;
+        SpriteAnimationInfo _currentSpriteAnimationInfo;
+        List<SpriteAnimationKeyframe> _originalKeyframes;
         bool _hasData;
 
         /// <summary>
@@ -38,14 +38,14 @@ namespace AnimatorFactory.SpriteKeyframePreview
             float defaultFrameRate = 12.0f;
             int defaultTotalFrames = 12;
 
-            List<SpriteKeyframeData> defaultKeyframes = new List<SpriteKeyframeData>();
+            List<SpriteAnimationKeyframe> defaultKeyframes = new List<SpriteAnimationKeyframe>();
             for (int i = 0; i < defaultTotalFrames; i++)
             {
                 float time = i / defaultFrameRate;
-                defaultKeyframes.Add(item: new SpriteKeyframeData(index: i, time: time, sprite: null));
+                defaultKeyframes.Add(item: new SpriteAnimationKeyframe(index: i, time: time, sprite: null));
             }
 
-            _currentAnimationInfo = new AnimationSpriteInfo(
+            _currentSpriteAnimationInfo = new SpriteAnimationInfo(
                 animationName: stateName,
                 duration: defaultTotalFrames / defaultFrameRate,
                 frameRate: defaultFrameRate,
@@ -54,10 +54,10 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 destinationFolderPath: $"Assets{Path.DirectorySeparatorChar}"
             );
 
-            _originalKeyframes = new List<SpriteKeyframeData>(collection: defaultKeyframes);
+            _originalKeyframes = new List<SpriteAnimationKeyframe>(collection: defaultKeyframes);
             _hasData = true;
 
-            DataChanged?.Invoke(obj: _currentAnimationInfo);
+            DataChanged?.Invoke(obj: _currentSpriteAnimationInfo);
         }
 
         /// <summary>
@@ -75,19 +75,19 @@ namespace AnimatorFactory.SpriteKeyframePreview
                     return;
                 }
 
-                AnimationSpriteInfo spriteInfo = SpriteKeyframeService.ExtractSpriteKeyframes(clip: clip);
+                SpriteAnimationInfo info = SpriteInfoExtractionService.ExtractSpriteKeyframes(clip: clip);
 
-                if (spriteInfo.keyframes.Count == 0)
+                if (info.keyframes.Count == 0)
                 {
                     ShowStatus(message: "No sprite keyframes found in this animation.", isError: false);
                     ClearData();
                     return;
                 }
 
-                _originalKeyframes = new List<SpriteKeyframeData>(collection: spriteInfo.keyframes);
-                _currentAnimationInfo = spriteInfo;
+                _originalKeyframes = new List<SpriteAnimationKeyframe>(collection: info.keyframes);
+                _currentSpriteAnimationInfo = info;
                 _hasData = true;
-                DataChanged?.Invoke(obj: spriteInfo);
+                DataChanged?.Invoke(obj: info);
             }
             catch (Exception ex)
             {
@@ -104,14 +104,14 @@ namespace AnimatorFactory.SpriteKeyframePreview
         {
             if (!_hasData || newFrameRate <= 0) return;
 
-            AnimationSpriteInfo modifiedInfo = CreateModifiedSpriteInfo(
-                original: _currentAnimationInfo,
+            SpriteAnimationInfo modifiedInfo = CreateModifiedSpriteInfo(
+                original: _currentSpriteAnimationInfo,
                 newFrameRate: newFrameRate,
-                newTotalFrames: _currentAnimationInfo.totalFrames,
-                newKeyframes: _currentAnimationInfo.keyframes
+                newTotalFrames: _currentSpriteAnimationInfo.totalFrames,
+                newKeyframes: _currentSpriteAnimationInfo.keyframes
             );
 
-            _currentAnimationInfo = modifiedInfo;
+            _currentSpriteAnimationInfo = modifiedInfo;
             DataChanged?.Invoke(obj: modifiedInfo);
         }
 
@@ -123,20 +123,20 @@ namespace AnimatorFactory.SpriteKeyframePreview
         {
             if (!_hasData || newTotalFrames <= 0 || _originalKeyframes == null) return;
 
-            List<SpriteKeyframeData> adjustedKeyframes = AdjustKeyframesForTotalFrames(
+            List<SpriteAnimationKeyframe> adjustedKeyframes = AdjustKeyframesForTotalFrames(
                 originalKeyframes: _originalKeyframes,
                 newTotalFrames: newTotalFrames,
-                frameRate: _currentAnimationInfo.frameRate
+                frameRate: _currentSpriteAnimationInfo.frameRate
             );
 
-            AnimationSpriteInfo modifiedInfo = CreateModifiedSpriteInfo(
-                original: _currentAnimationInfo,
-                newFrameRate: _currentAnimationInfo.frameRate,
+            SpriteAnimationInfo modifiedInfo = CreateModifiedSpriteInfo(
+                original: _currentSpriteAnimationInfo,
+                newFrameRate: _currentSpriteAnimationInfo.frameRate,
                 newTotalFrames: newTotalFrames,
                 newKeyframes: adjustedKeyframes
             );
 
-            _currentAnimationInfo = modifiedInfo;
+            _currentSpriteAnimationInfo = modifiedInfo;
             DataChanged?.Invoke(obj: modifiedInfo);
         }
 
@@ -150,7 +150,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         public void SelectedSpritesChanged(Sprite[] sprites)
         {
-            AnimationSpriteInfo currentInfo = _currentAnimationInfo;
+            SpriteAnimationInfo currentInfo = _currentSpriteAnimationInfo;
             List<Sprite> spritesList = sprites.ToList();
             spritesList
                 .Sort(
@@ -161,9 +161,9 @@ namespace AnimatorFactory.SpriteKeyframePreview
                     )
                 );
 
-            List<SpriteKeyframeData> keyframeData = spritesList
+            List<SpriteAnimationKeyframe> keyframeData = spritesList
                 .Select(
-                    selector: (sprite, index) => new SpriteKeyframeData(
+                    selector: (sprite, index) => new SpriteAnimationKeyframe(
                         index: index,
                         time: index / currentInfo.frameRate,
                         sprite: sprite
@@ -171,7 +171,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 )
                 .ToList();
 
-            _currentAnimationInfo = new AnimationSpriteInfo(
+            _currentSpriteAnimationInfo = new SpriteAnimationInfo(
                 animationName: currentInfo.animationName,
                 duration: keyframeData.Count / currentInfo.frameRate,
                 frameRate: currentInfo.frameRate,
@@ -181,38 +181,38 @@ namespace AnimatorFactory.SpriteKeyframePreview
             );
 
             _originalKeyframes = keyframeData;
-            DataChanged?.Invoke(obj: _currentAnimationInfo);
+            DataChanged?.Invoke(obj: _currentSpriteAnimationInfo);
         }
 
         public void UpdateAnimationName(string name)
         {
-            _currentAnimationInfo = _currentAnimationInfo.WithName(name: name);
+            _currentSpriteAnimationInfo = _currentSpriteAnimationInfo.WithName(name: name);
         }
 
         public void UpdateDestinationFolder(string destinationFolderPath)
         {
-            _currentAnimationInfo =
-                _currentAnimationInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
+            _currentSpriteAnimationInfo =
+                _currentSpriteAnimationInfo.WithDestinationFolderPath(destinationFolderPath: destinationFolderPath);
         }
 
         void ClearData()
         {
             _hasData = false;
-            _currentAnimationInfo = default;
+            _currentSpriteAnimationInfo = default;
             _originalKeyframes = null;
         }
 
         /// <summary>
         /// Creates a modified version of the sprite info with new frame rate, total frames, and keyframes.
         /// </summary>
-        AnimationSpriteInfo CreateModifiedSpriteInfo(
-            AnimationSpriteInfo original,
+        SpriteAnimationInfo CreateModifiedSpriteInfo(
+            SpriteAnimationInfo original,
             float newFrameRate,
             int newTotalFrames,
-            List<SpriteKeyframeData> newKeyframes
+            List<SpriteAnimationKeyframe> newKeyframes
         )
         {
-            return new AnimationSpriteInfo(
+            return new SpriteAnimationInfo(
                 animationName: original.animationName,
                 duration: newTotalFrames / newFrameRate,
                 frameRate: newFrameRate,
@@ -226,13 +226,13 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// Adjusts the keyframes list to match the new total frames count.
         /// Uses the original cached keyframes to preserve sprite data when increasing frames.
         /// </summary>
-        List<SpriteKeyframeData> AdjustKeyframesForTotalFrames(
-            List<SpriteKeyframeData> originalKeyframes,
+        List<SpriteAnimationKeyframe> AdjustKeyframesForTotalFrames(
+            List<SpriteAnimationKeyframe> originalKeyframes,
             int newTotalFrames,
             float frameRate
         )
         {
-            List<SpriteKeyframeData> adjustedKeyframes = new List<SpriteKeyframeData>();
+            List<SpriteAnimationKeyframe> adjustedKeyframes = new List<SpriteAnimationKeyframe>();
 
             int framesToCopy = Mathf.Min(a: originalKeyframes.Count, b: newTotalFrames);
             for (int i = 0; i < framesToCopy; i++)
@@ -245,7 +245,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 for (int i = originalKeyframes.Count; i < newTotalFrames; i++)
                 {
                     float time = i / frameRate;
-                    adjustedKeyframes.Add(item: new SpriteKeyframeData(index: i, time: time, sprite: null));
+                    adjustedKeyframes.Add(item: new SpriteAnimationKeyframe(index: i, time: time, sprite: null));
                 }
             }
 

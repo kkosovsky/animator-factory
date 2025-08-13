@@ -1,23 +1,23 @@
 using UnityEngine;
 
-namespace AnimatorFactory.SpriteKeyframePreview
+namespace AnimatorFactory
 {
     /// <summary>
     /// Represents a single sprite keyframe in an animation.
     /// </summary>
-    public readonly struct SpriteKeyframeData
+    public readonly struct SpriteAnimationKeyframe
     {
         public readonly float time;
         public readonly Sprite sprite;
-        public readonly string spriteName;
+        public readonly string imageName;
         public readonly int index;
 
-        public SpriteKeyframeData(int index, float time, Sprite sprite)
+        public SpriteAnimationKeyframe(int index, float time, Sprite sprite)
         {
             this.index = index;
             this.time = time;
             this.sprite = sprite;
-            spriteName = sprite != null ? sprite.name : "null";
+            imageName = sprite != null ? sprite.name : "null";
         }
     }
 }

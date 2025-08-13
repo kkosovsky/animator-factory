@@ -20,7 +20,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// </summary>
         /// <param name="keyframe">The keyframe data to display</param>
         /// <returns>A configured VisualElement representing the keyframe</returns>
-        public KeyframeElementView(SpriteKeyframeData keyframe)
+        public KeyframeElementView(SpriteAnimationKeyframe keyframe)
         {
             (float width, float height) = CalculateOptimalSpriteSize(sprite: keyframe.sprite);
             VisualElement container = CreateContainer(spriteWidth: width, spriteHeight: height);

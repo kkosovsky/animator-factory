@@ -1,22 +1,22 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace AnimatorFactory.SpriteKeyframePreview
+namespace AnimatorFactory
 {
     /// <summary>
     /// Service responsible for extracting sprite keyframe data from animation clips.
     /// Contains stateless logic for sprite analysis.
     /// </summary>
-    public static class SpriteKeyframeService
+    public static class SpriteInfoExtractionService
     {
         /// <summary>
         /// Extracts all sprite keyframes from an animation clip.
         /// </summary>
         /// <param name="clip">The animation clip to analyze</param>
         /// <returns>Animation sprite information with all keyframes</returns>
-        public static AnimationSpriteInfo ExtractSpriteKeyframes(AnimationClip clip)
+        public static SpriteAnimationInfo ExtractSpriteKeyframes(AnimationClip clip)
         {
-            AnimationSpriteInfo info = new(clip: clip);
+            SpriteAnimationInfo info = new(clip: clip);
 
             EditorCurveBinding[] bindings = AnimationUtility.GetObjectReferenceCurveBindings(clip: clip);
 
@@ -34,7 +34,7 @@ namespace AnimatorFactory.SpriteKeyframePreview
                 {
                     ObjectReferenceKeyframe keyframe = keyframes[i];
                     Sprite sprite = keyframe.value as Sprite;
-                    info.keyframes.Add(item: new SpriteKeyframeData(index: i, time: keyframe.time, sprite: sprite));
+                    info.keyframes.Add(item: new SpriteAnimationKeyframe(index: i, time: keyframe.time, sprite: sprite));
                 }
             }
 

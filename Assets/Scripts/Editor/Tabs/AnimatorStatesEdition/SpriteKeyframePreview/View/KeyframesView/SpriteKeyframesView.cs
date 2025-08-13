@@ -54,10 +54,10 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         public SpriteKeyframesView() => CreateUI();
 
-        public void OnDataChanged(AnimationSpriteInfo spriteInfo)
+        public void OnDataChanged(SpriteAnimationInfo info)
         {
             HideStatus();
-            DisplayKeyframes(spriteInfo: spriteInfo);
+            DisplayKeyframes(info: info);
             style.display = DisplayStyle.Flex;
         }
 
@@ -168,23 +168,23 @@ namespace AnimatorFactory.SpriteKeyframePreview
 
         void OnSpriteSelectionCancelled() => HideSpriteSelection();
 
-        void DisplayKeyframes(AnimationSpriteInfo spriteInfo)
+        void DisplayKeyframes(SpriteAnimationInfo info)
         {
             _keyframesContainer.Clear();
-            _titleField.SetValueWithoutNotify(newValue: spriteInfo.animationName);
+            _titleField.SetValueWithoutNotify(newValue: info.animationName);
 
-            _durationLabel.text = $"Duration: {spriteInfo.duration:F2}s";
-            _frameRateField.SetValueWithoutNotify(newValue: spriteInfo.frameRate);
-            _totalFramesField.SetValueWithoutNotify(newValue: spriteInfo.totalFrames);
+            _durationLabel.text = $"Duration: {info.duration:F2}s";
+            _frameRateField.SetValueWithoutNotify(newValue: info.frameRate);
+            _totalFramesField.SetValueWithoutNotify(newValue: info.totalFrames);
 
-            RefreshKeyframeElements(spriteInfo: spriteInfo);
+            RefreshKeyframeElements(info: info);
         }
 
-        void RefreshKeyframeElements(AnimationSpriteInfo spriteInfo)
+        void RefreshKeyframeElements(SpriteAnimationInfo info)
         {
             _keyframesContainer.Clear();
 
-            foreach (SpriteKeyframeData keyframe in spriteInfo.keyframes)
+            foreach (SpriteAnimationKeyframe keyframe in info.keyframes)
             {
                 VisualElement keyframeElement = new KeyframeElementView(keyframe: keyframe);
                 _keyframesContainer.Add(child: keyframeElement);

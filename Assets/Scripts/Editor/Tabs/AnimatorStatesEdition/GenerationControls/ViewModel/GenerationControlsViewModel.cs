@@ -15,37 +15,37 @@ namespace AnimatorFactory.GenerationControls
 
         bool _isGenerating;
         float _generationStartTime;
-        float _generationDuration = 1.0f;
+        const float maxGenerationDuration = 0.5f;
         AnimationClip _generatedClip;
         string _generatedStateName;
 
-        public void GenerateAnimationClips(AnimationSpriteInfo animationInfo)
+        public void GenerateAnimationClips(SpriteAnimationInfo spriteAnimationInfo)
         {
             if (_isGenerating)
             {
                 return;
             }
 
-            StartGeneration(animationInfo: animationInfo);
+            StartGeneration(spriteAnimationInfo: spriteAnimationInfo);
         }
 
-        void StartGeneration(AnimationSpriteInfo animationInfo)
+        void StartGeneration(SpriteAnimationInfo spriteAnimationInfo)
         {
             _isGenerating = true;
             _generationStartTime = (float)EditorApplication.timeSinceStartup;
-            _generatedStateName = animationInfo.animationName;
+            _generatedStateName = spriteAnimationInfo.animationName;
 
             EditorApplication.update += UpdateGenerationProgress;
 
             StartedGeneration?.Invoke();
             _generatedClip = AnimationClipGenerationService.CreateAnimationClip(
-                sprites: animationInfo.keyframes.Select(selector: data => data.sprite).ToArray(),
-                keyframeCount: animationInfo.totalFrames,
-                frameRate: animationInfo.frameRate,
+                sprites: spriteAnimationInfo.keyframes.Select(selector: data => data.sprite).ToArray(),
+                keyframeCount: spriteAnimationInfo.totalFrames,
+                frameRate: spriteAnimationInfo.frameRate,
                 hasLoopTime: false,
                 wrapMode: WrapMode.Clamp,
-                animationName: animationInfo.animationName,
-                destinationFolderPath: animationInfo.destinationFolderPath
+                animationName: spriteAnimationInfo.animationName,
+                destinationFolderPath: spriteAnimationInfo.destinationFolderPath
             );
         }
 
@@ -54,7 +54,7 @@ namespace AnimatorFactory.GenerationControls
             if (!_isGenerating) return;
 
             float elapsedTime = (float)EditorApplication.timeSinceStartup - _generationStartTime;
-            float progress = Mathf.Clamp01(value: elapsedTime / _generationDuration);
+            float progress = Mathf.Clamp01(value: elapsedTime / maxGenerationDuration);
 
             UpdatedGenerationProgress?.Invoke(obj: progress);
 
@@ -83,7 +83,7 @@ namespace AnimatorFactory.GenerationControls
             }
 
             FinishedGeneration?.Invoke();
-            
+
             Debug.Log(message: "...:: Generation Completed ::...");
             _generatedClip = null;
             _generatedStateName = null;

@@ -64,9 +64,7 @@ namespace AnimatorFactory.AnimatorStatePreview
         /// </summary>
         /// <param name="controller">The animator controller to analyze</param>
         /// <returns>List of all animator states</returns>
-        public static List<AnimatorState> GetAllAnimatorStates(AnimatorController controller)
-        {
-            return StateAnalysisService.GetAllAnimatorStates(controller: controller);
-        }
+        public static List<AnimatorState> GetAllAnimatorStates(AnimatorController controller) =>
+            AnimatorStateAnalysisService.GetAllAnimatorStates(controller: controller);
     }
 }

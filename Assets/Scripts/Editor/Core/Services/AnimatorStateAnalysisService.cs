@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Animations;
+using UnityEngine;
 
-namespace AnimatorFactory.AnimatorStatePreview
+namespace AnimatorFactory
 {
     /// <summary>
     /// Service responsible for analyzing animator states and controllers.
     /// Contains stateless logic for state analysis.
     /// </summary>
-    public static class StateAnalysisService
+    public static class AnimatorStateAnalysisService
     {
         /// <summary>
         /// Gets all animator states from an animator controller, including nested state machines.
@@ -18,13 +19,28 @@ namespace AnimatorFactory.AnimatorStatePreview
         public static List<AnimatorState> GetAllAnimatorStates(AnimatorController controller)
         {
             var allStates = new List<AnimatorState>();
-            
+
             foreach (AnimatorControllerLayer layer in controller.layers)
             {
                 CollectStatesRecursive(stateMachine: layer.stateMachine, states: allStates);
             }
-            
+
             return allStates;
+        }
+
+        public static void GetAllObjectsWithAnimator(GameObject gameObject, in List<GameObject> objects)
+        {
+            if (gameObject.HasComponent<Animator>())
+            {
+                objects.Add(item: gameObject);
+            }
+
+            Transform transform = gameObject.transform;
+            int childCount = transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                GetAllObjectsWithAnimator(gameObject: transform.GetChild(index: i).gameObject, objects: objects);
+            }
         }
 
         /// <summary>
@@ -36,7 +52,7 @@ namespace AnimatorFactory.AnimatorStatePreview
         {
             // Add all states from current state machine
             states.AddRange(collection: stateMachine.states.Select(selector: childState => childState.state));
-            
+
             // Recursively collect from sub-state machines
             foreach (ChildAnimatorStateMachine childStateMachine in stateMachine.stateMachines)
             {

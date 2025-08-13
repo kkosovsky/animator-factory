@@ -134,9 +134,9 @@ namespace AnimatorFactory.Editor
             _view.spriteKeyframesView.DestinationFolderChanged -= OnDestinationFolderChanged;
         }
 
-        void OnKeyframeDataChanged(AnimationSpriteInfo spriteInfo)
+        void OnKeyframeDataChanged(SpriteAnimationInfo info)
         {
-            _view.spriteKeyframesView.OnDataChanged(spriteInfo: spriteInfo);
+            _view.spriteKeyframesView.OnDataChanged(info: info);
         }
 
         void OnFrameRateChanged(float newFrameRate)
@@ -213,7 +213,7 @@ namespace AnimatorFactory.Editor
         void OnGenerateButtonClicked()
         {
             _view.generationControlsView.ShowIsGeneratingDialogue();
-            _generationControlsViewModel.GenerateAnimationClips(animationInfo: _spriteKeyframeViewModel.AnimationInfo);
+            _generationControlsViewModel.GenerateAnimationClips(spriteAnimationInfo: _spriteKeyframeViewModel.SpriteAnimationInfo);
         }
 
         void OnAnimationClipGenerated(AnimationClip animationClip, string stateName)
