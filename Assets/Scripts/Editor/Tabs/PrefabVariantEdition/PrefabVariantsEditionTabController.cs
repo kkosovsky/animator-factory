@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace AnimatorFactory.PrefabVariants
@@ -29,7 +28,7 @@ namespace AnimatorFactory.PrefabVariants
 
         void BindEvents()
         {
-            _view.PrefabSelected += OnPrefabSelected;
+            _view.PrefabSelected += _listController.OnParentPrefabSelected;
             _view.SpritesSourceFolderChanged += _viewModel.SourceFolderChanged;
             _view.GenerateButtonClicked += _viewModel.OnGenerateClicked;
             _listController.ItemsApplied += OnVariantItemsApplied;
@@ -37,16 +36,10 @@ namespace AnimatorFactory.PrefabVariants
 
         void UnbindEvents()
         {
-            _view.PrefabSelected -= OnPrefabSelected;
+            _view.PrefabSelected -= _listController.OnParentPrefabSelected;
             _listController.ItemsApplied -= OnVariantItemsApplied;
             _view.SpritesSourceFolderChanged -= _viewModel.SourceFolderChanged;
             _view.GenerateButtonClicked -= _viewModel.OnGenerateClicked;
-        }
-
-        void OnPrefabSelected(GameObject prefab)
-        {
-            _listController.OnParentPrefabSelected(prefab: prefab);
-            _viewModel.PrefabSelected(prefab: prefab);
         }
 
         void OnVariantItemsApplied(PrefabVariant[] variants)

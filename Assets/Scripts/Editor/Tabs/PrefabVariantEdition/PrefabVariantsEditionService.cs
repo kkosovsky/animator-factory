@@ -32,9 +32,8 @@ namespace AnimatorFactory.PrefabVariants
                 if (IsOriginalAnimatorValid(animator: animator))
                 {
                     CreateOverrideControllerForAnimator(
-                        prefabVariant: prefabVariant.gameObject,
-                        originalAnimator: animator,
-                        replacementSpritesPath: replacementSpritesPath
+                        prefabVariant: prefabVariant,
+                        originalAnimator: animator
                     );
                 }
             }
@@ -61,9 +60,8 @@ namespace AnimatorFactory.PrefabVariants
         }
 
         static void CreateOverrideControllerForAnimator(
-            GameObject prefabVariant,
-            Animator originalAnimator,
-            string replacementSpritesPath
+            PrefabVariant prefabVariant,
+            Animator originalAnimator
         )
         {
             AnimatorController originalController = originalAnimator.runtimeAnimatorController as AnimatorController;
@@ -75,16 +73,17 @@ namespace AnimatorFactory.PrefabVariants
             overrideController.GetOverrides(overrides: overrides);
 
             List<KeyValuePair<AnimationClip, AnimationClip>> newAnimationClips = GetNewAnimationClips(
+                variant: prefabVariant,
                 originalStates: AnimatorStateAnalysisService.GetAllAnimatorStates(controller: originalController),
                 overrides: overrides,
-                replacementSpritesPath: replacementSpritesPath
+                replacementSpritesPath: prefabVariant.spriteSourcesDirPath
             );
 
             overrideController.ApplyOverrides(overrides: newAnimationClips);
             string overrideControllerName = $"{originalAnimator.gameObject.name}_AnimatorOverride";
             overrideController.name = overrideControllerName;
-    
-            AssetDatabase.AddObjectToAsset(objectToAdd: overrideController, assetObject: prefabVariant);
+
+            AssetDatabase.AddObjectToAsset(objectToAdd: overrideController, assetObject: prefabVariant.gameObject);
             originalAnimator.runtimeAnimatorController = overrideController;
             PrefabUtility.RecordPrefabInstancePropertyModifications(targetObject: originalAnimator);
         }
@@ -108,6 +107,7 @@ namespace AnimatorFactory.PrefabVariants
         }
 
         static List<KeyValuePair<AnimationClip, AnimationClip>> GetNewAnimationClips(
+            PrefabVariant variant,
             List<AnimatorState> originalStates,
             List<KeyValuePair<AnimationClip, AnimationClip>> overrides,
             string replacementSpritesPath
@@ -131,7 +131,11 @@ namespace AnimatorFactory.PrefabVariants
                 {
                     overrides[index: i] = new KeyValuePair<AnimationClip, AnimationClip>(
                         key: @override.Key,
-                        value: MakeAnimationClip(original: @override.Key, newKeyframes: keyframes.ToArray())
+                        value: MakeAnimationClip(
+                            originalClip: @override.Key,
+                            newKeyframes: keyframes.ToArray(),
+                            variant: variant
+                        )
                     );
                 }
                 else
@@ -144,16 +148,16 @@ namespace AnimatorFactory.PrefabVariants
         }
 
 
-        static AnimationClip MakeAnimationClip(AnimationClip original, Sprite[] newKeyframes)
+        static AnimationClip MakeAnimationClip(AnimationClip originalClip, Sprite[] newKeyframes, PrefabVariant variant)
         {
             return AnimationClipGenerationService.CreateAnimationClip(
                 sprites: newKeyframes,
                 keyframeCount: newKeyframes.Length,
-                frameRate: original.frameRate,
+                frameRate: originalClip.frameRate,
                 hasLoopTime: false,
                 wrapMode: WrapMode.Clamp,
-                animationName: $"{original.name}_green",
-                destinationFolderPath: "Assets/TestGeneration/"
+                animationName: $"{variant.name}_{originalClip.name}",
+                destinationFolderPath: variant.generatedClipsPath
             );
         }
 

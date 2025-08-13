@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using AnimatorFactory.Core.UI;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace AnimatorFactory.PrefabVariants
         public Label prefabLabel;
         public FolderField spriteSourceFolderField;
         public FolderField clipsDestinationFolderField;
+        Guid _id;
 
         public PrefabVariantCell() => CreateUI();
 
@@ -29,7 +31,6 @@ namespace AnimatorFactory.PrefabVariants
             };
             Add(child: prefabImage);
 
-
             prefabLabel = new Label
             {
                 style =
@@ -45,12 +46,12 @@ namespace AnimatorFactory.PrefabVariants
                 labelText: "Sprite Sources:",
                 initialValue: $"Assets{Path.DirectorySeparatorChar}"
             );
-            
+
             clipsDestinationFolderField = new FolderField(
                 labelText: "Clips Destination:",
                 initialValue: $"Assets{Path.DirectorySeparatorChar}"
-            ); 
-            
+            );
+
             Add(child: spriteSourceFolderField);
             Add(child: clipsDestinationFolderField);
         }
@@ -67,10 +68,6 @@ namespace AnimatorFactory.PrefabVariants
 
         public void SetUp(Texture2D image, string labelText)
         {
-            if (image != null)
-                prefabImage.image = image;
-
-            prefabLabel.text = labelText ?? string.Empty;
         }
 
         public void SetUp(Sprite sprite, string labelText)
@@ -81,6 +78,32 @@ namespace AnimatorFactory.PrefabVariants
             }
 
             prefabLabel.text = labelText ?? string.Empty;
+        }
+
+        public void SetUp(
+            Guid id,
+            Texture2D image,
+            string labelText,
+            string initialSpritesSourceDir,
+            string initialClipsDestinationDir,
+            Action<Guid, string> onSpritesSourceDirChanged,
+            Action<Guid, string> onClipsDestinationPathDirChanged
+        )
+        {
+            _id = id;
+            if (image != null)
+            {
+                prefabImage.image = image;
+            }
+
+            prefabLabel.text = labelText ?? string.Empty;
+            spriteSourceFolderField.SetPath(path: initialSpritesSourceDir);
+            spriteSourceFolderField.SetId(id: _id);
+            spriteSourceFolderField.AddListener(onValueChanged: onSpritesSourceDirChanged);
+            
+            clipsDestinationFolderField.SetPath(path: initialClipsDestinationDir);
+            clipsDestinationFolderField.SetId(id: _id);
+            clipsDestinationFolderField.AddListener(onValueChanged: onClipsDestinationPathDirChanged);
         }
     }
 }

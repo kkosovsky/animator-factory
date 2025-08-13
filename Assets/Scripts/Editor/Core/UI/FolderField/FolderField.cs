@@ -11,14 +11,40 @@ namespace AnimatorFactory.Core.UI
         /// <summary>
         /// Fired when destination folder is changed by user.
         /// </summary>
+        ///
         public event Action<string> FolderPathChanged;
+
+        /// <summary>
+        /// Fired when destination folder is changed by user. Send identifier as well.
+        /// </summary>
+        ///
+        event Action<Guid, string> FolderPathChangedWithId;
 
         TextField _destinationFolderField;
         Button _browseFolderButton;
         bool _isUpdatingValue;
+        Guid _id;
 
         public FolderField(string labelText, string initialValue) =>
             CreateGUI(labelText: labelText, initialValue: initialValue);
+
+        public void SetPath(string path) => _destinationFolderField.value = path;
+
+        public void SetId(Guid id) => _id = id;
+
+        public void AddListener(Action<Guid, string> onValueChanged)
+        {
+            Delegate[] delegates = FolderPathChangedWithId?.GetInvocationList();
+            if (delegates is { Length: > 0 })
+            {
+                foreach (Delegate @delegate in delegates)
+                {
+                    FolderPathChangedWithId -= (Action<Guid, string>)@delegate;
+                }    
+            }
+            
+            FolderPathChangedWithId += onValueChanged;
+        }
 
         void CreateGUI(string labelText, string initialValue)
         {
@@ -94,6 +120,7 @@ namespace AnimatorFactory.Core.UI
             }
 
             FolderPathChanged?.Invoke(obj: newValue);
+            FolderPathChangedWithId?.Invoke(arg1: _id, arg2: newValue);
         }
 
         void OnBrowseFolderClicked()
@@ -133,7 +160,8 @@ namespace AnimatorFactory.Core.UI
             }
 
             _isUpdatingValue = false;
-            FolderPathChanged?.Invoke(obj: _destinationFolderField.value);
+            FolderPathChanged?.Invoke(obj: newValue);
+            FolderPathChangedWithId?.Invoke(arg1: _id, arg2: _destinationFolderField.value);
         }
 
         static class Strings

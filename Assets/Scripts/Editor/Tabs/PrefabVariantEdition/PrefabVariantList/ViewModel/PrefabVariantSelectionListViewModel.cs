@@ -34,7 +34,7 @@ namespace AnimatorFactory.PrefabVariants
             List<PrefabVariant> variants = FindAllPrefabVariants(parent: item)
                 .Select(gameObject => new PrefabVariant(gameObject))
                 .ToList();
-            
+
             Sort(items: variants);
             allItems = variants;
             RefreshAllFilteredItems();
@@ -47,9 +47,17 @@ namespace AnimatorFactory.PrefabVariants
                 return;
             }
 
-            PrefabVariant prefab = filteredItems[index: index];
-            Texture2D previewTexture = AssetPreview.GetAssetPreview(asset: prefab.gameObject);
-            cell.SetUp(image: previewTexture, labelText: prefab.name);
+            PrefabVariant variant = filteredItems[index: index];
+            Texture2D previewTexture = AssetPreview.GetAssetPreview(asset: variant.gameObject);
+            cell.SetUp(
+                id: variant.id,
+                image: previewTexture,
+                labelText: variant.name,
+                initialSpritesSourceDir: variant.spriteSourcesDirPath,
+                initialClipsDestinationDir: variant.generatedClipsPath,
+                onSpritesSourceDirChanged: UpdateVariantSpriteSourceDir,
+                onClipsDestinationPathDirChanged: UpdateClipsDestinationDir
+            );
         }
 
         public void Sort(List<PrefabVariant> items)
@@ -81,6 +89,14 @@ namespace AnimatorFactory.PrefabVariants
             filteredItems.Clear();
             filteredItems.AddRange(collection: allItems.Where(predicate: Filter));
         }
+
+        void UpdateClipsDestinationDir(Guid id, string path) => allItems
+            .First(variant => variant.id == id)
+            .generatedClipsPath = path;
+
+        void UpdateVariantSpriteSourceDir(Guid id, string path) => allItems
+            .First(variant => variant.id == id)
+            .spriteSourcesDirPath = path;
 
         public static IEnumerable<GameObject> FindAllPrefabVariants(GameObject parent)
         {
