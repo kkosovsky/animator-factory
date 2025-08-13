@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace AnimatorFactory.PrefabVariants
 {
-    public class PrefabVariantListController : SelectionListViewController<GameObject, GameObject>
+    public class PrefabVariantListController : SelectionListViewController<GameObject, PrefabVariant>
     {
         public PrefabVariantListController(
             PrefabVariantSelectionListViewModel viewModel,
@@ -15,7 +15,7 @@ namespace AnimatorFactory.PrefabVariants
             view.selectAllButton.style.display = DisplayStyle.None;
         }
 
-        public void OnPrefabSelected(GameObject prefab)
+        public void OnParentPrefabSelected(GameObject prefab)
         {
             viewModel.OnSourceItemChanged(item: prefab);
             RefreshList();

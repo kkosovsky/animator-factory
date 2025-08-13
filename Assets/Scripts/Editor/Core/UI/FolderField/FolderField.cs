@@ -11,7 +11,7 @@ namespace AnimatorFactory.Core.UI
         /// <summary>
         /// Fired when destination folder is changed by user.
         /// </summary>
-        public event Action<string> DestinationFolderChanged;
+        public event Action<string> FolderPathChanged;
 
         TextField _destinationFolderField;
         Button _browseFolderButton;
@@ -93,7 +93,7 @@ namespace AnimatorFactory.Core.UI
                 newValue = _destinationFolderField.value;
             }
 
-            DestinationFolderChanged?.Invoke(obj: newValue);
+            FolderPathChanged?.Invoke(obj: newValue);
         }
 
         void OnBrowseFolderClicked()
@@ -133,7 +133,7 @@ namespace AnimatorFactory.Core.UI
             }
 
             _isUpdatingValue = false;
-            DestinationFolderChanged?.Invoke(obj: _destinationFolderField.value);
+            FolderPathChanged?.Invoke(obj: _destinationFolderField.value);
         }
 
         static class Strings

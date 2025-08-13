@@ -85,7 +85,7 @@ namespace AnimatorFactory.PrefabVariants
                 initialValue: $"Assets{Path.DirectorySeparatorChar}"
             );
             Add(child: _sourceFolderField);
-            _sourceFolderField.DestinationFolderChanged += OnSourceFolderChanged;
+            _sourceFolderField.FolderPathChanged += OnSourceFolderPathChanged;
         }
 
         void OnPrefabSelected(ChangeEvent<UnityEngine.Object> evt)
@@ -94,7 +94,7 @@ namespace AnimatorFactory.PrefabVariants
             PrefabSelected?.Invoke(obj: value);
         }
 
-        void OnSourceFolderChanged(string path) => SpritesSourceFolderChanged?.Invoke(obj: path);
+        void OnSourceFolderPathChanged(string path) => SpritesSourceFolderChanged?.Invoke(obj: path);
 
         void OnGenerateButtonClicked() => GenerateButtonClicked?.Invoke();
     }

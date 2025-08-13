@@ -7,17 +7,17 @@ namespace AnimatorFactory.PrefabVariants
     {
         string spriteSourcePath = $"Assets{Path.DirectorySeparatorChar}";
         GameObject _rootPrefab;
-        GameObject[] _variants;
+        PrefabVariant[] _variants;
 
         public void SourceFolderChanged(string path) => spriteSourcePath = path;
 
         public void PrefabSelected(GameObject prefab) => _rootPrefab = prefab;
 
-        public void VariantsSelected(GameObject[] variants) => _variants = variants;
+        public void VariantsSelected(PrefabVariant[] variants) => _variants = variants;
 
         public void OnGenerateClicked()
         {
-            foreach (GameObject variant in _variants)
+            foreach (PrefabVariant variant in _variants)
             {
                 PrefabVariantsEditionService.CreateAnimatorOverrideControllerAsSubAsset(
                     prefabVariant: variant,

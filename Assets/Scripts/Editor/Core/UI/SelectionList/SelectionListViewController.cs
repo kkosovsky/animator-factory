@@ -133,10 +133,10 @@ namespace AnimatorFactory.Core.UI.SelectionList
 
         void OnApplyClicked()
         {
-            ListItem[] selectedSprites = GetSelectedItems();
-            if (selectedSprites.Length > 0)
+            ListItem[] selectedItems = GetSelectedItems();
+            if (selectedItems.Length > 0)
             {
-                ItemsApplied?.Invoke(obj: selectedSprites);
+                ItemsApplied?.Invoke(obj: selectedItems);
             }
         }
 

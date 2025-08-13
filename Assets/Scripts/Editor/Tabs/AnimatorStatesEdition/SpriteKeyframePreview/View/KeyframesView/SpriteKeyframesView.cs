@@ -48,8 +48,8 @@ namespace AnimatorFactory.SpriteKeyframePreview
         /// </summary>
         public event System.Action<string> DestinationFolderChanged
         {
-            add => _folderField.DestinationFolderChanged += value;
-            remove => _folderField.DestinationFolderChanged -= value;
+            add => _folderField.FolderPathChanged += value;
+            remove => _folderField.FolderPathChanged -= value;
         }
 
         public SpriteKeyframesView() => CreateUI();

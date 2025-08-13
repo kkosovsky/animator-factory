@@ -16,30 +16,30 @@ namespace AnimatorFactory.PrefabVariants
         /// <param name="prefabVariant">The prefab variant to modify</param>
         /// <param name="replacementSpritesPath">The path to look for replacement animation sprites</param>
         public static void CreateAnimatorOverrideControllerAsSubAsset(
-            GameObject prefabVariant,
+            PrefabVariant prefabVariant,
             string replacementSpritesPath
         )
         {
-            if (!IsValidVariant(variant: prefabVariant, path: replacementSpritesPath))
+            if (!IsValidVariant(variant: prefabVariant.gameObject, path: replacementSpritesPath))
             {
                 return;
             }
 
-            Animator[] animators = prefabVariant.GetComponentsInChildren<Animator>(includeInactive: true);
+            Animator[] animators = prefabVariant.gameObject.GetComponentsInChildren<Animator>(includeInactive: true);
 
             foreach (Animator animator in animators)
             {
                 if (IsOriginalAnimatorValid(animator: animator))
                 {
                     CreateOverrideControllerForAnimator(
-                        prefabVariant: prefabVariant,
+                        prefabVariant: prefabVariant.gameObject,
                         originalAnimator: animator,
                         replacementSpritesPath: replacementSpritesPath
                     );
                 }
             }
 
-            PrefabUtility.SavePrefabAsset(asset: prefabVariant);
+            PrefabUtility.SavePrefabAsset(asset: prefabVariant.gameObject);
             AssetDatabase.SaveAssets();
         }
 

@@ -8,10 +8,10 @@ using UnityEngine.UIElements;
 
 namespace AnimatorFactory.PrefabVariants
 {
-    public class PrefabVariantSelectionListViewModel : ISelectionListViewModel<GameObject, GameObject>
+    public class PrefabVariantSelectionListViewModel : ISelectionListViewModel<GameObject, PrefabVariant>
     {
-        public List<GameObject> allItems { get; set; } = new();
-        public List<GameObject> filteredItems { get; } = new();
+        public List<PrefabVariant> allItems { get; set; } = new();
+        public List<PrefabVariant> filteredItems { get; } = new();
 
         string _currentFilter = string.Empty;
 
@@ -31,7 +31,10 @@ namespace AnimatorFactory.PrefabVariants
                 return;
             }
 
-            List<GameObject> variants = FindAllPrefabVariants(parent: item).ToList();
+            List<PrefabVariant> variants = FindAllPrefabVariants(parent: item)
+                .Select(gameObject => new PrefabVariant(gameObject))
+                .ToList();
+            
             Sort(items: variants);
             allItems = variants;
             RefreshAllFilteredItems();
@@ -44,12 +47,12 @@ namespace AnimatorFactory.PrefabVariants
                 return;
             }
 
-            GameObject prefab = filteredItems[index: index];
-            Texture2D previewTexture = AssetPreview.GetAssetPreview(asset: prefab);
+            PrefabVariant prefab = filteredItems[index: index];
+            Texture2D previewTexture = AssetPreview.GetAssetPreview(asset: prefab.gameObject);
             cell.SetUp(image: previewTexture, labelText: prefab.name);
         }
 
-        public void Sort(List<GameObject> items)
+        public void Sort(List<PrefabVariant> items)
         {
             items.Sort(
                 comparison: (a, b) => string.Compare(
@@ -60,14 +63,16 @@ namespace AnimatorFactory.PrefabVariants
             );
         }
 
-        public bool Filter(GameObject item) =>
+        public bool Filter(PrefabVariant item) =>
             string.IsNullOrEmpty(value: _currentFilter)
             || item.name.Contains(
                 value: _currentFilter,
                 comparisonType: StringComparison.OrdinalIgnoreCase
             );
 
-        public void LoadAllItems() {}
+        public void LoadAllItems()
+        {
+        }
 
         public void OnSearchChanged(ChangeEvent<string> evt) => _currentFilter = evt.newValue;
 

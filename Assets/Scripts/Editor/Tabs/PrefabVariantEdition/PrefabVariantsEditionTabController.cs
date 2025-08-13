@@ -45,11 +45,11 @@ namespace AnimatorFactory.PrefabVariants
 
         void OnPrefabSelected(GameObject prefab)
         {
-            _listController.OnPrefabSelected(prefab: prefab);
+            _listController.OnParentPrefabSelected(prefab: prefab);
             _viewModel.PrefabSelected(prefab: prefab);
         }
 
-        void OnVariantItemsApplied(GameObject[] variants)
+        void OnVariantItemsApplied(PrefabVariant[] variants)
         {
             _listController.Hide();
             _view.ShowSelectedItemsLabel(count: variants.Length);

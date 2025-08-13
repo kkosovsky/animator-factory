@@ -12,10 +12,7 @@ namespace AnimatorFactory.PrefabVariants
         public FolderField spriteSourceFolderField;
         public FolderField clipsDestinationFolderField;
 
-        public PrefabVariantCell()
-        {
-            CreateUI();
-        }
+        public PrefabVariantCell() => CreateUI();
 
         void CreateUI()
         {
