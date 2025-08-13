@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a605c145d562c4f42a67ff784d853672
+guid: 48570db7a819a4273bb0b71d2a7e6c45
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -39,7 +39,7 @@ TextureImporter:
     mipBias: 0
     wrapU: 1
     wrapV: 1
-    wrapW: 1
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -123,169 +123,85 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: char_climbladder_outro_pullup_strip8_00
+      name: char_attack_sword_strip4_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 32
-        height: 48
+        width: 64
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d27bca1e022c44cfb8f0f8a8d7749032
-      internalID: 1337033531
+      spriteID: e938e6eec518a476cae827bbd27bdc24
+      internalID: -893266677
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_outro_pullup_strip8_01
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1e5f2a4f4092f4e80b521ca5d22d786e
-      internalID: -2080569076
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: char_climbladder_outro_pullup_strip8_02
+      name: char_attack_sword_strip4_1
       rect:
         serializedVersion: 2
         x: 64
         y: 0
-        width: 32
-        height: 48
+        width: 64
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 11c4838a07f3d47c088fce82f20a46b0
-      internalID: -1144640742
+      spriteID: e8b7457b5d59e4b778546b9d24bb7233
+      internalID: -1575434558
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_outro_pullup_strip8_03
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 20326be9aae0f4eb78e6ded5fc91ca4f
-      internalID: -416054460
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: char_climbladder_outro_pullup_strip8_04
+      name: char_attack_sword_strip4_2
       rect:
         serializedVersion: 2
         x: 128
         y: 0
-        width: 32
-        height: 48
+        width: 64
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 84b3262da20634c65b771e4da30429a8
-      internalID: 1814065369
+      spriteID: 4857739b7aed7483fadcc2868f9213a0
+      internalID: 1886751232
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_outro_pullup_strip8_05
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4370ef4430ed44abc8b7ae9eec729c2a
-      internalID: -1012431035
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: char_climbladder_outro_pullup_strip8_06
+      name: char_attack_sword_strip4_3
       rect:
         serializedVersion: 2
         x: 192
         y: 0
-        width: 32
-        height: 48
+        width: 64
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5ee0406861bcf4b45bd6987ff34ae610
-      internalID: 2138920921
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: char_climbladder_outro_pullup_strip8_07
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 64a146885f3bc4085a14fb5612098c43
-      internalID: -2012739981
+      spriteID: 0761d0c50eb984c679fd4d16245db58d
+      internalID: 1205296409
       vertices: []
       indices: 
       edges: []
@@ -293,7 +209,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 81468ae93cbf949c68b85a55adeee6c2
     internalID: 0
     vertices: []
     indices: 
@@ -301,14 +217,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      char_climbladder_outro_pullup_strip8_00: 1337033531
-      char_climbladder_outro_pullup_strip8_01: -2080569076
-      char_climbladder_outro_pullup_strip8_02: -1144640742
-      char_climbladder_outro_pullup_strip8_03: -416054460
-      char_climbladder_outro_pullup_strip8_04: 1814065369
-      char_climbladder_outro_pullup_strip8_05: -1012431035
-      char_climbladder_outro_pullup_strip8_06: 2138920921
-      char_climbladder_outro_pullup_strip8_07: -2012739981
+      char_attack_sword_strip4_0: -893266677
+      char_attack_sword_strip4_1: -1575434558
+      char_attack_sword_strip4_2: 1886751232
+      char_attack_sword_strip4_3: 1205296409
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

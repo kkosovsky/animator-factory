@@ -156,6 +156,7 @@ namespace AnimatorFactory.PrefabVariants
                 {
                     if (asset is not Sprite sprite)
                     {
+                        Debug.Log($"Asset is not a sprite: {asset.name}");
                         continue;
                     }
 
@@ -164,6 +165,7 @@ namespace AnimatorFactory.PrefabVariants
                         states.Any(predicate: state => spriteName.Contains(value: state.name.ToLower()));
                     if (!matchingStateExists)
                     {
+                        Debug.Log($"{spriteName} doesn't match any existing state");
                         continue;
                     }
 

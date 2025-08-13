@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a3cb9dc7ff30142cf9b257bbaa8005d6
+guid: a605c145d562c4f42a67ff784d853672
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -39,7 +39,7 @@ TextureImporter:
     mipBias: 0
     wrapU: 1
     wrapV: 1
-    wrapW: 0
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -123,7 +123,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: char_climbladder_loop_strip8_00
+      name: char_climb_outro_pullup_strip8_0
       rect:
         serializedVersion: 2
         x: 0
@@ -131,20 +131,20 @@ TextureImporter:
         width: 32
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 373d1a87a7ba94a8ca0a13a2de117274
-      internalID: -1015062964
+      spriteID: 881ca718f12af449b92214736fa01397
+      internalID: 1271552934
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_loop_strip8_01
+      name: char_climb_outro_pullup_strip8_1
       rect:
         serializedVersion: 2
         x: 32
@@ -152,20 +152,20 @@ TextureImporter:
         width: 32
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4f54be9515fd74863a8e0ba3fbd063bd
-      internalID: -297937451
+      spriteID: a85f50a4b97e14e46bdb56eee828f1dc
+      internalID: 3500633
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_loop_strip8_02
+      name: char_climb_outro_pullup_strip8_2
       rect:
         serializedVersion: 2
         x: 64
@@ -173,20 +173,20 @@ TextureImporter:
         width: 32
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4f39085cc29804f298c62c1dd987064d
-      internalID: -769238352
+      spriteID: 605f0c242a3d64f78a71e79a69808f52
+      internalID: 1909267410
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_loop_strip8_03
+      name: char_climb_outro_pullup_strip8_3
       rect:
         serializedVersion: 2
         x: 96
@@ -194,20 +194,20 @@ TextureImporter:
         width: 32
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 661a1fb9327c44b74896d76ca5d1830a
-      internalID: 323750931
+      spriteID: 650f7dbed81da4991a493bf0534e0da4
+      internalID: 420941739
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_loop_strip8_04
+      name: char_climb_outro_pullup_strip8_4
       rect:
         serializedVersion: 2
         x: 128
@@ -215,20 +215,20 @@ TextureImporter:
         width: 32
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2ce30a755f7574bc099a07f41a1fd11d
-      internalID: 1379607542
+      spriteID: d4f7ac14b7cf549d1a4b37ca4df57ee2
+      internalID: -134823269
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_loop_strip8_05
+      name: char_climb_outro_pullup_strip8_5
       rect:
         serializedVersion: 2
         x: 160
@@ -236,20 +236,20 @@ TextureImporter:
         width: 32
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c303500e3e6fb442d8258e65288be635
-      internalID: -628115756
+      spriteID: 2d27f58e4a7b8478b87f45bfb840da88
+      internalID: -902548462
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_loop_strip8_06
+      name: char_climb_outro_pullup_strip8_6
       rect:
         serializedVersion: 2
         x: 192
@@ -257,20 +257,20 @@ TextureImporter:
         width: 32
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1f3fb7087e5a749d28268e7d68b29b7a
-      internalID: 620599638
+      spriteID: edf017708d0f34072b658d384ea554e4
+      internalID: 1506048960
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: char_climbladder_loop_strip8_07
+      name: char_climb_outro_pullup_strip8_7
       rect:
         serializedVersion: 2
         x: 224
@@ -278,14 +278,14 @@ TextureImporter:
         width: 32
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 823b66ed5e97145978ed632c84cc7fdc
-      internalID: -709113090
+      spriteID: 1e680d5cc6f47484c9515d79c4833282
+      internalID: 2057573521
       vertices: []
       indices: 
       edges: []
@@ -301,14 +301,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      char_climbladder_loop_strip8_00: -1015062964
-      char_climbladder_loop_strip8_01: -297937451
-      char_climbladder_loop_strip8_02: -769238352
-      char_climbladder_loop_strip8_03: 323750931
-      char_climbladder_loop_strip8_04: 1379607542
-      char_climbladder_loop_strip8_05: -628115756
-      char_climbladder_loop_strip8_06: 620599638
-      char_climbladder_loop_strip8_07: -709113090
+      char_climb_outro_pullup_strip8_0: 1271552934
+      char_climb_outro_pullup_strip8_1: 3500633
+      char_climb_outro_pullup_strip8_2: 1909267410
+      char_climb_outro_pullup_strip8_3: 420941739
+      char_climb_outro_pullup_strip8_4: -134823269
+      char_climb_outro_pullup_strip8_5: -902548462
+      char_climb_outro_pullup_strip8_6: 1506048960
+      char_climb_outro_pullup_strip8_7: 2057573521
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
