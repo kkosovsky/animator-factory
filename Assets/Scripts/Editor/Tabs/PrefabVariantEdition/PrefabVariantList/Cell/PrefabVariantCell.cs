@@ -1,3 +1,5 @@
+using System.IO;
+using AnimatorFactory.Core.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,6 +9,8 @@ namespace AnimatorFactory.PrefabVariants
     {
         public Image prefabImage;
         public Label prefabLabel;
+        public FolderField spriteSourceFolderField;
+        public FolderField clipsDestinationFolderField;
 
         public PrefabVariantCell()
         {
@@ -39,6 +43,19 @@ namespace AnimatorFactory.PrefabVariants
                 }
             };
             Add(child: prefabLabel);
+
+            spriteSourceFolderField = new FolderField(
+                labelText: "Sprite Sources:",
+                initialValue: $"Assets{Path.DirectorySeparatorChar}"
+            );
+            
+            clipsDestinationFolderField = new FolderField(
+                labelText: "Clips Destination:",
+                initialValue: $"Assets{Path.DirectorySeparatorChar}"
+            ); 
+            
+            Add(child: spriteSourceFolderField);
+            Add(child: clipsDestinationFolderField);
         }
 
         void SetStyle()
