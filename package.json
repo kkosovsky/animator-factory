@@ -1,0 +1,23 @@
+{
+  "name": "com.kamilkosowski.animatorfactory",
+  "version": "0.0.1",
+  "displayName": "Animator Factory",
+  "description": "A Unity Editor tool for managing sprite animations, animator states, and quick alteration of prefab variant animations. Streamlines the creation and management of 2D character animations and their variants.",
+  "unity": "2021.3",
+  "dependencies": {},
+  "keywords": [
+    "animation",
+    "sprite",
+    "animator",
+    "prefab",
+    "2d",
+    "editor",
+    "tool"
+  ],
+  "author": {
+    "name": "Kamil Kosowski",
+    "email": "kosowski.ka@gmail.com"
+  },
+  "type": "tool",
+  "hideInEditor": false
+}
