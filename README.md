@@ -23,6 +23,12 @@ git submodule add https://github.com/yourusername/AnimatorFactory.git Packages/c
 git submodule add git@github.com:kkosovsky/animator-factory.git Packages/com.kamilkosowski.animatorfactory
 ```
 
+`Then add to Packages/manifest.json:`
+```json
+"com.kamilkosowski.animatorfactory": "file:AnimatorFactory"
+```
+
+
 ## Usage
 1. Open `Window > Animator Factory`
 2. Use the three tabs for different workflows:
