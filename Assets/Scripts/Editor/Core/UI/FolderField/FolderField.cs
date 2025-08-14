@@ -15,7 +15,8 @@ namespace AnimatorFactory.Core.UI
         public event Action<string> FolderPathChanged;
 
         /// <summary>
-        /// Fired when destination folder is changed by user. Send identifier as well.
+        /// Fired when destination folder is changed by user. Sends identifier as well.
+        /// Subscriptions created via public AddListener method.
         /// </summary>
         ///
         event Action<Guid, string> FolderPathChangedWithId;

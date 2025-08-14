@@ -66,20 +66,6 @@ namespace AnimatorFactory.PrefabVariants
             style.paddingBottom = 2;
         }
 
-        public void SetUp(Texture2D image, string labelText)
-        {
-        }
-
-        public void SetUp(Sprite sprite, string labelText)
-        {
-            if (sprite != null)
-            {
-                prefabImage.sprite = sprite;
-            }
-
-            prefabLabel.text = labelText ?? string.Empty;
-        }
-
         public void SetUp(
             Guid id,
             Texture2D image,
