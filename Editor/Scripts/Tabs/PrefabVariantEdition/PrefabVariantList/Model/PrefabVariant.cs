@@ -15,11 +15,10 @@ namespace AnimatorFactory.PrefabVariants
 
         public PrefabVariant(GameObject gameObject)
         {
-            string assetsPath = $"Assets{Path.DirectorySeparatorChar}";
             this.gameObject = gameObject;
             id = Guid.NewGuid();
-            generatedClipsPath = assetsPath;
-            spriteSourcesDirPath = assetsPath;
+            generatedClipsPath = AnimatorFactoryWindow.Configuration.GeneratedClipsPath;
+            spriteSourcesDirPath = AnimatorFactoryWindow.Configuration.DefaultSourceSpritePath;
         }
     }
 }

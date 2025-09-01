@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 118a8fdad1ee54e708e7c78f894cafe2, type: 3}
   m_Name: AnimatorFactoryConfiguration
   m_EditorClassIdentifier: 
-  defaultSourceStringPath: 
-  generatedClipsPath: 
+  <DefaultSourceSpritePath>k__BackingField: Assets/AutoBattler/Runtime/Units/Resources/Sprites/Units/AnimationSprites/
+  <GeneratedClipsPath>k__BackingField: Assets/AutoBattler/Runtime/Units/Animations/
