@@ -35,6 +35,7 @@ namespace AnimatorFactory.PrefabVariants
             _view.PrefabSelected += OnPrefabSelected;
             _view.GenerateButtonClicked += _viewModel.OnGenerateClicked;
             _listController.ItemsApplied += OnVariantItemsApplied;
+            _listController.SelectionChanged += OnVariantSelectionChanged;
             _hierarchyViewModel.HierarchyChanged += _view.HierarchyView.OnHierarchyChanged;
         }
 
@@ -42,6 +43,7 @@ namespace AnimatorFactory.PrefabVariants
         {
             _view.PrefabSelected -= OnPrefabSelected;
             _listController.ItemsApplied -= OnVariantItemsApplied;
+            _listController.SelectionChanged -= OnVariantSelectionChanged;
             _view.GenerateButtonClicked -= _viewModel.OnGenerateClicked;
             _hierarchyViewModel.HierarchyChanged -= _view.HierarchyView.OnHierarchyChanged;
         }
@@ -64,7 +66,14 @@ namespace AnimatorFactory.PrefabVariants
 
         void OnVariantItemsApplied(PrefabVariant[] variants)
         {
-            _listController.Hide();
+            _view.ShowSelectedItemsLabel(count: variants.Length);
+            _viewModel.VariantsSelected(variants: variants);
+            _view.ShowGenerateButton();
+        }
+        
+        void OnVariantSelectionChanged(PrefabVariant[] variants)
+        {
+            _view.HideGenerateButton();
             _view.ShowSelectedItemsLabel(count: variants.Length);
             _viewModel.VariantsSelected(variants: variants);
         }

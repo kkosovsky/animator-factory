@@ -15,9 +15,9 @@ namespace AnimatorFactory.PrefabVariants
         PrefabField _prefabField;
         FolderField _sourceFolderField;
         Label _selectedItemsLabel;
-        Button _generateButton;
         PrefabHierarchyView _hierarchyView;
         Label _hierarchyLabel;
+        Button _generateButton;
 
         public PrefabHierarchyView HierarchyView => _hierarchyView;
         
@@ -27,7 +27,16 @@ namespace AnimatorFactory.PrefabVariants
         {
             _selectedItemsLabel.text = $"Selected {count} variants";
             _selectedItemsLabel.style.display = DisplayStyle.Flex;
+        }
+
+        public void ShowGenerateButton()
+        {
             _generateButton.style.display = DisplayStyle.Flex;
+        }
+        
+        public void HideGenerateButton()
+        {
+            _generateButton.style.display = DisplayStyle.None;
         }
 
         void CreateUI()
