@@ -79,7 +79,14 @@ namespace AnimatorFactory.AnimatorStates
             };
             _contentContainer.Add(child: hierarchyLabel);
 
-            prefabHierarchyView = new PrefabHierarchyView();
+            prefabHierarchyView = new PrefabHierarchyView
+            {
+                style =
+                {
+                    height = 300,
+                    marginBottom = 10
+                }
+            };
             _contentContainer.Add(child: prefabHierarchyView);
         }
 
