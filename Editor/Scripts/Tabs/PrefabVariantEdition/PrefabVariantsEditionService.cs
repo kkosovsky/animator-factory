@@ -36,6 +36,7 @@ namespace AnimatorFactory.PrefabVariants
 
             PrefabUtility.SavePrefabAsset(asset: prefabVariant.gameObject);
             AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         static bool IsValidVariant(GameObject variant)

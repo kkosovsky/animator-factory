@@ -234,8 +234,9 @@ namespace AnimatorFactory.Editor
 
             if (_animatorStatesViewModel.CurrentAnimatorController.HasState(stateName: stateName))
             {
-                
+                return;
             }
+
             _animatorStatesViewModel.CreateNewStateWithClip(stateName: stateName, animationClip: animationClip);
         }
     }
