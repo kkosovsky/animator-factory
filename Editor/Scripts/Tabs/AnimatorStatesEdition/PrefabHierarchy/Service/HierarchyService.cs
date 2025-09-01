@@ -14,13 +14,12 @@ namespace AnimatorFactory.PrefabHierarchy
         /// </summary>
         /// <param name="selectedPrefab">The root prefab to analyze</param>
         /// <returns>List of hierarchy items with depth information</returns>
-        public static List<PrefabHierarchyListItem> BuildHierarchy(GameObject selectedPrefab, bool showDepth)
+        public static List<PrefabHierarchyListItem> BuildHierarchy(GameObject selectedPrefab)
         {
             List<PrefabHierarchyListItem> hierarchyNodes = new List<PrefabHierarchyListItem>();
             BuildHierarchyRecursive(
                 hierarchyNodes: hierarchyNodes,
                 transform: selectedPrefab.transform,
-                showDepth: showDepth,
                 depth: 0
             );
             return hierarchyNodes;
@@ -31,12 +30,10 @@ namespace AnimatorFactory.PrefabHierarchy
         /// </summary>
         /// <param name="hierarchyNodes">The list to add nodes to</param>
         /// <param name="transform">The current transform to process</param>
-        /// <param name="showDepth"></param>
         /// <param name="depth">The current depth in the hierarchy</param>
         static void BuildHierarchyRecursive(
             List<PrefabHierarchyListItem> hierarchyNodes,
             Transform transform,
-            bool showDepth,
             int depth
         )
         {
@@ -47,8 +44,7 @@ namespace AnimatorFactory.PrefabHierarchy
                 BuildHierarchyRecursive(
                     hierarchyNodes: hierarchyNodes,
                     transform: transform.GetChild(index: i),
-                    showDepth: showDepth,
-                    depth: showDepth ? depth + 1 : 0
+                    depth: depth + 1
                 );
             }
         }

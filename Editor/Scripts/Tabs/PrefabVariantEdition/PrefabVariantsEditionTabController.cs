@@ -45,15 +45,22 @@ namespace AnimatorFactory.PrefabVariants
         void BindEvents()
         {
             _view.PrefabSelected += OnPrefabSelected;
+            _view.ToggleValueChanged += OnToggleValueChanged;
             _view.HierarchyView.ItemSelected += OnHierarchyItemSelected;
             _listController.ItemsApplied += OnVariantItemsApplied;
             _listController.SelectionChanged += OnVariantSelectionChanged;
             _hierarchyViewModel.HierarchyChanged += _view.HierarchyView.OnHierarchyChanged;
         }
 
+        void OnToggleValueChanged(bool shouldFilter)
+        {
+            _hierarchyViewModel.FilterDidChange(shouldFilter: shouldFilter);
+        }
+
         void UnbindEvents()
         {
             _view.PrefabSelected -= OnPrefabSelected;
+            _view.ToggleValueChanged -= OnToggleValueChanged;
             _view.HierarchyView.ItemSelected -= OnHierarchyItemSelected;
             _listController.ItemsApplied -= OnVariantItemsApplied;
             _listController.SelectionChanged -= OnVariantSelectionChanged;
@@ -70,7 +77,7 @@ namespace AnimatorFactory.PrefabVariants
             else
             {
                 _view.ShowHierarchy();
-                _hierarchyViewModel.LoadHierarchy(prefab: prefab, onlyShowAnimatorGameObjects: true);
+                _hierarchyViewModel.LoadHierarchy(prefab: prefab);
             }
 
             _listController.OnParentPrefabSelected(prefab: prefab);

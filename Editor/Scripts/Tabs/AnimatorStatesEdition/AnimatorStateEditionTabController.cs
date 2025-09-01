@@ -204,7 +204,7 @@ namespace AnimatorFactory.Editor
             }
             else
             {
-                _prefabHierarchyViewModel.LoadHierarchy(prefab: prefab, onlyShowAnimatorGameObjects: false);
+                _prefabHierarchyViewModel.LoadHierarchy(prefab: prefab);
                 _animatorStatesViewModel.Clear();
                 _spriteKeyframeViewModel.Clear();
             }

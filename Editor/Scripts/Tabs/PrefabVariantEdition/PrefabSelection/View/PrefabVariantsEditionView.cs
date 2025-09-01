@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using AnimatorFactory.Core.UI;
 using AnimatorFactory.PrefabHierarchy;
 using UnityEngine;
@@ -10,15 +9,17 @@ namespace AnimatorFactory.PrefabVariants
     public class PrefabVariantsEditionView : VisualElement
     {
         public event Action<GameObject> PrefabSelected;
+        public event Action<bool> ToggleValueChanged;
 
         PrefabField _prefabField;
+        Toggle _toggle;
         FolderField _sourceFolderField;
         Label _selectedItemsLabel;
         PrefabHierarchyView _hierarchyView;
         Label _hierarchyLabel;
 
         public PrefabHierarchyView HierarchyView => _hierarchyView;
-        
+
         public PrefabVariantsEditionView() => CreateUI();
 
         public void ShowSelectedItemsLabel(int count)
@@ -31,6 +32,7 @@ namespace AnimatorFactory.PrefabVariants
         {
             SetStyle();
             AddPrefabSelection();
+            AddToggle();
             AddHierarchySection();
             AddSelectedItemsLabel();
         }
@@ -47,7 +49,6 @@ namespace AnimatorFactory.PrefabVariants
 
             Add(child: _selectedItemsLabel);
         }
-
 
 
         void SetStyle()
@@ -69,6 +70,22 @@ namespace AnimatorFactory.PrefabVariants
         {
             GameObject value = (GameObject)evt.newValue;
             PrefabSelected?.Invoke(obj: value);
+        }
+
+        void AddToggle()
+        {
+            _toggle = new Toggle(label: "Only Animator GameObjects")
+            {
+                value = false
+            };
+            
+            _toggle.RegisterValueChangedCallback(callback: OnToggleValueChanged);
+            Add(child: _toggle);
+        }
+
+        void OnToggleValueChanged(ChangeEvent<bool> evt)
+        {
+            ToggleValueChanged?.Invoke(obj: evt.newValue);
         }
 
         void AddHierarchySection()
