@@ -45,7 +45,10 @@ namespace AnimatorFactory.GenerationControls
                 };
             
             AnimationUtility.SetObjectReferenceCurve(clip: clip, binding: spriteBinding, keyframes: spriteKeyFrames);
-            string fullPath = Path.Combine(path1: destinationFolderPath, path2: $"{animationName}.anim");
+            
+            string sanitizedDestinationPath = SanitizeDestinationPath(destinationFolderPath);
+            string fullPath = Path.Combine(path1: sanitizedDestinationPath, path2: $"{animationName}.anim");
+            
             AssetDatabase.CreateAsset(asset: clip, path: fullPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -58,6 +61,28 @@ namespace AnimatorFactory.GenerationControls
             }
             
             return loadedClip;
+        }
+        
+        /// <summary>
+        /// Sanitizes the destination path to ensure it's a directory path, not a file path.
+        /// This prevents issues where a full file path might be passed instead of just the directory.
+        /// </summary>
+        /// <param name="destinationPath">The destination path to sanitize</param>
+        /// <returns>A clean directory path</returns>
+        static string SanitizeDestinationPath(string destinationPath)
+        {
+            if (string.IsNullOrEmpty(destinationPath))
+            {
+                return $"Assets{Path.DirectorySeparatorChar}";
+            }
+            
+            // If the path ends with .anim, it's likely a full file path - extract directory
+            if (destinationPath.EndsWith(".anim", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return Path.GetDirectoryName(destinationPath) ?? $"Assets{Path.DirectorySeparatorChar}";
+            }
+            
+            return destinationPath;
         }
     }
 }
