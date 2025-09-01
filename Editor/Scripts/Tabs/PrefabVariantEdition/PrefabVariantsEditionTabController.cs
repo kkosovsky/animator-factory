@@ -45,6 +45,7 @@ namespace AnimatorFactory.PrefabVariants
         void BindEvents()
         {
             _view.PrefabSelected += OnPrefabSelected;
+            _view.HierarchyView.ItemSelected += OnHierarchyItemSelected;
             _listController.ItemsApplied += OnVariantItemsApplied;
             _listController.SelectionChanged += OnVariantSelectionChanged;
             _hierarchyViewModel.HierarchyChanged += _view.HierarchyView.OnHierarchyChanged;
@@ -53,6 +54,7 @@ namespace AnimatorFactory.PrefabVariants
         void UnbindEvents()
         {
             _view.PrefabSelected -= OnPrefabSelected;
+            _view.HierarchyView.ItemSelected -= OnHierarchyItemSelected;
             _listController.ItemsApplied -= OnVariantItemsApplied;
             _listController.SelectionChanged -= OnVariantSelectionChanged;
             _hierarchyViewModel.HierarchyChanged -= _view.HierarchyView.OnHierarchyChanged;
@@ -68,10 +70,15 @@ namespace AnimatorFactory.PrefabVariants
             else
             {
                 _view.ShowHierarchy();
-                _hierarchyViewModel.LoadHierarchy(prefab: prefab);
+                _hierarchyViewModel.LoadHierarchy(prefab: prefab, onlyShowAnimatorGameObjects: true);
             }
-            
+
             _listController.OnParentPrefabSelected(prefab: prefab);
+        }
+
+        void OnHierarchyItemSelected(PrefabHierarchyListItem hierarchyItem)
+        {
+            Debug.Log(message: "OnHierarchyItemSelected");
         }
 
         void OnVariantItemsApplied(PrefabVariant[] variants)
@@ -80,7 +87,7 @@ namespace AnimatorFactory.PrefabVariants
             _viewModel.VariantsSelected(variants: variants);
             ShowGenerateButton();
         }
-        
+
         void OnVariantSelectionChanged(PrefabVariant[] variants)
         {
             HideGenerateButton();
@@ -94,7 +101,7 @@ namespace AnimatorFactory.PrefabVariants
         {
             _generateButton.style.display = DisplayStyle.Flex;
         }
-        
+
         void HideGenerateButton()
         {
             _generateButton.style.display = DisplayStyle.None;

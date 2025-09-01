@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace AnimatorFactory.PrefabHierarchy
@@ -13,14 +14,15 @@ namespace AnimatorFactory.PrefabHierarchy
         /// Fired when the hierarchy data changes.
         /// </summary>
         public event Action<List<PrefabHierarchyListItem>> HierarchyChanged;
-        
+
         List<PrefabHierarchyListItem> _currentHierarchy = new();
 
         /// <summary>
         /// Loads the hierarchy for the given prefab.
         /// </summary>
         /// <param name="prefab">The prefab to analyze</param>
-        public void LoadHierarchy(GameObject prefab)
+        /// <param name="onlyShowAnimatorGameObjects">If true only displays game objects with Animator Component added</param>
+        public void LoadHierarchy(GameObject prefab, bool onlyShowAnimatorGameObjects)
         {
             if (prefab == null)
             {
@@ -30,9 +32,15 @@ namespace AnimatorFactory.PrefabHierarchy
 
             try
             {
-                List<PrefabHierarchyListItem> hierarchy = HierarchyService.BuildHierarchy(selectedPrefab: prefab);
-                _currentHierarchy = hierarchy;
-                HierarchyChanged?.Invoke(obj: hierarchy);
+                List<PrefabHierarchyListItem> hierarchy = HierarchyService.BuildHierarchy(
+                    selectedPrefab: prefab,
+                    showDepth: !onlyShowAnimatorGameObjects
+                );
+                _currentHierarchy = onlyShowAnimatorGameObjects
+                    ? hierarchy.Where(predicate: item => item.gameObject.HasComponent<Animator>()).ToList()
+                    : hierarchy;
+
+                HierarchyChanged?.Invoke(obj: _currentHierarchy);
             }
             catch (Exception ex)
             {
