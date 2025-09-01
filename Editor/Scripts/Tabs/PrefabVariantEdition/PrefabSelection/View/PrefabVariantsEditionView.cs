@@ -10,14 +10,12 @@ namespace AnimatorFactory.PrefabVariants
     public class PrefabVariantsEditionView : VisualElement
     {
         public event Action<GameObject> PrefabSelected;
-        public event Action GenerateButtonClicked;
 
         PrefabField _prefabField;
         FolderField _sourceFolderField;
         Label _selectedItemsLabel;
         PrefabHierarchyView _hierarchyView;
         Label _hierarchyLabel;
-        Button _generateButton;
 
         public PrefabHierarchyView HierarchyView => _hierarchyView;
         
@@ -29,23 +27,12 @@ namespace AnimatorFactory.PrefabVariants
             _selectedItemsLabel.style.display = DisplayStyle.Flex;
         }
 
-        public void ShowGenerateButton()
-        {
-            _generateButton.style.display = DisplayStyle.Flex;
-        }
-        
-        public void HideGenerateButton()
-        {
-            _generateButton.style.display = DisplayStyle.None;
-        }
-
         void CreateUI()
         {
             SetStyle();
             AddPrefabSelection();
             AddHierarchySection();
             AddSelectedItemsLabel();
-            AddGenerateButton();
         }
 
         void AddSelectedItemsLabel()
@@ -61,20 +48,7 @@ namespace AnimatorFactory.PrefabVariants
             Add(child: _selectedItemsLabel);
         }
 
-        void AddGenerateButton()
-        {
-            _generateButton = new Button(clickEvent: OnGenerateButtonClicked)
-            {
-                text = "Generate",
-                style =
-                {
-                    display = DisplayStyle.None,
-                    height = 24.0f
-                }
-            };
 
-            Add(child: _generateButton);
-        }
 
         void SetStyle()
         {
@@ -96,8 +70,6 @@ namespace AnimatorFactory.PrefabVariants
             GameObject value = (GameObject)evt.newValue;
             PrefabSelected?.Invoke(obj: value);
         }
-
-        void OnGenerateButtonClicked() => GenerateButtonClicked?.Invoke();
 
         void AddHierarchySection()
         {

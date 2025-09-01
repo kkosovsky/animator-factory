@@ -10,6 +10,7 @@ namespace AnimatorFactory.PrefabVariants
         readonly PrefabVariantsEditionViewModel _viewModel;
         readonly PrefabVariantListController _listController;
         readonly PrefabHierarchyViewModel _hierarchyViewModel;
+        readonly Button _generateButton;
 
         public PrefabVariantsEditionTabController()
         {
@@ -21,7 +22,18 @@ namespace AnimatorFactory.PrefabVariants
                 itemViewFactory: new PrefabVariantListItemFactory()
             );
 
+            _generateButton = new Button(clickEvent: OnGenerateButtonClicked)
+            {
+                text = "Generate",
+                style =
+                {
+                    display = DisplayStyle.None,
+                    height = 24.0f
+                }
+            };
+
             _view.Add(child: _listController.View);
+            _view.Add(child: _generateButton);
             _listController.Hide();
             BindEvents();
         }
@@ -33,7 +45,6 @@ namespace AnimatorFactory.PrefabVariants
         void BindEvents()
         {
             _view.PrefabSelected += OnPrefabSelected;
-            _view.GenerateButtonClicked += _viewModel.OnGenerateClicked;
             _listController.ItemsApplied += OnVariantItemsApplied;
             _listController.SelectionChanged += OnVariantSelectionChanged;
             _hierarchyViewModel.HierarchyChanged += _view.HierarchyView.OnHierarchyChanged;
@@ -44,7 +55,6 @@ namespace AnimatorFactory.PrefabVariants
             _view.PrefabSelected -= OnPrefabSelected;
             _listController.ItemsApplied -= OnVariantItemsApplied;
             _listController.SelectionChanged -= OnVariantSelectionChanged;
-            _view.GenerateButtonClicked -= _viewModel.OnGenerateClicked;
             _hierarchyViewModel.HierarchyChanged -= _view.HierarchyView.OnHierarchyChanged;
         }
 
@@ -68,14 +78,26 @@ namespace AnimatorFactory.PrefabVariants
         {
             _view.ShowSelectedItemsLabel(count: variants.Length);
             _viewModel.VariantsSelected(variants: variants);
-            _view.ShowGenerateButton();
+            ShowGenerateButton();
         }
         
         void OnVariantSelectionChanged(PrefabVariant[] variants)
         {
-            _view.HideGenerateButton();
+            HideGenerateButton();
             _view.ShowSelectedItemsLabel(count: variants.Length);
             _viewModel.VariantsSelected(variants: variants);
+        }
+
+        void OnGenerateButtonClicked() => _viewModel.OnGenerateClicked();
+
+        void ShowGenerateButton()
+        {
+            _generateButton.style.display = DisplayStyle.Flex;
+        }
+        
+        void HideGenerateButton()
+        {
+            _generateButton.style.display = DisplayStyle.None;
         }
     }
 }
