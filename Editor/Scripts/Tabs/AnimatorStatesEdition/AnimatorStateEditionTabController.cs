@@ -213,7 +213,9 @@ namespace AnimatorFactory.Editor
         void OnGenerateButtonClicked()
         {
             _view.generationControlsView.ShowIsGeneratingDialogue();
-            _generationControlsViewModel.GenerateAnimationClips(spriteAnimationInfo: _spriteKeyframeViewModel.SpriteAnimationInfo);
+            _generationControlsViewModel.GenerateAnimationClips(
+                spriteAnimationInfo: _spriteKeyframeViewModel.SpriteAnimationInfo
+            );
         }
 
         void OnAnimationClipGenerated(AnimationClip animationClip, string stateName)
@@ -230,6 +232,10 @@ namespace AnimatorFactory.Editor
                 return;
             }
 
+            if (_animatorStatesViewModel.CurrentAnimatorController.HasState(stateName: stateName))
+            {
+                
+            }
             _animatorStatesViewModel.CreateNewStateWithClip(stateName: stateName, animationClip: animationClip);
         }
     }
