@@ -20,9 +20,13 @@ namespace AnimatorFactory.GenerationControls
         )
         {
             string sanitizedDestinationPath = SanitizeDestinationPath(destinationPath: destinationFolderPath);
+            if (!Directory.Exists(path: sanitizedDestinationPath))
+            {
+                Directory.CreateDirectory(path: sanitizedDestinationPath);
+            }
+            
             string fullPath = Path.Combine(path1: sanitizedDestinationPath, path2: $"{animationName}.anim");
 
-            // Check if animation clip already exists
             AnimationClip existingClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetPath: fullPath);
             if (existingClip != null)
             {
@@ -36,7 +40,6 @@ namespace AnimatorFactory.GenerationControls
                 );
             }
 
-            // Create new clip if it doesn't exist
             AnimationClip clip = new()
             {
                 frameRate = frameRate,

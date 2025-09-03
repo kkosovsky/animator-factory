@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <DefaultSourceSpritePath>k__BackingField: Assets/AutoBattler/Runtime/Units/Resources/Sprites/Units/AnimationSprites/
   <GeneratedClipsPath>k__BackingField: Assets/AutoBattler/Runtime/Units/Animations/
+  <FallbackSpritesPath>k__BackingField: Assets/AutoBattler/Runtime/Units/Resources/Sprites/Units/BattleSprites/

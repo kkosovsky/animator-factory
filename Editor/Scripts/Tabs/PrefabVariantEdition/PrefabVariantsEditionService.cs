@@ -105,7 +105,8 @@ namespace AnimatorFactory.PrefabVariants
                 variant: prefabVariant,
                 originalStates: AnimatorStateAnalysisService.GetAllAnimatorStates(controller: originalController),
                 overrides: overrides,
-                variantSpritesPath: prefabVariant.fullSpritesSourcePath
+                variantSpritesPath: prefabVariant.fullSpritesSourcePath,
+                fallbackSpritePath: prefabVariant.fallbackSpritePath
             );
 
             overrideController.ApplyOverrides(overrides: newAnimationClips);
@@ -139,12 +140,14 @@ namespace AnimatorFactory.PrefabVariants
             PrefabVariant variant,
             List<AnimatorState> originalStates,
             List<KeyValuePair<AnimationClip, AnimationClip>> overrides,
-            string variantSpritesPath
+            string variantSpritesPath,
+            string fallbackSpritePath
         )
         {
             Dictionary<string, List<Sprite>> sprites = LoadAllSpritesRecursively(
                 states: originalStates,
-                rootPath: variantSpritesPath
+                rootPath: variantSpritesPath,
+                fallbackSpritePath: fallbackSpritePath
             );
 
             Dictionary<AnimationClip, string> clipToStateName = CreateClipToStateMapping(states: originalStates);
@@ -191,17 +194,78 @@ namespace AnimatorFactory.PrefabVariants
             );
         }
 
-        static Dictionary<string, List<Sprite>> LoadAllSpritesRecursively(List<AnimatorState> states, string rootPath)
+        static Dictionary<string, List<Sprite>> LoadAllSpritesRecursively(
+            List<AnimatorState> states,
+            string rootPath,
+            string fallbackSpritePath
+        )
         {
             Dictionary<string, List<Sprite>> spriteDict = new Dictionary<string, List<Sprite>>();
 
             if (!AssetDatabase.IsValidFolder(path: rootPath))
             {
-                return spriteDict;
+                LoadFallbackSpriteForEveryState(
+                    states: states,
+                    spriteDict: spriteDict,
+                    fallbackSpritePath: fallbackSpritePath
+                );
+            }
+            else
+            {
+                string[] guids = AssetDatabase.FindAssets(filter: "t:Sprite", searchInFolders: new[] { rootPath });
+                if (!guids.Any())
+                {
+                    LoadFallbackSpriteForEveryState(
+                        states: states,
+                        spriteDict: spriteDict,
+                        fallbackSpritePath: fallbackSpritePath
+                    );
+                }
+                else
+                {
+                    LoadActualAnimSprites(states: states, guids: guids, spriteDict: spriteDict);
+                }
             }
 
-            string[] guids = AssetDatabase.FindAssets(filter: "t:Sprite", searchInFolders: new[] { rootPath });
+            foreach (List<Sprite> sprites in spriteDict.Values)
+            {
+                sprites.Sort(
+                    comparison: (a, b) => string.Compare(
+                        strA: a.name,
+                        strB: b.name,
+                        comparisonType: StringComparison.OrdinalIgnoreCase
+                    )
+                );
+            }
 
+            return spriteDict;
+        }
+
+        static void LoadFallbackSpriteForEveryState(
+            List<AnimatorState> states,
+            Dictionary<string, List<Sprite>> spriteDict,
+            string fallbackSpritePath
+        )
+        {
+            Sprite fallbackSprite = AssetDatabase.LoadAssetAtPath<Sprite>(fallbackSpritePath);
+            if (fallbackSprite == null)
+            {
+                Debug.LogError($"Could not find fallback sprite at path: {fallbackSpritePath}");
+                return;
+            }
+            
+            foreach (AnimatorState state in states)
+            {
+                spriteDict[state.name] = new List<Sprite> { fallbackSprite };
+            }
+        }
+
+        static void LoadActualAnimSprites(
+            List<AnimatorState> states,
+            string[] guids,
+            Dictionary<string, List<Sprite>> spriteDict
+        )
+        {
             foreach (string guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid: guid);
@@ -239,25 +303,11 @@ namespace AnimatorFactory.PrefabVariants
                     }
                     else
                     {
-                        List<Sprite> newKeyframes = new List<Sprite>();
-                        newKeyframes.Add(item: sprite);
+                        List<Sprite> newKeyframes = new List<Sprite> { sprite };
                         spriteDict[key: stateName] = newKeyframes;
                     }
                 }
             }
-
-            foreach (List<Sprite> sprites in spriteDict.Values)
-            {
-                sprites.Sort(
-                    comparison: (a, b) => string.Compare(
-                        strA: a.name,
-                        strB: b.name,
-                        comparisonType: StringComparison.OrdinalIgnoreCase
-                    )
-                );
-            }
-
-            return spriteDict;
         }
 
         static Dictionary<AnimationClip, string> CreateClipToStateMapping(List<AnimatorState> states)

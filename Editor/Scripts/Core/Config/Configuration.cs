@@ -7,5 +7,6 @@ namespace AnimatorFactory
     {
         [field: SerializeField] public string DefaultSourceSpritePath { get; private set; }
         [field: SerializeField] public string GeneratedClipsPath { get; private set; }
+        [field: SerializeField] public string FallbackSpritesPath { get; private set; }
     }
 }

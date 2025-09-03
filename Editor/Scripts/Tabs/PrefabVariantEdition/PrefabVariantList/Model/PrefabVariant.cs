@@ -7,8 +7,10 @@ namespace AnimatorFactory.PrefabVariants
     public class PrefabVariant
     {
         public string name => gameObject.name;
-        public string fullSpritesSourcePath;
-        public string fullClipsDestinationPath;
+
+        public readonly string fullSpritesSourcePath;
+        public readonly string fullClipsDestinationPath;
+        public readonly string fallbackSpritePath;
 
         public readonly GameObject gameObject;
         public string spriteSourcesDirPath;
@@ -25,6 +27,8 @@ namespace AnimatorFactory.PrefabVariants
             
             spriteSourcesDirPath = AnimatorFactoryWindow.Configuration.DefaultSourceSpritePath;
             fullSpritesSourcePath = $"{spriteSourcesDirPath}{gameObject.name}{Path.DirectorySeparatorChar}";
+
+            fallbackSpritePath = $"{AnimatorFactoryWindow.Configuration.FallbackSpritesPath}{name}.png";
         }
     }
 }
