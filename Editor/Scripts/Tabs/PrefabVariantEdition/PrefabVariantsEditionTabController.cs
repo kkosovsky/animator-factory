@@ -85,7 +85,7 @@ namespace AnimatorFactory.PrefabVariants
 
         void OnHierarchyItemSelected(PrefabHierarchyListItem hierarchyItem)
         {
-            Debug.Log(message: "OnHierarchyItemSelected");
+            _viewModel.DidSelectHierarchyItem(item: hierarchyItem);
         }
 
         void OnVariantItemsApplied(PrefabVariant[] variants)
