@@ -16,6 +16,7 @@ namespace AnimatorFactory.PrefabHierarchy
 
         ListView _hierarchyListView;
         List<PrefabHierarchyListItem> _hierarchyNodes = new();
+        int _selectedIndex = -1;
 
         public PrefabHierarchyView() => CreateUI();
 
@@ -54,6 +55,19 @@ namespace AnimatorFactory.PrefabHierarchy
                 return;
             }
 
+            int newSelectedIndex = _hierarchyListView.selectedIndex;
+
+            if (_selectedIndex >= 0)
+            {
+                RefreshSingleItem(index: _selectedIndex);
+            }
+
+            if (newSelectedIndex >= 0)
+            {
+                RefreshSingleItem(index: newSelectedIndex);
+            }
+
+            _selectedIndex = newSelectedIndex;
             ItemSelected?.Invoke(obj: selectedItem);
         }
 
@@ -72,6 +86,7 @@ namespace AnimatorFactory.PrefabHierarchy
                 }
             };
 
+            AddSelectionIndicator(container);
             AddIndentSpace(container: container);
             AddImageIcon(container: container);
             AddNameLabel(container: container);
@@ -88,6 +103,10 @@ namespace AnimatorFactory.PrefabHierarchy
             }
 
             PrefabHierarchyListItem listItem = _hierarchyNodes[index: index];
+
+            Image selectionIndicator = element.Q<Image>("selection-indicator");
+            bool isSelected = _hierarchyListView.selectedIndex == index;
+            selectionIndicator.style.display = isSelected ? DisplayStyle.Flex : DisplayStyle.None;
 
             VisualElement indentSpace = element.Q<VisualElement>(name: "indent-space");
             indentSpace.style.width = listItem.depth * 20;
@@ -114,6 +133,24 @@ namespace AnimatorFactory.PrefabHierarchy
             {
                 AddComponentIcon<Animator>(container: iconsContainer, tooltip: "Has Animator component");
             }
+        }
+
+        static void AddSelectionIndicator(VisualElement container)
+        {
+            Image selectionIndicator = new()
+            {
+                name = "selection-indicator",
+                style =
+                {
+                    width = 16,
+                    height = 16,
+                    marginRight = 4,
+                    display = DisplayStyle.None
+                }
+            };
+
+            selectionIndicator.image = EditorGUIUtility.IconContent("d_FilterSelectedOnly").image;
+            container.Add(selectionIndicator);
         }
 
         static void AddIndentSpace(VisualElement container)
@@ -168,6 +205,14 @@ namespace AnimatorFactory.PrefabHierarchy
                 }
             };
             container.Add(child: iconsContainer);
+        }
+
+        void RefreshSingleItem(int index)
+        {
+            if (index >= 0 && index < _hierarchyNodes.Count)
+            {
+                _hierarchyListView.RefreshItem(index: index);
+            }
         }
 
         static void AddComponentIcon<T>(VisualElement container, string tooltip)
