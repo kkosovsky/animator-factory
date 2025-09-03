@@ -23,7 +23,9 @@ namespace AnimatorFactory
             frameRate = clip.frameRate;
             totalFrames = Mathf.RoundToInt(f: duration * frameRate);
             keyframes = new List<SpriteAnimationKeyframe>();
-            destinationFolderPath = AssetDatabase.GetAssetPath(assetObject: clip);
+            
+            string fullPath = AssetDatabase.GetAssetPath(assetObject: clip);
+            destinationFolderPath = System.IO.Path.GetDirectoryName(path: fullPath);
         }
 
         public SpriteAnimationInfo(

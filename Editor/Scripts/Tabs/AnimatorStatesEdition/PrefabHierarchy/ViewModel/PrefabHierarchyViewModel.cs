@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace AnimatorFactory.PrefabHierarchy
@@ -13,7 +14,7 @@ namespace AnimatorFactory.PrefabHierarchy
         /// Fired when the hierarchy data changes.
         /// </summary>
         public event Action<List<PrefabHierarchyListItem>> HierarchyChanged;
-        
+
         List<PrefabHierarchyListItem> _currentHierarchy = new();
 
         /// <summary>
@@ -30,9 +31,11 @@ namespace AnimatorFactory.PrefabHierarchy
 
             try
             {
-                List<PrefabHierarchyListItem> hierarchy = HierarchyService.BuildHierarchy(selectedPrefab: prefab);
+                List<PrefabHierarchyListItem> hierarchy = HierarchyService.BuildHierarchy(
+                    selectedPrefab: prefab
+                );
                 _currentHierarchy = hierarchy;
-                HierarchyChanged?.Invoke(obj: hierarchy);
+                EmitCurrentHierarchy(filtered: false);
             }
             catch (Exception ex)
             {
@@ -41,6 +44,8 @@ namespace AnimatorFactory.PrefabHierarchy
             }
         }
 
+        public void FilterDidChange(bool shouldFilter) => EmitCurrentHierarchy(filtered: shouldFilter);
+
         /// <summary>
         /// Clears all hierarchy data.
         /// </summary>
@@ -48,6 +53,22 @@ namespace AnimatorFactory.PrefabHierarchy
         {
             _currentHierarchy.Clear();
             HierarchyChanged?.Invoke(obj: _currentHierarchy);
+        }
+
+        void EmitCurrentHierarchy(bool filtered)
+        {
+            if (!filtered)
+            {
+                HierarchyChanged?.Invoke(obj: _currentHierarchy);
+                return;
+            }
+
+            List<PrefabHierarchyListItem> filteredHierarchy =_currentHierarchy
+                .Where(predicate: item => item.gameObject.HasComponent<Animator>())
+                .Select(selector: item => new PrefabHierarchyListItem(gameObject: item.gameObject, depth: 0))
+                .ToList();
+            
+            HierarchyChanged?.Invoke(obj: filteredHierarchy);
         }
     }
 }

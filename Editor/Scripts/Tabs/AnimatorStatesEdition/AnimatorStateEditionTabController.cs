@@ -213,7 +213,9 @@ namespace AnimatorFactory.Editor
         void OnGenerateButtonClicked()
         {
             _view.generationControlsView.ShowIsGeneratingDialogue();
-            _generationControlsViewModel.GenerateAnimationClips(spriteAnimationInfo: _spriteKeyframeViewModel.SpriteAnimationInfo);
+            _generationControlsViewModel.GenerateAnimationClips(
+                spriteAnimationInfo: _spriteKeyframeViewModel.SpriteAnimationInfo
+            );
         }
 
         void OnAnimationClipGenerated(AnimationClip animationClip, string stateName)
@@ -227,6 +229,11 @@ namespace AnimatorFactory.Editor
             if (string.IsNullOrEmpty(value: stateName))
             {
                 Debug.LogError(message: "State name is null or empty in OnAnimationClipGenerated");
+                return;
+            }
+
+            if (_animatorStatesViewModel.CurrentAnimatorController.HasState(stateName: stateName))
+            {
                 return;
             }
 

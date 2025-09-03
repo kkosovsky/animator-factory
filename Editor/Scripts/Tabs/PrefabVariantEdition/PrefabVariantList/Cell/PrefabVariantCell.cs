@@ -44,12 +44,12 @@ namespace AnimatorFactory.PrefabVariants
 
             spriteSourceFolderField = new FolderField(
                 labelText: "Sprite Sources:",
-                initialValue: $"Assets{Path.DirectorySeparatorChar}"
+                initialValue: AnimatorFactoryWindow.Configuration.DefaultSourceSpritePath
             );
 
             clipsDestinationFolderField = new FolderField(
                 labelText: "Clips Destination:",
-                initialValue: $"Assets{Path.DirectorySeparatorChar}"
+                initialValue: AnimatorFactoryWindow.Configuration.GeneratedClipsPath
             );
 
             Add(child: spriteSourceFolderField);

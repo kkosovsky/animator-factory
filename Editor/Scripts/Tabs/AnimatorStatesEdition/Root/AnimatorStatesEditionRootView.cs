@@ -20,8 +20,12 @@ namespace AnimatorFactory.AnimatorStates
         public SpriteKeyframesView spriteKeyframesView;
         public GenerationControlsView generationControlsView;
 
+        ScrollView _mainScrollView;
+        VisualElement _contentContainer;
+
         public AnimatorStatesEditionRootView()
         {
+            CreateScrollableContainer();
             CreatePrefabSelectionSection();
             CreateHierarchySection();
             CreateAnimatorStatesSection();
@@ -29,11 +33,37 @@ namespace AnimatorFactory.AnimatorStates
             CreateGenerateControlsView();
         }
 
+        void CreateScrollableContainer()
+        {
+            _mainScrollView = new ScrollView(ScrollViewMode.Vertical)
+            {
+                style = 
+                {
+                    flexGrow = 1
+                }
+            };
+
+            _contentContainer = new VisualElement()
+            {
+                style = 
+                {
+                    flexGrow = 1,
+                    paddingLeft = 5,
+                    paddingRight = 5,
+                    paddingTop = 5,
+                    paddingBottom = 5
+                }
+            };
+
+            _mainScrollView.Add(_contentContainer);
+            Add(_mainScrollView);
+        }
+
         void CreatePrefabSelectionSection()
         {
             prefabField = new PrefabField(label: Strings.prefabSelectionLabel);
             prefabField.RegisterValueChangedCallback(callback: OnPrefabSelectionChanged);
-            Add(child: prefabField);
+            _contentContainer.Add(child: prefabField);
         }
 
         void CreateHierarchySection()
@@ -47,28 +77,35 @@ namespace AnimatorFactory.AnimatorStates
                     marginBottom = 5
                 }
             };
-            Add(child: hierarchyLabel);
+            _contentContainer.Add(child: hierarchyLabel);
 
-            prefabHierarchyView = new PrefabHierarchyView();
-            Add(child: prefabHierarchyView);
+            prefabHierarchyView = new PrefabHierarchyView
+            {
+                style =
+                {
+                    height = 300,
+                    marginBottom = 10
+                }
+            };
+            _contentContainer.Add(child: prefabHierarchyView);
         }
 
         void CreateAnimatorStatesSection()
         {
             animatorStatesView = new AnimatorStatesView();
-            Add(child: animatorStatesView);
+            _contentContainer.Add(child: animatorStatesView);
         }
 
         void CreateSpriteKeyframeSection()
         {
             spriteKeyframesView = new SpriteKeyframesView();
-            Add(child: spriteKeyframesView);
+            _contentContainer.Add(child: spriteKeyframesView);
         }
 
         void CreateGenerateControlsView()
         {
             generationControlsView = new GenerationControlsView();
-            Add(child: generationControlsView);
+            _contentContainer.Add(child: generationControlsView);
         }
 
         void OnPrefabSelectionChanged(ChangeEvent<Object> evt)

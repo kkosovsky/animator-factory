@@ -1,6 +1,7 @@
 using AnimatorFactory.Core.UI;
 using AnimatorFactory.Editor;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace AnimatorFactory
@@ -13,6 +14,8 @@ namespace AnimatorFactory
         TabView _mainTabView;
         AnimatorFactoryController _controller;
 
+        public static Configuration Configuration { get; private set; }
+
         /// <summary>
         /// Menu item to open the Animator Factory window.
         /// </summary>
@@ -21,6 +24,7 @@ namespace AnimatorFactory
 
         void OnEnable()
         {
+            LoadConfiguration();
             _controller = new AnimatorFactoryController();
             CreateUIElements();
         }
@@ -62,6 +66,25 @@ namespace AnimatorFactory
             _mainTabView.AddTab(title: Strings.prefabVariantsTabLabel, content: _controller.GetPrefabVariantsContent());
 
             container.Add(child: _mainTabView);
+        }
+
+        static void LoadConfiguration()
+        {
+            string[] guids = AssetDatabase.FindAssets(filter: "t:Configuration");
+
+            if (guids.Length > 0)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid: guids[0]);
+                Configuration = AssetDatabase.LoadAssetAtPath<Configuration>(assetPath: assetPath);
+            }
+
+            if (Configuration == null)
+            {
+                Debug.LogWarning(
+                    message:
+                    "AnimatorFactory Configuration asset not found. Please create one using Create > Animator Factory > Configuration"
+                );
+            }
         }
     }
 }

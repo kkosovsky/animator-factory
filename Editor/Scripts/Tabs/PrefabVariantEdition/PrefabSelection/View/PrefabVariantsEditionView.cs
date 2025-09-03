@@ -1,6 +1,6 @@
 using System;
-using System.IO;
 using AnimatorFactory.Core.UI;
+using AnimatorFactory.PrefabHierarchy;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,12 +9,16 @@ namespace AnimatorFactory.PrefabVariants
     public class PrefabVariantsEditionView : VisualElement
     {
         public event Action<GameObject> PrefabSelected;
-        public event Action GenerateButtonClicked;
+        public event Action<bool> ToggleValueChanged;
 
         PrefabField _prefabField;
+        Toggle _toggle;
         FolderField _sourceFolderField;
         Label _selectedItemsLabel;
-        Button _generateButton;
+        PrefabHierarchyView _hierarchyView;
+        Label _hierarchyLabel;
+
+        public PrefabHierarchyView HierarchyView => _hierarchyView;
 
         public PrefabVariantsEditionView() => CreateUI();
 
@@ -22,15 +26,15 @@ namespace AnimatorFactory.PrefabVariants
         {
             _selectedItemsLabel.text = $"Selected {count} variants";
             _selectedItemsLabel.style.display = DisplayStyle.Flex;
-            _generateButton.style.display = DisplayStyle.Flex;
         }
 
         void CreateUI()
         {
             SetStyle();
             AddPrefabSelection();
+            AddToggle();
+            AddHierarchySection();
             AddSelectedItemsLabel();
-            AddGenerateButton();
         }
 
         void AddSelectedItemsLabel()
@@ -46,20 +50,6 @@ namespace AnimatorFactory.PrefabVariants
             Add(child: _selectedItemsLabel);
         }
 
-        void AddGenerateButton()
-        {
-            _generateButton = new Button(clickEvent: OnGenerateButtonClicked)
-            {
-                text = "Generate",
-                style =
-                {
-                    display = DisplayStyle.None,
-                    height = 24.0f
-                }
-            };
-
-            Add(child: _generateButton);
-        }
 
         void SetStyle()
         {
@@ -82,6 +72,58 @@ namespace AnimatorFactory.PrefabVariants
             PrefabSelected?.Invoke(obj: value);
         }
 
-        void OnGenerateButtonClicked() => GenerateButtonClicked?.Invoke();
+        void AddToggle()
+        {
+            _toggle = new Toggle(label: "Only Animator GameObjects")
+            {
+                value = false
+            };
+            
+            _toggle.RegisterValueChangedCallback(callback: OnToggleValueChanged);
+            Add(child: _toggle);
+        }
+
+        void OnToggleValueChanged(ChangeEvent<bool> evt)
+        {
+            ToggleValueChanged?.Invoke(obj: evt.newValue);
+        }
+
+        void AddHierarchySection()
+        {
+            _hierarchyLabel = new Label(text: "Hierarchy:")
+            {
+                style =
+                {
+                    unityFontStyleAndWeight = FontStyle.Bold,
+                    marginTop = 10,
+                    marginBottom = 5,
+                    display = DisplayStyle.None
+                }
+            };
+            Add(child: _hierarchyLabel);
+
+            _hierarchyView = new PrefabHierarchyView
+            {
+                style =
+                {
+                    display = DisplayStyle.None,
+                    height = 200,
+                    marginBottom = 10
+                }
+            };
+            Add(child: _hierarchyView);
+        }
+
+        public void ShowHierarchy()
+        {
+            _hierarchyLabel.style.display = DisplayStyle.Flex;
+            _hierarchyView.style.display = DisplayStyle.Flex;
+        }
+
+        public void HideHierarchy()
+        {
+            _hierarchyLabel.style.display = DisplayStyle.None;
+            _hierarchyView.style.display = DisplayStyle.None;
+        }
     }
 }

@@ -13,48 +13,87 @@ namespace AnimatorFactory.PrefabVariants
         /// <summary>
         /// Replaces the AnimatorController with AnimatorOverrideController as a sub-asset
         /// </summary>
+        /// <param name="originalAnimatorGameObject">The original animator we want to override</param>
         /// <param name="prefabVariant">The prefab variant to modify</param>
-        public static void CreateAnimatorOverrideControllerAsSubAsset(PrefabVariant prefabVariant)
+        public static void CreateAnimatorOverrideControllerAsSubAsset(
+            PrefabHierarchyListItem originalAnimatorGameObject,
+            PrefabVariant prefabVariant
+        )
         {
-            if (!IsValidVariant(variant: prefabVariant.gameObject))
+            Animator originalAnimator = originalAnimatorGameObject.gameObject.GetComponent<Animator>();
+
+            if (!IsValidVariant(originalAnimator: originalAnimator, variant: prefabVariant))
             {
                 return;
             }
 
-            Animator[] animators = prefabVariant.gameObject.GetComponentsInChildren<Animator>(includeInactive: true);
-
-            foreach (Animator animator in animators)
+            if (!IsOriginalAnimatorValid(animator: originalAnimator))
             {
-                if (IsOriginalAnimatorValid(animator: animator))
-                {
-                    CreateOverrideControllerForAnimator(
-                        prefabVariant: prefabVariant,
-                        originalAnimator: animator
-                    );
-                }
+                return;
             }
+
+            CreateOverrideControllerForAnimator(
+                originalAnimator: originalAnimator,
+                prefabVariant: prefabVariant
+            );
 
             PrefabUtility.SavePrefabAsset(asset: prefabVariant.gameObject);
             AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
-        static bool IsValidVariant(GameObject variant)
+        static bool IsValidVariant(Animator originalAnimator, PrefabVariant variant)
         {
             if (variant == null)
             {
-                Debug.LogError(message: "PrefabVariant is null");
+                Debug.LogError(message: "Variant is null");
+                return false;
+            }
+
+            if (variant.gameObject == null)
+            {
+                Debug.LogError(
+                    message: "Variant has no game object!"
+                );
+
+                return false;
+            }
+
+            List<Animator> animators = variant
+                .gameObject.GetComponentsInChildren<Animator>(includeInactive: true)
+                .Where(predicate: animator => animator.gameObject.name.Equals(value: originalAnimator.gameObject.name))
+                .ToList();
+
+            if (!animators.Any())
+            {
+                Debug.LogError(
+                    message:
+                    $"Variant doesn't not have a matching game object in its hierarchy! Variant game object: {variant.gameObject.name}, required game object: {originalAnimator.gameObject.name}"
+                );
+
                 return false;
             }
 
             return true;
         }
 
-        static void CreateOverrideControllerForAnimator(
-            PrefabVariant prefabVariant,
-            Animator originalAnimator
-        )
+        static void CreateOverrideControllerForAnimator(Animator originalAnimator, PrefabVariant prefabVariant)
         {
             AnimatorController originalController = originalAnimator.runtimeAnimatorController as AnimatorController;
+            Animator variantAnimator = prefabVariant
+                .gameObject
+                .GetComponentsInChildren<Animator>()
+                .First(predicate: animator => animator.gameObject.name.Equals(value: originalAnimator.gameObject.name));
+
+            if (variantAnimator == null)
+            {
+                Debug.LogError(
+                    message:
+                    $"Didn't find matching child object with animator where object name is {originalAnimator.gameObject.name}"
+                );
+                return;
+            }
+
             AnimatorOverrideController overrideController = new(controller: originalController);
             List<KeyValuePair<AnimationClip, AnimationClip>> overrides = new List<
                 KeyValuePair<AnimationClip, AnimationClip>
@@ -66,15 +105,16 @@ namespace AnimatorFactory.PrefabVariants
                 variant: prefabVariant,
                 originalStates: AnimatorStateAnalysisService.GetAllAnimatorStates(controller: originalController),
                 overrides: overrides,
-                replacementSpritesPath: prefabVariant.spriteSourcesDirPath
+                variantSpritesPath: prefabVariant.fullSpritesSourcePath,
+                fallbackSpritePath: prefabVariant.fallbackSpritePath
             );
 
             overrideController.ApplyOverrides(overrides: newAnimationClips);
-            string overrideControllerName = $"{originalAnimator.gameObject.name}_AnimatorOverride";
+            string overrideControllerName = $"{prefabVariant.name}_AnimatorOverride";
             overrideController.name = overrideControllerName;
 
             AssetDatabase.AddObjectToAsset(objectToAdd: overrideController, assetObject: prefabVariant.gameObject);
-            originalAnimator.runtimeAnimatorController = overrideController;
+            variantAnimator.runtimeAnimatorController = overrideController;
             PrefabUtility.RecordPrefabInstancePropertyModifications(targetObject: originalAnimator);
         }
 
@@ -83,13 +123,13 @@ namespace AnimatorFactory.PrefabVariants
             AnimatorController originalController = animator.runtimeAnimatorController as AnimatorController;
             if (originalController == null)
             {
-                Debug.LogWarning(message: $"Animator on {animator.gameObject.name} doesn't have an AnimatorController");
+                Debug.LogError(message: $"Animator on {animator.gameObject.name} doesn't have an AnimatorController");
                 return false;
             }
 
             if (animator.runtimeAnimatorController is AnimatorOverrideController)
             {
-                Debug.Log(message: $"Animator on {animator.gameObject.name} already has an override controller");
+                Debug.LogError(message: $"Animator on {animator.gameObject.name} already has an override controller");
                 return false;
             }
 
@@ -100,12 +140,14 @@ namespace AnimatorFactory.PrefabVariants
             PrefabVariant variant,
             List<AnimatorState> originalStates,
             List<KeyValuePair<AnimationClip, AnimationClip>> overrides,
-            string replacementSpritesPath
+            string variantSpritesPath,
+            string fallbackSpritePath
         )
         {
             Dictionary<string, List<Sprite>> sprites = LoadAllSpritesRecursively(
                 states: originalStates,
-                rootPath: replacementSpritesPath
+                rootPath: variantSpritesPath,
+                fallbackSpritePath: fallbackSpritePath
             );
 
             Dictionary<AnimationClip, string> clipToStateName = CreateClipToStateMapping(states: originalStates);
@@ -140,28 +182,90 @@ namespace AnimatorFactory.PrefabVariants
 
         static AnimationClip MakeAnimationClip(AnimationClip originalClip, Sprite[] newKeyframes, PrefabVariant variant)
         {
+            string newClipName = $"{variant.name}_{originalClip.name.Split(separator: '_').Last()}";
             return AnimationClipGenerationService.CreateAnimationClip(
                 sprites: newKeyframes,
                 keyframeCount: newKeyframes.Length,
                 frameRate: originalClip.frameRate,
-                hasLoopTime: false,
+                hasLoopTime: originalClip.isLooping,
                 wrapMode: WrapMode.Clamp,
-                animationName: $"{variant.name}_{originalClip.name}",
-                destinationFolderPath: variant.generatedClipsPath
+                animationName: newClipName,
+                destinationFolderPath: variant.fullClipsDestinationPath
             );
         }
 
-        static Dictionary<string, List<Sprite>> LoadAllSpritesRecursively(List<AnimatorState> states, string rootPath)
+        static Dictionary<string, List<Sprite>> LoadAllSpritesRecursively(
+            List<AnimatorState> states,
+            string rootPath,
+            string fallbackSpritePath
+        )
         {
             Dictionary<string, List<Sprite>> spriteDict = new Dictionary<string, List<Sprite>>();
 
             if (!AssetDatabase.IsValidFolder(path: rootPath))
             {
-                return spriteDict;
+                LoadFallbackSpriteForEveryState(
+                    states: states,
+                    spriteDict: spriteDict,
+                    fallbackSpritePath: fallbackSpritePath
+                );
+            }
+            else
+            {
+                string[] guids = AssetDatabase.FindAssets(filter: "t:Sprite", searchInFolders: new[] { rootPath });
+                if (!guids.Any())
+                {
+                    LoadFallbackSpriteForEveryState(
+                        states: states,
+                        spriteDict: spriteDict,
+                        fallbackSpritePath: fallbackSpritePath
+                    );
+                }
+                else
+                {
+                    LoadActualAnimSprites(states: states, guids: guids, spriteDict: spriteDict);
+                }
             }
 
-            string[] guids = AssetDatabase.FindAssets(filter: "t:Sprite", searchInFolders: new[] { rootPath });
+            foreach (List<Sprite> sprites in spriteDict.Values)
+            {
+                sprites.Sort(
+                    comparison: (a, b) => string.Compare(
+                        strA: a.name,
+                        strB: b.name,
+                        comparisonType: StringComparison.OrdinalIgnoreCase
+                    )
+                );
+            }
 
+            return spriteDict;
+        }
+
+        static void LoadFallbackSpriteForEveryState(
+            List<AnimatorState> states,
+            Dictionary<string, List<Sprite>> spriteDict,
+            string fallbackSpritePath
+        )
+        {
+            Sprite fallbackSprite = AssetDatabase.LoadAssetAtPath<Sprite>(fallbackSpritePath);
+            if (fallbackSprite == null)
+            {
+                Debug.LogError($"Could not find fallback sprite at path: {fallbackSpritePath}");
+                return;
+            }
+            
+            foreach (AnimatorState state in states)
+            {
+                spriteDict[state.name] = new List<Sprite> { fallbackSprite };
+            }
+        }
+
+        static void LoadActualAnimSprites(
+            List<AnimatorState> states,
+            string[] guids,
+            Dictionary<string, List<Sprite>> spriteDict
+        )
+        {
             foreach (string guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid: guid);
@@ -199,25 +303,11 @@ namespace AnimatorFactory.PrefabVariants
                     }
                     else
                     {
-                        List<Sprite> newKeyframes = new List<Sprite>();
-                        newKeyframes.Add(item: sprite);
+                        List<Sprite> newKeyframes = new List<Sprite> { sprite };
                         spriteDict[key: stateName] = newKeyframes;
                     }
                 }
             }
-
-            foreach (List<Sprite> sprites in spriteDict.Values)
-            {
-                sprites.Sort(
-                    comparison: (a, b) => string.Compare(
-                        strA: a.name,
-                        strB: b.name,
-                        comparisonType: StringComparison.OrdinalIgnoreCase
-                    )
-                );
-            }
-
-            return spriteDict;
         }
 
         static Dictionary<AnimationClip, string> CreateClipToStateMapping(List<AnimatorState> states)

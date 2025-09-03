@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
@@ -5,6 +6,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
 {
     public interface ISelectionListViewModel<SourceItem, ListItem>
     {
+        public event Action<List<ListItem>> DidFilterItems;
         List<ListItem> allItems { get; set; }
         List<ListItem> filteredItems { get; }
 

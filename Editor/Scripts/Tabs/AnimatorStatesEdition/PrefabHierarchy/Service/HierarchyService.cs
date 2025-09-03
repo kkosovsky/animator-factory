@@ -17,7 +17,11 @@ namespace AnimatorFactory.PrefabHierarchy
         public static List<PrefabHierarchyListItem> BuildHierarchy(GameObject selectedPrefab)
         {
             List<PrefabHierarchyListItem> hierarchyNodes = new List<PrefabHierarchyListItem>();
-            BuildHierarchyRecursive(hierarchyNodes: hierarchyNodes, transform: selectedPrefab.transform, depth: 0);
+            BuildHierarchyRecursive(
+                hierarchyNodes: hierarchyNodes,
+                transform: selectedPrefab.transform,
+                depth: 0
+            );
             return hierarchyNodes;
         }
 
