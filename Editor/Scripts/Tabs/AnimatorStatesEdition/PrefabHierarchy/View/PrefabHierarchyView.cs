@@ -86,10 +86,9 @@ namespace AnimatorFactory.PrefabHierarchy
                 }
             };
 
-            AddSelectionIndicator(container);
             AddIndentSpace(container: container);
             AddImageIcon(container: container);
-            AddNameLabel(container: container);
+            AddNameLabelAndSelectionIndicator(container: container);
             AddIconsContainer(container: container);
 
             return container;
@@ -104,7 +103,7 @@ namespace AnimatorFactory.PrefabHierarchy
 
             PrefabHierarchyListItem listItem = _hierarchyNodes[index: index];
 
-            Image selectionIndicator = element.Q<Image>("selection-indicator");
+            Image selectionIndicator = element.Q<Image>(name: "selection-indicator");
             bool isSelected = _hierarchyListView.selectedIndex == index;
             selectionIndicator.style.display = isSelected ? DisplayStyle.Flex : DisplayStyle.None;
 
@@ -135,24 +134,6 @@ namespace AnimatorFactory.PrefabHierarchy
             }
         }
 
-        static void AddSelectionIndicator(VisualElement container)
-        {
-            Image selectionIndicator = new()
-            {
-                name = "selection-indicator",
-                style =
-                {
-                    width = 16,
-                    height = 16,
-                    marginRight = 4,
-                    display = DisplayStyle.None
-                }
-            };
-
-            selectionIndicator.image = EditorGUIUtility.IconContent("d_FilterSelectedOnly").image;
-            container.Add(selectionIndicator);
-        }
-
         static void AddIndentSpace(VisualElement container)
         {
             VisualElement indentSpace = new()
@@ -179,18 +160,50 @@ namespace AnimatorFactory.PrefabHierarchy
             container.Add(child: icon);
         }
 
-        static void AddNameLabel(VisualElement container)
+        static void AddNameLabelAndSelectionIndicator(VisualElement container)
         {
+            VisualElement labelContainer = new()
+            {
+                name = "label-container",
+                style =
+                {
+                    flexDirection = FlexDirection.Row,
+                    alignItems = Align.Center,
+                    flexGrow = 1
+                }
+            };
+
             Label nameLabel = new()
             {
                 name = "name-label",
                 style =
                 {
-                    flexGrow = 1,
-                    unityTextAlign = TextAnchor.MiddleLeft
+                    unityTextAlign = TextAnchor.MiddleLeft,
+                    marginRight = 4
                 }
             };
-            container.Add(child: nameLabel);
+
+            labelContainer.Add(child: nameLabel);
+            AddSelectionIndicator(container: labelContainer);
+            container.Add(child: labelContainer);
+        }
+
+        static void AddSelectionIndicator(VisualElement container)
+        {
+            Image selectionIndicator = new()
+            {
+                name = "selection-indicator",
+                style =
+                {
+                    width = 16,
+                    height = 16,
+                    marginLeft = 4,
+                    display = DisplayStyle.None
+                }
+            };
+
+            selectionIndicator.image = EditorGUIUtility.IconContent(name: "d_FilterSelectedOnly").image;
+            container.Add(child: selectionIndicator);
         }
 
         static void AddIconsContainer(VisualElement container)

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace AnimatorFactory.PrefabVariants
@@ -16,7 +17,7 @@ namespace AnimatorFactory.PrefabVariants
         public string spriteSourcesDirPath;
         public string generatedClipsPath;
         public Guid id;
-        
+
 
         public PrefabVariant(GameObject gameObject)
         {
@@ -24,11 +25,12 @@ namespace AnimatorFactory.PrefabVariants
             id = Guid.NewGuid();
             generatedClipsPath = AnimatorFactoryWindow.Configuration.GeneratedClipsPath;
             fullClipsDestinationPath = $"{generatedClipsPath}{gameObject.name}{Path.DirectorySeparatorChar}";
-            
+
             spriteSourcesDirPath = AnimatorFactoryWindow.Configuration.DefaultSourceSpritePath;
             fullSpritesSourcePath = $"{spriteSourcesDirPath}{gameObject.name}{Path.DirectorySeparatorChar}";
 
-            fallbackSpritePath = $"{AnimatorFactoryWindow.Configuration.FallbackSpritesPath}{name}.png";
+            fallbackSpritePath =
+                $"{AnimatorFactoryWindow.Configuration.FallbackSpritesPath}{name.Split(separator: '_').First()}.png";
         }
     }
 }

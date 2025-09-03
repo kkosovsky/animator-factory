@@ -10,6 +10,7 @@ namespace AnimatorFactory.PrefabVariants
 {
     public class PrefabVariantSelectionListViewModel : ISelectionListViewModel<GameObject, PrefabVariant>
     {
+        public event Action<List<PrefabVariant>> DidFilterItems;
         public List<PrefabVariant> allItems { get; set; } = new();
         public List<PrefabVariant> filteredItems { get; } = new();
 
@@ -32,7 +33,7 @@ namespace AnimatorFactory.PrefabVariants
             }
 
             List<PrefabVariant> variants = FindAllPrefabVariants(parent: item)
-                .Select(gameObject => new PrefabVariant(gameObject))
+                .Select(selector: gameObject => new PrefabVariant(gameObject: gameObject))
                 .ToList();
 
             Sort(items: variants);
@@ -82,12 +83,17 @@ namespace AnimatorFactory.PrefabVariants
         {
         }
 
-        public void OnSearchChanged(ChangeEvent<string> evt) => _currentFilter = evt.newValue;
+        public void OnSearchChanged(ChangeEvent<string> evt)
+        {
+            _currentFilter = evt.newValue;
+            RefreshAllFilteredItems();
+        }
 
         public void RefreshAllFilteredItems()
         {
             filteredItems.Clear();
             filteredItems.AddRange(collection: allItems.Where(predicate: Filter));
+            DidFilterItems?.Invoke(obj: filteredItems);
         }
 
         void UpdateClipsDestinationDir(Guid id, string path)
@@ -98,7 +104,7 @@ namespace AnimatorFactory.PrefabVariants
             }
 
             allItems
-                .First(variant => variant.id == id)
+                .First(predicate: variant => variant.id == id)
                 .generatedClipsPath = path;
         }
 
@@ -110,7 +116,7 @@ namespace AnimatorFactory.PrefabVariants
             }
 
             allItems
-                .First(variant => variant.id == id)
+                .First(predicate: variant => variant.id == id)
                 .spriteSourcesDirPath = path;
         }
 

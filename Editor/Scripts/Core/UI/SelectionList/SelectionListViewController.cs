@@ -29,7 +29,7 @@ namespace AnimatorFactory.Core.UI.SelectionList
         protected readonly SelectionListView view;
         protected readonly ISelectionListViewModel<SourceItem, ListItem> viewModel;
 
-        public SelectionListViewController(
+        protected SelectionListViewController(
             string headerText,
             ISelectionListViewModel<SourceItem, ListItem> viewModel,
             ListItemViewFactory itemViewFactory
@@ -47,8 +47,15 @@ namespace AnimatorFactory.Core.UI.SelectionList
                 OnApplyClicked: OnApplyClicked,
                 OnCancelClicked: OnCancelClicked
             );
+            this.viewModel.DidFilterItems += OnDidFilterItems;
             this.viewModel.LoadAllItems();
             RefreshAllFilteredItems();
+        }
+
+        void OnDidFilterItems(List<ListItem> filteredItems)
+        {
+            view.list.itemsSource = filteredItems;
+            view.list.RefreshItems();
         }
 
         /// <summary>
