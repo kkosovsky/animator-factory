@@ -27,10 +27,11 @@ namespace AnimatorFactory.PrefabVariants
             fullClipsDestinationPath = $"{generatedClipsPath}{gameObject.name}{Path.DirectorySeparatorChar}";
 
             spriteSourcesDirPath = AnimatorFactoryWindow.Configuration.DefaultSourceSpritePath;
-            fullSpritesSourcePath = $"{spriteSourcesDirPath}{gameObject.name}{Path.DirectorySeparatorChar}";
+            string baseName = name.Split(separator: '_').First();
+            fullSpritesSourcePath = $"{spriteSourcesDirPath}{baseName}{Path.DirectorySeparatorChar}";
 
             fallbackSpritePath =
-                $"{AnimatorFactoryWindow.Configuration.FallbackSpritesPath}{name.Split(separator: '_').First()}.png";
+                $"{AnimatorFactoryWindow.Configuration.FallbackSpritesPath}{baseName}.png";
         }
     }
 }

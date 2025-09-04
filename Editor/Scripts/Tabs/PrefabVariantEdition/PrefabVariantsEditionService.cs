@@ -5,6 +5,7 @@ using AnimatorFactory.GenerationControls;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AnimatorFactory.PrefabVariants
 {
@@ -113,9 +114,42 @@ namespace AnimatorFactory.PrefabVariants
             string overrideControllerName = $"{prefabVariant.name}_AnimatorOverride";
             overrideController.name = overrideControllerName;
 
+            RemoveExistingSubAssetByName(
+                mainAsset: prefabVariant.gameObject,
+                assetName: overrideControllerName,
+                assetType: typeof(AnimatorOverrideController)
+            );
+            
             AssetDatabase.AddObjectToAsset(objectToAdd: overrideController, assetObject: prefabVariant.gameObject);
             variantAnimator.runtimeAnimatorController = overrideController;
             PrefabUtility.RecordPrefabInstancePropertyModifications(targetObject: originalAnimator);
+        }
+
+        static void RemoveExistingSubAssetByName(GameObject mainAsset, string assetName, Type assetType)
+        {
+            Object[] subAssets =
+                AssetDatabase.LoadAllAssetsAtPath(assetPath: AssetDatabase.GetAssetPath(assetObject: mainAsset));
+
+            foreach (Object subAsset in subAssets)
+            {
+                if (subAsset == mainAsset)
+                {
+                    continue;
+                }
+
+                bool nameMatches = subAsset.name == assetName;
+                bool typeMatches = assetType.IsInstanceOfType(o: subAsset);
+
+                if (!nameMatches || !typeMatches)
+                {
+                    continue;
+                }
+
+                Debug.Log(message: $"Removing existing {assetType.Name}: {assetName}");
+                AssetDatabase.RemoveObjectFromAsset(objectToRemove: subAsset);
+                Object.DestroyImmediate(obj: subAsset, allowDestroyingAssets: true);
+                break;
+            }
         }
 
         static bool IsOriginalAnimatorValid(Animator animator)
@@ -247,16 +281,16 @@ namespace AnimatorFactory.PrefabVariants
             string fallbackSpritePath
         )
         {
-            Sprite fallbackSprite = AssetDatabase.LoadAssetAtPath<Sprite>(fallbackSpritePath);
+            Sprite fallbackSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath: fallbackSpritePath);
             if (fallbackSprite == null)
             {
-                Debug.LogError($"Could not find fallback sprite at path: {fallbackSpritePath}");
+                Debug.LogError(message: $"Could not find fallback sprite at path: {fallbackSpritePath}");
                 return;
             }
-            
+
             foreach (AnimatorState state in states)
             {
-                spriteDict[state.name] = new List<Sprite> { fallbackSprite };
+                spriteDict[key: state.name] = new List<Sprite> { fallbackSprite };
             }
         }
 
@@ -275,9 +309,9 @@ namespace AnimatorFactory.PrefabVariants
                     continue;
                 }
 
-                UnityEngine.Object[] allAssets = AssetDatabase.LoadAllAssetsAtPath(assetPath: path);
+                Object[] allAssets = AssetDatabase.LoadAllAssetsAtPath(assetPath: path);
 
-                foreach (UnityEngine.Object asset in allAssets)
+                foreach (Object asset in allAssets)
                 {
                     if (asset is not Sprite sprite)
                     {
