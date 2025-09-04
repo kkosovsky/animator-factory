@@ -23,15 +23,6 @@ namespace AnimatorFactory.PrefabVariants
                 return;
             }
 
-            PrefabAssetType type = PrefabUtility.GetPrefabAssetType(componentOrGameObject: item);
-            if (type != PrefabAssetType.Regular)
-            {
-                Debug.Log(message: "Prefab type is not .Regular. Stopping execution.");
-                allItems.Clear();
-                filteredItems.Clear();
-                return;
-            }
-
             List<PrefabVariant> variants = FindAllPrefabVariants(parent: item)
                 .Select(selector: gameObject => new PrefabVariant(gameObject: gameObject))
                 .ToList();
@@ -122,7 +113,7 @@ namespace AnimatorFactory.PrefabVariants
 
         public static IEnumerable<GameObject> FindAllPrefabVariants(GameObject parent)
         {
-            return AssetDatabase
+            IEnumerable<GameObject> variants = AssetDatabase
                 .FindAssets(filter: "t:prefab")
                 .Select(selector: AssetDatabase.GUIDToAssetPath)
                 .Select(selector: AssetDatabase.LoadAssetAtPath<GameObject>)
@@ -130,11 +121,41 @@ namespace AnimatorFactory.PrefabVariants
                 .Where(
                     predicate: go =>
                         PrefabUtility.GetPrefabAssetType(componentOrGameObject: go) == PrefabAssetType.Variant
-                )
+                );
+
+            PrefabAssetType type = PrefabUtility.GetPrefabAssetType(componentOrGameObject: parent);
+            return type switch
+            {
+                PrefabAssetType.Regular => GetVariantsForRegularPrefab(parent: parent, variants: variants),
+                PrefabAssetType.Variant => GetVariantsForVariant(parent: parent, prefabs: variants),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        static IEnumerable<GameObject> GetVariantsForRegularPrefab(GameObject parent, IEnumerable<GameObject> variants)
+        {
+            return variants
                 .Where(
                     predicate: go =>
                         PrefabUtility.GetCorrespondingObjectFromSource(componentOrGameObject: go) == parent
                 );
+        }
+
+        static IEnumerable<GameObject> GetVariantsForVariant(GameObject parent, IEnumerable<GameObject> prefabs)
+        {
+            return prefabs
+                .Where(predicate: go => IsDirectVariantOf(variant: go, potentialParent: parent));
+        }
+
+        static bool IsDirectVariantOf(GameObject variant, GameObject potentialParent)
+        {
+            string parentPath = AssetDatabase.GetAssetPath(assetObject: potentialParent);
+            string[] parentDependencies = AssetDatabase.GetDependencies(pathName: parentPath, recursive: false);
+
+            string variantPath = AssetDatabase.GetAssetPath(assetObject: variant);
+            string[] variantDependencies = AssetDatabase.GetDependencies(pathName: variantPath, recursive: false);
+
+            return variantDependencies.Intersect(parentDependencies).Count() == parentDependencies.Length;
         }
     }
 }
