@@ -28,11 +28,6 @@ namespace AnimatorFactory.PrefabVariants
                 return;
             }
 
-            if (!IsOriginalAnimatorValid(animator: originalAnimator))
-            {
-                return;
-            }
-
             CreateOverrideControllerForAnimator(
                 originalAnimator: originalAnimator,
                 prefabVariant: prefabVariant
@@ -80,7 +75,7 @@ namespace AnimatorFactory.PrefabVariants
 
         static void CreateOverrideControllerForAnimator(Animator originalAnimator, PrefabVariant prefabVariant)
         {
-            AnimatorController originalController = originalAnimator.runtimeAnimatorController as AnimatorController;
+            RuntimeAnimatorController originalController = originalAnimator.runtimeAnimatorController;
             Animator variantAnimator = prefabVariant
                 .gameObject
                 .GetComponentsInChildren<Animator>()
@@ -119,7 +114,7 @@ namespace AnimatorFactory.PrefabVariants
                 assetName: overrideControllerName,
                 assetType: typeof(AnimatorOverrideController)
             );
-            
+
             AssetDatabase.AddObjectToAsset(objectToAdd: overrideController, assetObject: prefabVariant.gameObject);
             variantAnimator.runtimeAnimatorController = overrideController;
             PrefabUtility.RecordPrefabInstancePropertyModifications(targetObject: originalAnimator);
@@ -132,6 +127,11 @@ namespace AnimatorFactory.PrefabVariants
 
             foreach (Object subAsset in subAssets)
             {
+                if (subAsset == null)
+                {
+                    continue;
+                }
+
                 if (subAsset == mainAsset)
                 {
                     continue;
@@ -150,24 +150,6 @@ namespace AnimatorFactory.PrefabVariants
                 Object.DestroyImmediate(obj: subAsset, allowDestroyingAssets: true);
                 break;
             }
-        }
-
-        static bool IsOriginalAnimatorValid(Animator animator)
-        {
-            AnimatorController originalController = animator.runtimeAnimatorController as AnimatorController;
-            if (originalController == null)
-            {
-                Debug.LogError(message: $"Animator on {animator.gameObject.name} doesn't have an AnimatorController");
-                return false;
-            }
-
-            if (animator.runtimeAnimatorController is AnimatorOverrideController)
-            {
-                Debug.LogError(message: $"Animator on {animator.gameObject.name} already has an override controller");
-                return false;
-            }
-
-            return true;
         }
 
         static List<KeyValuePair<AnimationClip, AnimationClip>> GetNewAnimationClips(
@@ -257,7 +239,12 @@ namespace AnimatorFactory.PrefabVariants
                 }
                 else
                 {
-                    LoadActualAnimSprites(states: states, guids: guids, spriteDict: spriteDict);
+                    LoadActualAnimSprites(
+                        states: states,
+                        guids: guids,
+                        spriteDict: spriteDict,
+                        fallbackSpritePath: fallbackSpritePath
+                    );
                 }
             }
 
@@ -297,7 +284,8 @@ namespace AnimatorFactory.PrefabVariants
         static void LoadActualAnimSprites(
             List<AnimatorState> states,
             string[] guids,
-            Dictionary<string, List<Sprite>> spriteDict
+            Dictionary<string, List<Sprite>> spriteDict,
+            string fallbackSpritePath
         )
         {
             foreach (string guid in guids)
@@ -309,37 +297,46 @@ namespace AnimatorFactory.PrefabVariants
                     continue;
                 }
 
-                Object[] allAssets = AssetDatabase.LoadAllAssetsAtPath(assetPath: path);
+                List<Sprite> allAssets = AssetDatabase
+                    .LoadAllAssetsAtPath(assetPath: path)
+                    .OfType<Sprite>()
+                    .ToList();
 
-                foreach (Object asset in allAssets)
+                foreach (AnimatorState state in states)
                 {
-                    if (asset is not Sprite sprite)
+                    string stateName = state.name;
+                    if (!allAssets.Any(predicate: sprite => sprite.name.Contains(value: stateName)))
                     {
-                        Debug.Log(message: $"Asset is not a sprite: {asset.name}");
                         continue;
                     }
 
-                    string spriteName = sprite.name.ToLower();
-                    bool matchingStateExists =
-                        states.Any(predicate: state => spriteName.Contains(value: state.name.ToLower()));
-                    if (!matchingStateExists)
                     {
-                        Debug.Log(message: $"{spriteName} doesn't match any existing state");
-                        continue;
-                    }
+                        List<Sprite> stateSprites =
+                            allAssets.Where(predicate: sprite => sprite.name.Contains(value: stateName)).ToList();
+                        List<Sprite> newKeyframes = new List<Sprite>(collection: stateSprites);
+                        if (!spriteDict.ContainsKey(stateName))
+                        {
+                            spriteDict[stateName] = newKeyframes;
+                            continue;
+                        }
 
-                    string stateName = states
-                        .First(predicate: state => spriteName.Contains(value: state.name.ToLower()))
-                        .name;
-                    if (spriteDict.ContainsKey(key: stateName))
-                    {
-                        spriteDict[key: stateName].Add(item: sprite);
+                        spriteDict[key: stateName].AddRange(newKeyframes);
                     }
-                    else
-                    {
-                        List<Sprite> newKeyframes = new List<Sprite> { sprite };
-                        spriteDict[key: stateName] = newKeyframes;
-                    }
+                }
+            }
+            
+            Sprite fallbackSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath: fallbackSpritePath);
+            foreach (AnimatorState state in states)
+            {
+                if (!spriteDict.ContainsKey(state.name))
+                {
+                    spriteDict[key: state.name] = new List<Sprite> { fallbackSprite };
+                    continue;
+                }
+
+                if (!spriteDict[state.name].Any())
+                {
+                    spriteDict[key: state.name] = new List<Sprite> { fallbackSprite };
                 }
             }
         }

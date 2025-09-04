@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Animations;
@@ -16,11 +17,22 @@ namespace AnimatorFactory
         /// </summary>
         /// <param name="controller">The animator controller to analyze</param>
         /// <returns>List of all animator states</returns>
-        public static List<AnimatorState> GetAllAnimatorStates(AnimatorController controller)
+        public static List<AnimatorState> GetAllAnimatorStates(RuntimeAnimatorController controller)
         {
             var allStates = new List<AnimatorState>();
-
-            foreach (AnimatorControllerLayer layer in controller.layers)
+            AnimatorControllerLayer[] layers = Array.Empty<AnimatorControllerLayer>();
+            
+            if (controller is AnimatorController animatorController)
+            {
+                layers = animatorController.layers;
+            }
+            
+            if (controller is AnimatorOverrideController overrideController)
+            {
+                layers = (overrideController.runtimeAnimatorController as AnimatorController).layers;
+            }
+            
+            foreach (AnimatorControllerLayer layer in layers)
             {
                 CollectStatesRecursive(stateMachine: layer.stateMachine, states: allStates);
             }
