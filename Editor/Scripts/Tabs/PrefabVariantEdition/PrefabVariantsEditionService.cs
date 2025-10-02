@@ -314,17 +314,11 @@ namespace AnimatorFactory.PrefabVariants
                         List<Sprite> stateSprites =
                             allAssets.Where(predicate: sprite => sprite.name.Contains(value: stateName)).ToList();
                         List<Sprite> newKeyframes = new List<Sprite>(collection: stateSprites);
-                        if (!spriteDict.ContainsKey(stateName))
-                        {
-                            spriteDict[stateName] = newKeyframes;
-                            continue;
-                        }
-
-                        spriteDict[key: stateName].AddRange(newKeyframes);
+                        spriteDict[stateName] = newKeyframes;
                     }
                 }
             }
-            
+
             Sprite fallbackSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath: fallbackSpritePath);
             foreach (AnimatorState state in states)
             {
