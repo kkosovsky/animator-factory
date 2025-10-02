@@ -251,11 +251,19 @@ namespace AnimatorFactory.PrefabVariants
             foreach (List<Sprite> sprites in spriteDict.Values)
             {
                 sprites.Sort(
-                    comparison: (a, b) => string.Compare(
-                        strA: a.name,
-                        strB: b.name,
-                        comparisonType: StringComparison.OrdinalIgnoreCase
-                    )
+                    comparison: (a, b) =>
+                    {
+                        return ExtractNumber(a.name).CompareTo(ExtractNumber(b.name));
+
+                        static int ExtractNumber(string name)
+                        {
+                            int lastUnderscoreIndex = name.LastIndexOf('_');
+                            return lastUnderscoreIndex != -1 && lastUnderscoreIndex < name.Length - 1 
+                                && int.TryParse(name[(lastUnderscoreIndex + 1)..], out int result)
+                                    ? result 
+                                    : 0;
+                        }
+                    }
                 );
             }
 
