@@ -114,7 +114,7 @@ namespace AnimatorFactory.PrefabVariants
         public static IEnumerable<GameObject> FindAllPrefabVariants(GameObject parent)
         {
             IEnumerable<GameObject> variants = AssetDatabase
-                .FindAssets(filter: "t:prefab")
+                .FindAssets(filter: "t:prefab", AnimatorFactoryWindow.Configuration.PrefabVariantsPath)
                 .Select(selector: AssetDatabase.GUIDToAssetPath)
                 .Select(selector: AssetDatabase.LoadAssetAtPath<GameObject>)
                 .Where(predicate: go => go != null)
@@ -123,13 +123,7 @@ namespace AnimatorFactory.PrefabVariants
                         PrefabUtility.GetPrefabAssetType(componentOrGameObject: go) == PrefabAssetType.Variant
                 );
 
-            PrefabAssetType type = PrefabUtility.GetPrefabAssetType(componentOrGameObject: parent);
-            return type switch
-            {
-                PrefabAssetType.Regular => GetVariantsForRegularPrefab(parent: parent, variants: variants),
-                PrefabAssetType.Variant => GetVariantsForVariant(parent: parent, prefabs: variants),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            return GetVariantsForRegularPrefab(parent: parent, variants: variants);
         }
 
         static IEnumerable<GameObject> GetVariantsForRegularPrefab(GameObject parent, IEnumerable<GameObject> variants)
@@ -139,23 +133,6 @@ namespace AnimatorFactory.PrefabVariants
                     predicate: go =>
                         PrefabUtility.GetCorrespondingObjectFromSource(componentOrGameObject: go) == parent
                 );
-        }
-
-        static IEnumerable<GameObject> GetVariantsForVariant(GameObject parent, IEnumerable<GameObject> prefabs)
-        {
-            return prefabs
-                .Where(predicate: go => IsDirectVariantOf(variant: go, potentialParent: parent));
-        }
-
-        static bool IsDirectVariantOf(GameObject variant, GameObject potentialParent)
-        {
-            string parentPath = AssetDatabase.GetAssetPath(assetObject: potentialParent);
-            string[] parentDependencies = AssetDatabase.GetDependencies(pathName: parentPath, recursive: false);
-
-            string variantPath = AssetDatabase.GetAssetPath(assetObject: variant);
-            string[] variantDependencies = AssetDatabase.GetDependencies(pathName: variantPath, recursive: false);
-
-            return variantDependencies.Intersect(parentDependencies).Count() == parentDependencies.Length;
         }
     }
 }

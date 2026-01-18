@@ -15,3 +15,5 @@ MonoBehaviour:
   <DefaultSourceSpritePath>k__BackingField: Assets/AutoBattler/Runtime/Units/Resources/Sprites/Units/AnimationSprites/
   <GeneratedClipsPath>k__BackingField: Assets/AutoBattler/Runtime/Units/Animations/
   <FallbackSpritesPath>k__BackingField: Assets/AutoBattler/Runtime/Units/Resources/Sprites/Units/BattleSprites/
+  <PrefabVariantsPath>k__BackingField:
+  - Assets/AutoBattler/Runtime/Units/Resources/GeneratedUnits/GameObjects/
