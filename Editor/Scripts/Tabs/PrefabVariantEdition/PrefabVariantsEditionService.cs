@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AnimatorFactory.GenerationControls;
 using UnityEditor;
@@ -305,26 +306,35 @@ namespace AnimatorFactory.PrefabVariants
                     continue;
                 }
 
-                List<Sprite> allAssets = AssetDatabase
+                string stem = Path.GetFileNameWithoutExtension(path: path);
+                AnimatorState owner = states
+                    .Where(predicate: state =>
+                        stem == state.name
+                        || stem.EndsWith(value: "_" + state.name, comparisonType: StringComparison.Ordinal))
+                    .OrderByDescending(keySelector: state => state.name.Length)
+                    .FirstOrDefault();
+
+                if (owner == null)
+                {
+                    continue;
+                }
+
+                if (spriteDict.ContainsKey(key: owner.name))
+                {
+                    continue;
+                }
+
+                List<Sprite> spritesInSheet = AssetDatabase
                     .LoadAllAssetsAtPath(assetPath: path)
                     .OfType<Sprite>()
                     .ToList();
 
-                foreach (AnimatorState state in states)
+                if (!spritesInSheet.Any())
                 {
-                    string stateName = state.name;
-                    if (!allAssets.Any(predicate: sprite => sprite.name.Contains(value: stateName)))
-                    {
-                        continue;
-                    }
-
-                    {
-                        List<Sprite> stateSprites =
-                            allAssets.Where(predicate: sprite => sprite.name.Contains(value: stateName)).ToList();
-                        List<Sprite> newKeyframes = new List<Sprite>(collection: stateSprites);
-                        spriteDict[stateName] = newKeyframes;
-                    }
+                    continue;
                 }
+
+                spriteDict[key: owner.name] = spritesInSheet;
             }
 
             Sprite fallbackSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath: fallbackSpritePath);
